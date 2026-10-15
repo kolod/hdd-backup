@@ -39,6 +39,8 @@ namespace HddBackup.App.Forms
         private OperationRequest _request;
         private OperationResult _result;
         private OperationProgress _last = OperationProgress.Idle;
+        private string _step;
+        private string _extraLine;
 
         public OperationPanel(TaskbarProgress taskbar)
         {
@@ -82,10 +84,12 @@ namespace HddBackup.App.Forms
 
         public event EventHandler CancelRequested;
 
-        public void Start(IImagingEngine engine, OperationRequest request)
+        public void Start(IImagingEngine engine, OperationRequest request, string step = null)
         {
             _engine = engine;
             _request = request;
+            _step = step;
+            _extraLine = null;
             _result = null;
             _last = OperationProgress.Idle;
             _banner.Visible = false;
@@ -107,10 +111,11 @@ namespace HddBackup.App.Forms
             _taskbar.SetState(confirming ? TaskbarState.Paused : TaskbarState.Normal);
         }
 
-        public void ShowResult(OperationResult result)
+        public void ShowResult(OperationResult result, string extraLine = null)
         {
             _timer.Stop();
             _result = result;
+            _extraLine = extraLine;
             _cancel.Visible = false;
             _close.Visible = true;
             Refresh(_engine.CurrentProgress);
@@ -148,7 +153,7 @@ namespace HddBackup.App.Forms
             base.Dispose(disposing);
         }
 
-        /// <summary>Hides the finished operation's panel; only possible once the operation is over.</summary>
+                /// <summary>Hides the finished operation's panel; only possible once the operation is over.</summary>
         private void CloseResult()
         {
             if (_result == null)
@@ -163,7 +168,7 @@ namespace HddBackup.App.Forms
         private void Refresh(OperationProgress p)
         {
             _last = p;
-            _phase.Text = PhaseText(p.Phase);
+            _phase.Text = _step == null ? PhaseText(p.Phase) : Strings.Format("Shrink_StepPhase", _step, PhaseText(p.Phase));
             if (_result != null)
             {
                 // After the end the last phase (release/eject) has no data; show the whole run instead.
@@ -196,6 +201,11 @@ namespace HddBackup.App.Forms
                 return Strings.Get(_result.State == OperationState.Completed ? "Phase_Done" : "Phase_Stopped");
             }
 
+            if (_request?.Kind == OperationKind.ShrinkImage)
+            {
+                return Strings.Get("Phase_Shrink_" + phase);
+            }
+
             if (phase == OperationPhase.Transferring && _request != null)
             {
                 return Strings.Get(_request.IsBackup ? "Phase_Transferring_Backup" : "Phase_Transferring_Restore");
@@ -221,6 +231,10 @@ namespace HddBackup.App.Forms
                     if (r.Kind == OperationKind.VerifyImage)
                     {
                         lines.Add(Strings.Get("Result_VerifyDone"));
+                    }
+                    else if (r.Kind == OperationKind.ShrinkImage)
+                    {
+                        lines.Add(Strings.Format("Shrink_ResultSaved", r.ImagePath, Formatters.Bytes(r.DataBytes)));
                     }
                     else
                     {
@@ -262,7 +276,11 @@ namespace HddBackup.App.Forms
                     }
 
                     AddDeviceState(r, lines);
-                    if (!string.IsNullOrEmpty(r.ErrorDetail))
+                    if (r.ErrorCode == ErrorCode.ShrinkNotPossible)
+                    {
+                        lines.Add(Formatters.BlockersFromDetail(r.ErrorDetail));
+                    }
+                    else if (!string.IsNullOrEmpty(r.ErrorDetail))
                     {
                         lines.Add(Strings.Format("Error_Details", r.ErrorDetail));
                     }
@@ -282,6 +300,11 @@ namespace HddBackup.App.Forms
                 lines.Add(Strings.Format("Result_Sha256", sha));
             }
 
+            if (!string.IsNullOrEmpty(_extraLine))
+            {
+                lines.Add(_extraLine);
+            }
+
             lines.Add(Strings.Format("Result_Duration", Formatters.Duration(r.Duration)));
             _banner.BackColor = color;
             _banner.Text = string.Join(Environment.NewLine, lines);
@@ -294,6 +317,12 @@ namespace HddBackup.App.Forms
         {
             if (r.Kind == OperationKind.VerifyImage)
             {
+                return;
+            }
+
+            if (r.Kind == OperationKind.ShrinkImage)
+            {
+                lines.Add(Strings.Get("Shrink_NothingSaved"));
                 return;
             }
 

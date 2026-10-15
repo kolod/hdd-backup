@@ -73,5 +73,38 @@ namespace HddBackup.App.Localization
         {
             return Strings.Get("Error_" + code);
         }
+
+        /// <summary>Localized bullet list of shrink blockers (technical detail appended verbatim).</summary>
+        public static string Blockers(System.Collections.Generic.IEnumerable<HddBackup.Core.Shrinking.ShrinkBlockerInfo> blockers)
+        {
+            var lines = new System.Collections.Generic.List<string>();
+            foreach (var b in blockers)
+            {
+                lines.Add(BlockerLine(b.Blocker.ToString(), b.Detail));
+            }
+
+            return string.Join(Environment.NewLine, lines);
+        }
+
+        /// <summary>Same as <see cref="Blockers(System.Collections.Generic.IEnumerable{HddBackup.Core.Shrinking.ShrinkBlockerInfo})"/> for an engine error detail ("Name: detail; Name").</summary>
+        public static string BlockersFromDetail(string detail)
+        {
+            var lines = new System.Collections.Generic.List<string>();
+            foreach (var part in (detail ?? string.Empty).Split(new[] { "; " }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                int colon = part.IndexOf(": ", StringComparison.Ordinal);
+                string name = colon > 0 ? part.Substring(0, colon) : part;
+                string extra = colon > 0 ? part.Substring(colon + 2) : string.Empty;
+                lines.Add(Enum.IsDefined(typeof(HddBackup.Core.Shrinking.ShrinkBlocker), name) ? BlockerLine(name, extra) : "• " + part);
+            }
+
+            return string.Join(Environment.NewLine, lines);
+        }
+
+        private static string BlockerLine(string name, string detail)
+        {
+            string text = Strings.Get("Blocker_" + name);
+            return "• " + (string.IsNullOrEmpty(detail) ? text : text + " (" + detail + ")");
+        }
     }
 }

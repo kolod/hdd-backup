@@ -1,5 +1,40 @@
 # Release notes
 
+## 1.1.0 — release candidate (2026-10-15)
+
+Feature `002-ext4-image-shrink`: fit a Linux (for example Raspberry Pi OS) image onto a smaller
+card, natively on Windows.
+
+### Contents
+
+- **Shrink image…** on the Restore tab: smallest possible size or a given card size; `.img` or
+  `.img.gz` output with SHA-256 sidecars.
+- **Shrink and write**: offered when an image is larger than the selected card; the smaller
+  copy is saved next to the original and then written through the normal confirmation.
+- The last ext4 partition is rebuilt (not resized in place) and verified before it is kept.
+  The original image is never modified. Unsafe images are refused with a specific, translated
+  reason (journal needs recovery, not clean, errors, orphans, unsupported features or layout).
+- Help → Device diagnostics now includes a shrink analysis of the selected image.
+
+### Artifact
+
+| File | Size | SHA-256 |
+|------|------|---------|
+| `HddBackup.exe` (Release, AnyCPU, .NET Framework 4.8) | 373,760 bytes | `a53157cb46c20c94421b28d5f7dc10f937b1b2a24f09120a6253506da5318e98` |
+
+### Verification status
+
+| Check | Result |
+|-------|--------|
+| `dotnet build -c Release` | 0 warnings, 0 errors |
+| Automated tests (`dotnet test`) | 233 passed, 0 failed |
+| `tests/check-artifact.ps1` | Passed (single exe < 5 MB) |
+| Independent e2fsprogs 1.47.0 check of rebuilt and shrunk fixtures (`e2fsck -fn`, `sfdisk -V`, `fsck.vfat`, debugfs tree comparison) | All clean and identical (see `specs/002-ext4-image-shrink/quickstart.md`) |
+| SC-004: 16 GiB `.img.gz` with 3.1 GiB data → 8 GiB card size | 4.4 min on a SATA HDD (target ≤ 15 min on an SSD): unpack 164 s, rebuild 66 s, verify 3 s (data still in the file cache), save < 1 min. Result independently checked: `e2fsck -fn` clean, 33,174 objects identical to the source |
+| Shrink dialogs in en/de/ja | No clipped text |
+| Raspberry Pi boot from a shrunk image (checklist steps 19–26) | **Pending** (needs real hardware) |
+| Manual hardware checklist steps 1–18 on Windows 7 SP1 / Windows 11 | **Pending**, as for 1.0.0 |
+
 ## 1.0.0 — release candidate (2026-10-15)
 
 First implementation of feature `001-usb-sd-imaging`.

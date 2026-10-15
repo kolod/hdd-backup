@@ -30,6 +30,8 @@ namespace HddBackup.Core.Errors
         DeviceChanged,
         PartitionBeyondDevice,
         UnsuitableReader,
+        ShrinkNotPossible,
+        ShrinkVerifyFailed,
         InvalidRequest,
         Unexpected
     }

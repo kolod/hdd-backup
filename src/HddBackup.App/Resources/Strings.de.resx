@@ -556,4 +556,126 @@ Quellcode: {0}</value>
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>Durchschnittliche Geschwindigkeit: {0}</value>
   </data>
+  <data name="Restore_Shrink" xml:space="preserve">
+    <value>Abbild verkleinern…</value>
+  </data>
+  <data name="Shrink_Title" xml:space="preserve">
+    <value>Abbild verkleinern</value>
+  </data>
+  <data name="Shrink_Analyzing" xml:space="preserve">
+    <value>Abbild wird analysiert…</value>
+  </data>
+  <data name="Shrink_Summary" xml:space="preserve">
+    <value>Abbild: {0} ({1})
+Partitionen: {2}
+Belegt in der Linux-Partition (ext4): {3}
+Kleinstmögliches Abbild: {4}</value>
+  </data>
+  <data name="Shrink_TargetMinimum" xml:space="preserve">
+    <value>So klein wie möglich</value>
+  </data>
+  <data name="Shrink_TargetCard" xml:space="preserve">
+    <value>Passend für eine Karte mit:</value>
+  </data>
+  <data name="Shrink_Output" xml:space="preserve">
+    <value>Kleineres Abbild speichern unter:</value>
+  </data>
+  <data name="Shrink_Start" xml:space="preserve">
+    <value>Starten</value>
+  </data>
+  <data name="Shrink_OfferTitle" xml:space="preserve">
+    <value>Abbild ist größer als das Gerät</value>
+  </data>
+  <data name="Shrink_OfferText" xml:space="preserve">
+    <value>Das Abbild ({0}) ist größer als das ausgewählte Gerät ({1}).
+
+Seine Linux-Partition (ext4) enthält nur {2} Daten. HddBackup kann eine kleinere Kopie des Abbilds erstellen, die auf das Gerät passt ({3}), und diese Kopie schreiben.
+
+Das ursprüngliche Abbild wird nicht verändert. Die kleinere Kopie wird gespeichert als:
+{4}</value>
+  </data>
+  <data name="Shrink_AndWrite" xml:space="preserve">
+    <value>Verkleinern und schreiben</value>
+  </data>
+  <data name="Shrink_NotPossible" xml:space="preserve">
+    <value>Das Abbild ({0}) ist größer als das ausgewählte Gerät ({1}) und kann nicht passend verkleinert werden:</value>
+  </data>
+  <data name="Shrink_ResultSaved" xml:space="preserve">
+    <value>Kleineres Abbild gespeichert: {0} ({1})</value>
+  </data>
+  <data name="Shrink_NothingSaved" xml:space="preserve">
+    <value>Es wurde keine Abbilddatei erstellt; das ursprüngliche Abbild ist unverändert.</value>
+  </data>
+  <data name="Shrink_Step" xml:space="preserve">
+    <value>Schritt {0} von {1}</value>
+  </data>
+  <data name="Shrink_StepPhase" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Phase_Shrink_Preparing" xml:space="preserve">
+    <value>Abbild wird entpackt…</value>
+  </data>
+  <data name="Phase_Shrink_Transferring" xml:space="preserve">
+    <value>Dateisystem wird neu aufgebaut…</value>
+  </data>
+  <data name="Phase_Shrink_Verifying" xml:space="preserve">
+    <value>Ergebnis wird geprüft…</value>
+  </data>
+  <data name="Phase_Shrink_Flushing" xml:space="preserve">
+    <value>Abbild wird gespeichert…</value>
+  </data>
+  <data name="Phase_Shrink_Releasing" xml:space="preserve">
+    <value>Abschluss…</value>
+  </data>
+  <data name="Phase_Shrink_Ejecting" xml:space="preserve">
+    <value>Abschluss…</value>
+  </data>
+  <data name="Dialog_ShrinkFilter" xml:space="preserve">
+    <value>Unkomprimiertes Abbild (*.img)|*.img|Komprimiertes Abbild (*.img.gz)|*.img.gz</value>
+  </data>
+  <data name="Error_ShrinkNotPossible" xml:space="preserve">
+    <value>Das Abbild kann nicht verkleinert werden.</value>
+  </data>
+  <data name="Error_ShrinkVerifyFailed" xml:space="preserve">
+    <value>Das kleinere Abbild hat die Prüfung nicht bestanden und wurde nicht gespeichert. Das ursprüngliche Abbild ist unverändert.</value>
+  </data>
+  <data name="Blocker_NotEnoughSpaceEvenAtMinimum" xml:space="preserve">
+    <value>Die Daten passen selbst bei der kleinstmöglichen Größe nicht.</value>
+  </data>
+  <data name="Blocker_RootNotLastPartition" xml:space="preserve">
+    <value>Die Linux-Partition (ext4) ist nicht die letzte Partition des Abbilds.</value>
+  </data>
+  <data name="Blocker_RootNotExt4" xml:space="preserve">
+    <value>Die letzte Partition enthält kein ext4-Dateisystem.</value>
+  </data>
+  <data name="Blocker_UnsupportedLayout" xml:space="preserve">
+    <value>Diese Partitionsaufteilung wird nicht unterstützt.</value>
+  </data>
+  <data name="Blocker_FsNotClean" xml:space="preserve">
+    <value>Das Dateisystem wurde nicht sauber ausgehängt. Fahren Sie das Gerät ordnungsgemäß herunter und erstellen Sie eine neue Sicherung.</value>
+  </data>
+  <data name="Blocker_FsHasErrors" xml:space="preserve">
+    <value>Im Dateisystem sind Fehler vermerkt. Prüfen und reparieren Sie es zuerst auf dem ursprünglichen Gerät.</value>
+  </data>
+  <data name="Blocker_OrphanInodes" xml:space="preserve">
+    <value>Das Dateisystem enthält unvollständige Löschvorgänge. Fahren Sie das Gerät ordnungsgemäß herunter und erstellen Sie eine neue Sicherung.</value>
+  </data>
+  <data name="Blocker_JournalNeedsRecovery" xml:space="preserve">
+    <value>Das Dateisystem-Journal muss wiederhergestellt werden (die Karte wurde im Betrieb entfernt). Starten Sie das Gerät einmal, fahren Sie es ordnungsgemäß herunter und erstellen Sie eine neue Sicherung.</value>
+  </data>
+  <data name="Blocker_UnsupportedFeature" xml:space="preserve">
+    <value>Das Dateisystem verwendet Funktionen, die nicht neu aufgebaut werden können</value>
+  </data>
+  <data name="Blocker_ChecksumMismatch" xml:space="preserve">
+    <value>Die Metadaten des Dateisystems sind beschädigt</value>
+  </data>
+  <data name="Blocker_UnsupportedBlockSize" xml:space="preserve">
+    <value>Nicht unterstützte Blockgröße des Dateisystems</value>
+  </data>
+  <data name="Blocker_UnsupportedInodeSize" xml:space="preserve">
+    <value>Nicht unterstützte Inode-Größe</value>
+  </data>
+  <data name="Blocker_AlreadyFits" xml:space="preserve">
+    <value>Das Abbild passt bereits; eine Verkleinerung ist nicht nötig.</value>
+  </data>
 </root>

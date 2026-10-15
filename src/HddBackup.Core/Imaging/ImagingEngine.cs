@@ -74,6 +74,11 @@ namespace HddBackup.Core.Imaging
                 return DestinationChecks.Check(request, _access.GetPathInfo(request.ImagePath));
             }
 
+            if (request.Kind == OperationKind.ShrinkImage)
+            {
+                return ValidateShrink(request);
+            }
+
             var image = ImageDescriptor.Load(request.ImagePath);
             return request.IsRestore
                 ? RestoreGuard.Check(request, image, _access.GetPathInfo(request.ImagePath))
@@ -92,7 +97,9 @@ namespace HddBackup.Core.Imaging
                 throw new InvalidOperationException("An engine instance runs a single operation.");
             }
 
-            var model = new PhaseModel(request.VerifyAfter && request.Kind != OperationKind.VerifyImage);
+            var model = request.Kind == OperationKind.ShrinkImage
+                ? new PhaseModel(ShrinkShares(request))
+                : new PhaseModel(request.VerifyAfter && request.Kind != OperationKind.VerifyImage);
             Volatile.Write(ref _model, model);
             return Task.Factory.StartNew(
                 () => Run(request, model, cancellationToken),
@@ -128,6 +135,10 @@ namespace HddBackup.Core.Imaging
                 if (request.IsBackup)
                 {
                     RunBackup(request, model, result, ct);
+                }
+                else if (request.Kind == OperationKind.ShrinkImage)
+                {
+                    RunShrink(request, model, result, ct);
                 }
                 else if (request.IsRestore)
                 {
@@ -494,6 +505,83 @@ namespace HddBackup.Core.Imaging
             }
             catch (Exception ex) when (IsExpected(ex))
             {
+                RecordFailure(result, ex);
+                result.SafeToRemove = true;
+            }
+        }
+
+        private IReadOnlyList<ValidationWarning> ValidateShrink(OperationRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.ShrinkOutputPath))
+            {
+                throw new ImagingException(ErrorCode.InvalidRequest, "No output file selected.");
+            }
+
+            string directory = Path.GetDirectoryName(Path.GetFullPath(request.ShrinkOutputPath));
+            if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+            {
+                throw new ImagingException(ErrorCode.InvalidRequest, "Output folder does not exist.");
+            }
+
+            var plan = Shrinking.ShrinkPlanner.Analyze(request.ImagePath, CancellationToken.None);
+            if (!plan.IsShrinkable)
+            {
+                throw Shrinking.ImageShrinker.Blocked(plan.Blockers);
+            }
+
+            if (request.ShrinkTargetBytes.HasValue && request.ShrinkTargetBytes.Value < plan.MinimumImageBytes)
+            {
+                throw Shrinking.ImageShrinker.Blocked(new[] { new Shrinking.ShrinkBlockerInfo(Shrinking.ShrinkBlocker.NotEnoughSpaceEvenAtMinimum, plan.MinimumImageBytes + " bytes needed") });
+            }
+
+            return Array.Empty<ValidationWarning>();
+        }
+
+        private static IDictionary<OperationPhase, double> ShrinkShares(OperationRequest request)
+        {
+            bool gzipSource = request.ImagePath != null && ImageDescriptor.IsGzipPath(request.ImagePath);
+            return new Dictionary<OperationPhase, double>
+            {
+                { OperationPhase.Preparing, gzipSource ? 0.15 : 0.01 },
+                { OperationPhase.Transferring, gzipSource ? 0.45 : 0.55 },
+                { OperationPhase.Verifying, 0.25 },
+                { OperationPhase.Flushing, gzipSource ? 0.15 : 0.19 }
+            };
+        }
+
+        private void RunShrink(OperationRequest request, PhaseModel model, OperationResult result, CancellationToken ct)
+        {
+            try
+            {
+                ValidateShrink(request);
+                var outcome = Shrinking.ImageShrinker.Run(
+                    new Shrinking.ShrinkRequest
+                    {
+                        SourcePath = request.ImagePath,
+                        OutputPath = request.ShrinkOutputPath,
+                        TargetImageBytes = request.ShrinkTargetBytes,
+                        Compression = request.Compression == CompressionChoice.Fastest ? CompressionLevel.Fastest : CompressionLevel.Optimal,
+                        FreeBytes = _access.GetPathInfo(request.ShrinkOutputPath).FreeBytes
+                    },
+                    model,
+                    ct);
+
+                result.ImagePath = outcome.OutputPath;
+                result.IsGzipImage = outcome.IsGzip;
+                result.ContentSha256 = outcome.ContentSha256;
+                result.FileSha256 = outcome.FileSha256;
+                result.DataBytes = outcome.ImageBytes;
+                result.ContentComplete = true;
+                result.SafeToRemove = true;
+                result.State = OperationState.Completed;
+            }
+            catch (Exception ex) when (IsExpected(ex) || ex is Ext4.Ext4FormatException)
+            {
+                if (ex is Ext4.Ext4FormatException format)
+                {
+                    ex = Shrinking.ImageShrinker.Blocked(new[] { new Shrinking.ShrinkBlockerInfo(Shrinking.ShrinkBlocker.ChecksumMismatch, format.Message) });
+                }
+
                 RecordFailure(result, ex);
                 result.SafeToRemove = true;
             }

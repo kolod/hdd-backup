@@ -21,6 +21,23 @@ them (`MainForm.StartOperation`, `ConfirmWriteDialog`).
 | Cancellation leaves a defined state | The engine always flushes and then releases after any write; the result reports `SafeToRemove` and `ContentComplete` | `CancellationTests.CancelledRestore_FlushesThenReleases` (random points) |
 | 100% only when safe to remove | `PhaseModel` caps the bar at 99.9% until `Completed`; `Completed` comes after flush, verify, release and eject | `BackupProgressTests.PercentStaysBelow100UntilCompleted_AndReaches100`, `ProgressModelTests.*` |
 
+## Shrinking ext4 images (feature 002)
+
+Scope: `ShrinkPlanner`, `ImageShrinker`, `Ext4Writer`, `PartitionTableEditor`, the engine's
+`ShrinkImage` operation, and the "shrink and write" flow in `MainForm`.
+
+| Rule | Implementation | Automated evidence |
+|------|----------------|--------------------|
+| The original image is never modified | Source opened read-only (`FileBlockDevice.OpenRead`); a gzip source is decompressed to a separate working copy | `ImageShrinkerTests.Shrink_ProducesVerifiedSmallerImage` and `Cancellation_*` compare the source SHA-256 before and after |
+| Unsafe sources are refused before any file is created | `ShrinkPlanner.Analyze` blockers (layout, features, journal recovery, not clean, errors, orphans, block/inode size, checksum) checked by `ImagingEngine.ValidateShrink` | `ShrinkRefusalTests.*` (negative fixtures and patched superblocks) |
+| A result is kept only if it is verified | Three steps on the finished output: own `Ext4Checker`, `Ext4TreeComparer` against the source (content, metadata, xattrs, links), and byte comparison of everything before the root partition except the table entry | `ImageShrinkerTests.*`; independent `e2fsck -fn` and debugfs comparison logged in `specs/002-ext4-image-shrink/quickstart.md` |
+| Partial output never looks valid | Output and working copy are `.partial` / `.work.partial`, renamed only after verification and sidecars; deleted on failure or cancel | `TargetBelowMinimum_IsRefusedWithoutFiles`, `Cancellation_LeavesNoFiles_AndSourceUntouched` |
+| "Shrink and write" writes only a verified, committed image | The write step is a normal `RestoreDevice` of the committed output, with the usual confirmation dialog, lock, guards and read-back verification | `ShrinkAndWriteTests.ShrunkImage_WrittenToSmallerDevice_EqualsShrunkImage` |
+| 100% only at the end | Shrink phases use `PhaseModel` (capped at 99.9% until `Completed`) | `ImageShrinkerTests.Progress_StaysBelow100UntilCommit` |
+
+The product never calls Linux tools; Docker is used only on the developer machine to create
+fixtures and to run the independent checks.
+
 ## Residual risks
 
 1. **Automatic remount after a partition table change.** When `DeviceLock` is disposed, Windows
@@ -35,3 +52,7 @@ them (`MainForm.StartOperation`, `ConfirmWriteDialog`).
 4. **Native code coverage.** Enumeration, locking, raw I/O and eject are verified only by the
    manual hardware checklist. They need a run on real USB and SD media on Windows 7 SP1 and
    Windows 11 before release.
+5. **ext4 rebuild fidelity.** The rebuilt file system is checked by the program's own checker
+   and tree comparison, and during development by e2fsprogs 1.47.0 on all fixtures. File
+   systems with features outside the supported set are refused rather than rebuilt. A boot test
+   on a real Raspberry Pi (checklist steps 19–24) is still required before release.

@@ -1,10 +1,12 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using HddBackup.App.Localization;
 using HddBackup.Core.Devices;
+using HddBackup.Core.Shrinking;
 
 namespace HddBackup.App.Forms
 {
@@ -28,8 +30,12 @@ namespace HddBackup.App.Forms
         private readonly Button _save = Ui.Button();
         private readonly Button _close = Ui.Button();
 
-        public DiagnosticsDialog()
+        private readonly string _imagePath;
+
+        /// <param name="imagePath">Image selected on the Restore tab; its shrink analysis is appended.</param>
+        public DiagnosticsDialog(string imagePath = null)
         {
+            _imagePath = imagePath;
             Text = Strings.Get("Diagnostics_Title");
             StartPosition = FormStartPosition.CenterParent;
             ShowInTaskbar = false;
@@ -63,7 +69,7 @@ namespace HddBackup.App.Forms
             string report;
             try
             {
-                report = await Task.Run(() => new DeviceEnumerator().BuildDiagnosticReport());
+                report = await Task.Run(() => new DeviceEnumerator().BuildDiagnosticReport() + ImageSection());
             }
             catch (Exception ex)
             {
@@ -79,6 +85,23 @@ namespace HddBackup.App.Forms
             _report.SelectionStart = 0;
             _copy.Enabled = true;
             _save.Enabled = true;
+        }
+
+        private string ImageSection()
+        {
+            if (string.IsNullOrEmpty(_imagePath))
+            {
+                return string.Empty;
+            }
+
+            try
+            {
+                return "\n" + ShrinkPlanner.Analyze(_imagePath, CancellationToken.None).Describe();
+            }
+            catch (Exception ex)
+            {
+                return "\nShrink analysis: " + _imagePath + "\n  " + ex.Message + "\n";
+            }
         }
 
         private void Copy()
