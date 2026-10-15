@@ -13,6 +13,16 @@ SD/microSD cards.
   when the device can be removed safely.
 - UI languages: English, Ukrainian, German, French, Spanish, Japanese.
 
+## Disclaimer
+
+HddBackup writes directly to disks. Restoring an image overwrites **all** data on the target
+device, and a wrong choice of device cannot be undone. Check the selected device before every
+write and keep copies of important data elsewhere.
+
+The software is provided "as is", without warranty of any kind. The author is not liable for
+any loss of data, hardware damage, or financial or other losses arising from its use. See
+sections 15–16 of the [LICENSE](LICENSE).
+
 ## Requirements
 
 - Windows 7 SP1, 8.1, 10 or 11 (x86 or x64).
