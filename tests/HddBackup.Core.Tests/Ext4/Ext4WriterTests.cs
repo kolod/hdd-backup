@@ -10,15 +10,19 @@ using Xunit;
 
 namespace HddBackup.Core.Tests.Ext4
 {
-    public class Ext4WriterTests
+    public sealed class Ext4WriterTests : IDisposable
     {
+        private readonly TempDirs _temp = new TempDirs();
+
+        public void Dispose() => _temp.Dispose();
+
         /// <summary>
         /// Rebuilds the fixture's ext4 into a new file (partition only). blocksFactor = new size
         /// relative to the source block count; 0 ⇒ minimum (data + 25%).
         /// </summary>
-        internal static string Rebuild(string fixture, double blocksFactor)
+        internal static string Rebuild(string fixture, double blocksFactor, TempDirs temp)
         {
-            var output = Path.Combine(TestPaths.NewTempDirectory(), fixture + "-" + blocksFactor.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + ".ext4");
+            var output = Path.Combine(temp.New(), fixture + "-" + blocksFactor.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + ".ext4");
             using (var root = FixtureImages.OpenRoot(fixture, out var image))
             using (image)
             using (var reader = new Ext4Reader(root))
@@ -64,7 +68,7 @@ namespace HddBackup.Core.Tests.Ext4
         [MemberData(nameof(Cases))]
         public void Rebuilt_FileSystem_ReproducesTheManifest(string fixture, double factor)
         {
-            var path = Rebuild(fixture, factor);
+            var path = Rebuild(fixture, factor, _temp);
             using (var device = FileBlockDevice.OpenRead(path))
             using (var reader = new Ext4Reader(device))
             {

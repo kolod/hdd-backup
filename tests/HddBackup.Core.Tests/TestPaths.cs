@@ -6,9 +6,9 @@ using System.IO;
 namespace HddBackup.Core.Tests
 {
     /// <summary>
-    /// Temporary directories for tests. Each test run gets its own "run-&lt;pid&gt;" folder; folders of
-    /// runs that are no longer alive are deleted at startup, so images from earlier runs do not
-    /// pile up (shrink tests create hundreds of MB per run).
+    /// Temporary directories for tests. Each test run gets its own "run-&lt;pid&gt;" folder, deleted
+    /// when the test process exits; folders of runs that died without cleanup are deleted at the
+    /// next startup, so images from earlier runs do not pile up (shrink tests create GBs per run).
     /// </summary>
     internal static class TestPaths
     {
@@ -33,24 +33,33 @@ namespace HddBackup.Core.Tests
                     || !IsAlive(pid);
                 if (stale)
                 {
-                    try
-                    {
-                        Directory.Delete(dir, true);
-                    }
-                    catch (IOException)
-                    {
-                        // Still in use; it is removed by a later run.
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                    }
+                    DeleteQuietly(dir);
                 }
             }
 
             var run = Path.Combine(Root, "run-" + Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
             Directory.CreateDirectory(run);
+            AppDomain.CurrentDomain.ProcessExit += (s, e) => DeleteQuietly(run);
             return run;
         }
+
+        internal static void DeleteQuietly(string dir)
+        {
+            try
+            {
+                Directory.Delete(dir, true);
+            }
+            catch (IOException)
+            {
+                // A file is still open; the next run removes the folder.
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+        }
+
+        // Note: the test host is usually terminated without running ProcessExit handlers, so
+        // large outputs are deleted per test through TempDirs; the handler above is a best effort.
 
         private static bool IsAlive(int pid)
         {

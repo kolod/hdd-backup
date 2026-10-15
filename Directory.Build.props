@@ -1,0 +1,12 @@
+<Project>
+
+  <!--
+    .NET Framework 4.8 reference assemblies from NuGet, so the build does not depend on a
+    targeting pack installed with Visual Studio (CI images change; research R-1).
+    Build-time only: nothing is copied next to the executable.
+  -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

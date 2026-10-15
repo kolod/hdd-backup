@@ -69,8 +69,12 @@ namespace HddBackup.Core.Tests.Shrinking
         }
     }
 
-    public class ImageShrinkerTests
+    public sealed class ImageShrinkerTests : IDisposable
     {
+        private readonly TempDirs _temp = new TempDirs();
+
+        public void Dispose() => _temp.Dispose();
+
         internal static OperationResult Shrink(string source, string output, long? target = null, CancellationToken cancel = default(CancellationToken))
         {
             var engine = new ImagingEngine(new FakeDeviceAccess(), EngineHarness.BufferSize, 4);
@@ -96,7 +100,7 @@ namespace HddBackup.Core.Tests.Shrinking
         {
             string source = gzipSource ? FixtureImages.CompressedPath(fixture) : FixtureImages.RawPath(fixture);
             string sourceHashBefore = EngineHarness.ShaOfFile(source);
-            var dir = TestPaths.NewTempDirectory();
+            var dir = _temp.New();
             var output = Path.Combine(dir, "shrunk" + outputExtension);
 
             var result = Shrink(source, output);
@@ -153,7 +157,7 @@ namespace HddBackup.Core.Tests.Shrinking
         {
             var plan = ShrinkPlanner.Analyze(FixtureImages.RawPath("rpi-like-4k"), CancellationToken.None);
             long target = plan.MinimumImageBytes + (32L << 20);
-            var output = Path.Combine(TestPaths.NewTempDirectory(), "fit.img");
+            var output = Path.Combine(_temp.New(), "fit.img");
 
             var result = Shrink(FixtureImages.RawPath("rpi-like-4k"), output, target);
 
@@ -165,7 +169,7 @@ namespace HddBackup.Core.Tests.Shrinking
         [Fact]
         public void GzipOutput_DecompressesToRawOutput()
         {
-            var dir = TestPaths.NewTempDirectory();
+            var dir = _temp.New();
             var raw = Path.Combine(dir, "a.img");
             var gz = Path.Combine(dir, "b.img.gz");
 
@@ -180,7 +184,7 @@ namespace HddBackup.Core.Tests.Shrinking
         public void TargetBelowMinimum_IsRefusedWithoutFiles()
         {
             var plan = ShrinkPlanner.Analyze(FixtureImages.RawPath("rpi-like-4k"), CancellationToken.None);
-            var dir = TestPaths.NewTempDirectory();
+            var dir = _temp.New();
 
             var result = Shrink(FixtureImages.RawPath("rpi-like-4k"), Path.Combine(dir, "x.img"), plan.MinimumImageBytes - (64L << 20));
 
@@ -193,7 +197,7 @@ namespace HddBackup.Core.Tests.Shrinking
         {
             var access = new FakeDeviceAccess { PathInfo = new PathInfo { FreeBytes = 16L << 20, FileSystem = "NTFS" } };
             var engine = new ImagingEngine(access, EngineHarness.BufferSize, 4);
-            var dir = TestPaths.NewTempDirectory();
+            var dir = _temp.New();
 
             var result = await engine.RunAsync(
                 new OperationRequest { Kind = OperationKind.ShrinkImage, ImagePath = FixtureImages.CompressedPath("rpi-like-4k"), ShrinkOutputPath = Path.Combine(dir, "x.img") },
@@ -211,7 +215,7 @@ namespace HddBackup.Core.Tests.Shrinking
         {
             var source = FixtureImages.CompressedPath("rpi-like-4k");
             string before = EngineHarness.ShaOfFile(source);
-            var dir = TestPaths.NewTempDirectory();
+            var dir = _temp.New();
             using (var cts = new CancellationTokenSource(afterMs))
             {
                 var result = Shrink(source, Path.Combine(dir, "c.img"), null, cts.Token);
@@ -231,7 +235,7 @@ namespace HddBackup.Core.Tests.Shrinking
         public async Task Progress_StaysBelow100UntilCommit()
         {
             var engine = new ImagingEngine(new FakeDeviceAccess(), EngineHarness.BufferSize, 4);
-            var output = Path.Combine(TestPaths.NewTempDirectory(), "p.img");
+            var output = Path.Combine(_temp.New(), "p.img");
             var task = engine.RunAsync(new OperationRequest { Kind = OperationKind.ShrinkImage, ImagePath = FixtureImages.RawPath("rpi-legacy"), ShrinkOutputPath = output }, CancellationToken.None);
             double last = 0;
             while (!task.IsCompleted)
@@ -253,8 +257,12 @@ namespace HddBackup.Core.Tests.Shrinking
     }
 
     /// <summary>US3: unsafe sources are refused with a specific reason and nothing is written (T035/T036).</summary>
-    public class ShrinkRefusalTests
+    public sealed class ShrinkRefusalTests : IDisposable
     {
+        private readonly TempDirs _temp = new TempDirs();
+
+        public void Dispose() => _temp.Dispose();
+
         [Theory]
         [InlineData("dirty", ShrinkBlocker.JournalNeedsRecovery, null)]
         [InlineData("inline", ShrinkBlocker.UnsupportedFeature, "inline_data")]
@@ -276,7 +284,7 @@ namespace HddBackup.Core.Tests.Shrinking
         {
             var source = FixtureImages.RawPath("rpi-like-4k");
             long rootOffset = ShrinkPlanner.Analyze(source, CancellationToken.None).RootPartition.Offset;
-            var copy = Path.Combine(TestPaths.NewTempDirectory(), patch + ".img");
+            var copy = Path.Combine(_temp.New(), patch + ".img");
             File.Copy(source, copy);
 
             using (var stream = new FileStream(copy, FileMode.Open, FileAccess.ReadWrite))
@@ -308,7 +316,7 @@ namespace HddBackup.Core.Tests.Shrinking
             AssertRefused(copy, expected, detail);
         }
 
-        private static void AssertRefused(string source, ShrinkBlocker expected, string detail)
+        private void AssertRefused(string source, ShrinkBlocker expected, string detail)
         {
             string before = EngineHarness.ShaOfFile(source);
             var plan = ShrinkPlanner.Analyze(source, CancellationToken.None);
@@ -320,7 +328,7 @@ namespace HddBackup.Core.Tests.Shrinking
             }
 
             // The engine refuses before creating any file, and the source stays untouched.
-            var dir = TestPaths.NewTempDirectory();
+            var dir = _temp.New();
             var result = ImageShrinkerTests.Shrink(source, Path.Combine(dir, "out.img"));
             Assert.Equal(OperationState.Failed, result.State);
             Assert.Equal(ErrorCode.ShrinkNotPossible, result.ErrorCode);
@@ -330,13 +338,17 @@ namespace HddBackup.Core.Tests.Shrinking
         }
     }
 
-    public class ShrinkAndWriteTests
+    public sealed class ShrinkAndWriteTests : IDisposable
     {
+        private readonly TempDirs _temp = new TempDirs();
+
+        public void Dispose() => _temp.Dispose();
+
         [Fact]
         public void ShrunkImage_WrittenToSmallerDevice_EqualsShrunkImage()
         {
             var plan = ShrinkPlanner.Analyze(FixtureImages.RawPath("rpi-like-4k"), CancellationToken.None);
-            var output = Path.Combine(TestPaths.NewTempDirectory(), "for-card.img");
+            var output = Path.Combine(_temp.New(), "for-card.img");
             long cardSize = plan.MinimumImageBytes + (16L << 20);
             Assert.True(cardSize < plan.SourceImageBytes);
 

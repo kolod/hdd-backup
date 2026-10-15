@@ -1,0 +1,94 @@
+# Shared build + test steps for CI and releases, so both build the executable identically
+# (specs/003-ci-release-automation/contracts/workflows.md).
+name: Build and test
+description: Build HddBackup with warnings as errors, run all tests, summarize them and check the artifact.
+
+inputs:
+  version:
+    description: Version stamped into the executable (-p:Version), e.g. 1.2.0 or 0.0.0-ci.42
+    required: true
+  export-ext4:
+    description: When 'true', the tests export rebuilt/shrunk ext4 images for the Linux check job
+    required: false
+    default: 'false'
+
+outputs:
+  exe-dir:
+    description: Folder with HddBackup.exe and HddBackup.exe.config
+    value: ${{ steps.paths.outputs.exe-dir }}
+  trx-path:
+    description: xUnit TRX result file
+    value: ${{ steps.paths.outputs.trx-path }}
+  exports-dir:
+    description: Folder with exported ext4 images (empty unless export-ext4 is true)
+    value: ${{ steps.paths.outputs.exports-dir }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up .NET SDK (global.json)
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      with:
+        global-json-file: global.json
+
+    - name: Prepare paths
+      id: paths
+      shell: pwsh
+      run: |
+        # Test images go to the runner's work disk, never to a shared system temp folder.
+        "TEMP=$env:RUNNER_TEMP" >> $env:GITHUB_ENV
+        "TMP=$env:RUNNER_TEMP" >> $env:GITHUB_ENV
+        "exe-dir=$env:GITHUB_WORKSPACE/src/HddBackup.App/bin/Release/net48" >> $env:GITHUB_OUTPUT
+        "trx-path=$env:RUNNER_TEMP/test-results/results.trx" >> $env:GITHUB_OUTPUT
+        "exports-dir=$env:RUNNER_TEMP/ext4-exports" >> $env:GITHUB_OUTPUT
+        "### Disk before tests" >> $env:GITHUB_STEP_SUMMARY
+        Get-PSDrive -PSProvider FileSystem | Where-Object Used |
+          ForEach-Object { "- $($_.Name): {0:N1} GB free" -f ($_.Free / 1GB) } >> $env:GITHUB_STEP_SUMMARY
+
+    - name: Build (Release, warnings as errors)
+      shell: pwsh
+      run: dotnet build HddBackup.sln -c Release -warnaserror "-p:Version=${{ inputs.version }}"
+
+    - name: Test
+      shell: pwsh
+      env:
+        HDDBACKUP_EXPORT_DIR: ${{ inputs.export-ext4 == 'true' && steps.paths.outputs.exports-dir || '' }}
+      run: >
+        dotnet test tests/HddBackup.Core.Tests -c Release --no-build
+        --logger "trx;LogFileName=results.trx"
+        --results-directory "${{ runner.temp }}/test-results"
+
+    - name: Test summary
+      if: always()
+      shell: pwsh
+      run: |
+        $trx = '${{ steps.paths.outputs.trx-path }}'
+        if (Test-Path $trx) { ./tools/ci/Write-TestSummary.ps1 -TrxPath $trx }
+        else { "### :x: No test results (build failed?)" >> $env:GITHUB_STEP_SUMMARY }
+
+    - name: Script and ruleset tests (Pester 5)
+      shell: pwsh
+      run: |
+        # Windows ships Pester 3.4; make sure version 5 is used.
+        if (-not (Get-Module -ListAvailable Pester | Where-Object { $_.Version.Major -eq 5 })) {
+          Install-Module Pester -RequiredVersion 5.7.1 -Scope CurrentUser -Force -SkipPublisherCheck
+        }
+        Import-Module Pester -MinimumVersion 5.5 -MaximumVersion 5.99 -ErrorAction Stop
+        $config = New-PesterConfiguration
+        $config.Run.Path = 'tools/tests'
+        $config.Run.Exit = $true
+        $config.Output.Verbosity = 'Detailed'
+        $config.Output.CIFormat = 'GithubActions'
+        Invoke-Pester -Configuration $config
+
+    - name: Artifact check (single exe, size, languages, manifest)
+      shell: pwsh
+      run: ./tests/check-artifact.ps1 -OutputDir '${{ steps.paths.outputs.exe-dir }}'
+
+    - name: Disk after tests
+      if: always()
+      shell: pwsh
+      run: |
+        "### Disk after tests" >> $env:GITHUB_STEP_SUMMARY
+        Get-PSDrive -PSProvider FileSystem | Where-Object Used |
+          ForEach-Object { "- $($_.Name): {0:N1} GB free" -f ($_.Free / 1GB) } >> $env:GITHUB_STEP_SUMMARY

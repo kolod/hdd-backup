@@ -20,16 +20,11 @@ namespace HddBackup.Core.Tests.Shrinking
     {
         private const long EightGiB = 8L << 30;
 
-        [Fact]
+        [OptInFact("HDDBACKUP_PERF_IMAGE")]
         [Trait("Category", "Performance")]
         public async Task LargeImage_ShrinksToEightGiB()
         {
             var source = Environment.GetEnvironmentVariable("HDDBACKUP_PERF_IMAGE");
-            if (string.IsNullOrEmpty(source))
-            {
-                return; // not configured on this machine
-            }
-
             string dir = Path.GetDirectoryName(Path.GetFullPath(source));
             string output = Path.Combine(dir, "perf-shrunk.img");
             File.Delete(output);

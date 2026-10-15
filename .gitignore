@@ -22,3 +22,6 @@ HddBackup.ini
 
 # Session memory (local)
 .remember/
+
+# Local test images (not part of the repository)
+data/

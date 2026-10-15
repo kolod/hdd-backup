@@ -38,6 +38,22 @@ Scope: `ShrinkPlanner`, `ImageShrinker`, `Ext4Writer`, `PartitionTableEditor`, t
 The product never calls Linux tools; Docker is used only on the developer machine to create
 fixtures and to run the independent checks.
 
+## Release integrity (feature 003)
+
+Scope: `.github/workflows/release.yml`, `.github/actions/build-test`, `.github/rulesets/`,
+`tools/release/`, `tools/github/Set-RepoProtection.ps1`.
+
+| Rule | Implementation | Evidence |
+|------|----------------|----------|
+| Releases are built only from reviewed code on main | `Test-ReleaseTag.ps1` checks `git merge-base --is-ancestor <tag> origin/main`; main accepts only squash-merged PRs with green `build-test` and `ext4-check` (`main.json`) | `Test-ReleaseTag.Tests.ps1` (side-branch tag → exit 2); `Rulesets.Tests.ps1` |
+| A release build is the same as a CI build | Both use the composite action `build-test` (warnings as errors, all tests, Pester, artifact check) | Workflow files |
+| Nothing becomes public without the hardware checklist | `gh release create --draft`; the body starts with a "hardware checklist pending" banner | `New-ReleaseBody.Tests.ps1` (banner text and order) |
+| A published release never changes | The workflow refuses an existing release; immutable releases are enabled; `v*` tags can be created only by the owner and cannot be moved or deleted by others | `release.yml` validate job; `Set-RepoProtection.Tests.ps1`; `Rulesets.Tests.ps1` |
+| Downloads can be verified | `SHA256SUMS` asset plus the same lines in the release text | `New-ReleaseBody.Tests.ps1` (hashes equal `Get-FileHash`) |
+| The build cannot be changed through a third party | Only GitHub-owned actions, pinned to full commit SHAs; Dependabot proposes updates as PRs that go through CI | Workflow files, `.github/dependabot.yml` |
+| Least privilege | Workflows default to `contents: read`; only the release `publish` job has `contents: write`; pull requests from forks get no secrets | Workflow files |
+| No stored admin credential | Protection is applied by the owner locally with `gh`; nothing in CI can change the rules | `Set-RepoProtection.ps1` (admin check, exit 3) |
+
 ## Residual risks
 
 1. **Automatic remount after a partition table change.** When `DeviceLock` is disposed, Windows
@@ -56,3 +72,7 @@ fixtures and to run the independent checks.
    and tree comparison, and during development by e2fsprogs 1.47.0 on all fixtures. File
    systems with features outside the supported set are refused rather than rebuilt. A boot test
    on a real Raspberry Pi (checklist steps 19–24) is still required before release.
+6. **Unsigned executable.** Releases are not code-signed; users rely on the SHA-256 published
+   with each release. Windows SmartScreen may warn on first start.
+7. **Owner account compromise.** The owner can bypass the main-branch rules (through a pull
+   request) and create release tags. Two-factor authentication on the owner account is assumed.

@@ -10,13 +10,17 @@ using Xunit;
 
 namespace HddBackup.Core.Tests.Ext4
 {
-    public class Ext4CheckerTests
+    public sealed class Ext4CheckerTests : IDisposable
     {
+        private readonly TempDirs _temp = new TempDirs();
+
+        public void Dispose() => _temp.Dispose();
+
         [Theory]
         [MemberData(nameof(Ext4WriterTests.Cases), MemberType = typeof(Ext4WriterTests))]
         public void RebuiltFileSystems_AreConsistent(string fixture, double factor)
         {
-            var path = Ext4WriterTests.Rebuild(fixture, factor);
+            var path = Ext4WriterTests.Rebuild(fixture, factor, _temp);
             using (var device = FileBlockDevice.OpenRead(path))
             {
                 var findings = Ext4Checker.Check(device);
@@ -38,9 +42,9 @@ namespace HddBackup.Core.Tests.Ext4
         }
 
         /// <summary>Copy of a rebuilt legacy file system (no metadata checksums to fix up).</summary>
-        private static string LegacyCopy()
+        private string LegacyCopy()
         {
-            var path = Ext4WriterTests.Rebuild("rpi-legacy", 0);
+            var path = Ext4WriterTests.Rebuild("rpi-legacy", 0, _temp);
             var copy = Path.Combine(Path.GetDirectoryName(path), "corrupt.ext4");
             File.Copy(path, copy, true);
             return copy;
@@ -120,7 +124,7 @@ namespace HddBackup.Core.Tests.Ext4
         [Fact]
         public void CorruptInodeChecksum_IsReported()
         {
-            var path = Ext4WriterTests.Rebuild("rpi-like-4k", 0);
+            var path = Ext4WriterTests.Rebuild("rpi-like-4k", 0, _temp);
             var copy = Path.Combine(Path.GetDirectoryName(path), "corrupt-csum.ext4");
             File.Copy(path, copy, true);
             var (inodeOffset, _) = Locate(copy, "etc/passwd");
@@ -130,8 +134,12 @@ namespace HddBackup.Core.Tests.Ext4
         }
     }
 
-    public class Ext4TreeComparerTests
+    public sealed class Ext4TreeComparerTests : IDisposable
     {
+        private readonly TempDirs _temp = new TempDirs();
+
+        public void Dispose() => _temp.Dispose();
+
         private static System.Collections.Generic.List<string> CompareWithSource(string fixture, string rebuilt)
         {
             using (var root = FixtureImages.OpenRoot(fixture, out var image))
@@ -148,14 +156,14 @@ namespace HddBackup.Core.Tests.Ext4
         [MemberData(nameof(Ext4WriterTests.Cases), MemberType = typeof(Ext4WriterTests))]
         public void Rebuilt_IsIdenticalToSource(string fixture, double factor)
         {
-            var findings = CompareWithSource(fixture, Ext4WriterTests.Rebuild(fixture, factor));
+            var findings = CompareWithSource(fixture, Ext4WriterTests.Rebuild(fixture, factor, _temp));
             Assert.True(findings.Count == 0, string.Join(Environment.NewLine, findings));
         }
 
         [Fact]
         public void ChangedContent_IsReported()
         {
-            var path = Ext4WriterTests.Rebuild("rpi-legacy", 0);
+            var path = Ext4WriterTests.Rebuild("rpi-legacy", 0, _temp);
             long block;
             int blockSize;
             using (var device = FileBlockDevice.OpenRead(path))
@@ -179,7 +187,7 @@ namespace HddBackup.Core.Tests.Ext4
         [Fact]
         public void ChangedMode_IsReported()
         {
-            var path = Ext4WriterTests.Rebuild("rpi-legacy", 0);
+            var path = Ext4WriterTests.Rebuild("rpi-legacy", 0, _temp);
             long inodeOffset;
             using (var device = FileBlockDevice.OpenRead(path))
             using (var reader = new Ext4Reader(device))
