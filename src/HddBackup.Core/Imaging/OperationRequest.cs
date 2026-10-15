@@ -9,7 +9,10 @@ namespace HddBackup.Core.Imaging
         BackupPartition,
         RestoreDevice,
         RestorePartition,
-        VerifyImage
+        VerifyImage,
+
+        /// <summary>Create a smaller copy of an image by rebuilding its last (ext4) partition.</summary>
+        ShrinkImage
     }
 
     public enum CompressionChoice
@@ -77,6 +80,12 @@ namespace HddBackup.Core.Imaging
         /// incomplete. Never applies to restores.
         /// </summary>
         public bool AllowIncompleteBackup { get; set; }
+
+        /// <summary>ShrinkImage: path of the new, smaller image (.img or .img.gz).</summary>
+        public string ShrinkOutputPath { get; set; }
+
+        /// <summary>ShrinkImage: maximum size of the result; null ⇒ smallest possible.</summary>
+        public long? ShrinkTargetBytes { get; set; }
 
         public bool IsBackup => Kind == OperationKind.BackupDevice || Kind == OperationKind.BackupPartition;
 

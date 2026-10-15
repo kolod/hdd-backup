@@ -40,6 +40,15 @@ namespace HddBackup.Core.Progress
         private bool _fractionRateStarted;
         private double _lastPercent;
 
+        private readonly System.Collections.Generic.IDictionary<OperationPhase, double> _customShares;
+
+        /// <summary>Explicit phase shares (summing to about 1); phases not listed get 0.</summary>
+        public PhaseModel(System.Collections.Generic.IDictionary<OperationPhase, double> shares, Func<TimeSpan> clock = null)
+            : this(false, clock)
+        {
+            _customShares = shares;
+        }
+
         public PhaseModel(bool hasVerify, Func<TimeSpan> clock = null)
         {
             if (clock == null)
@@ -181,6 +190,11 @@ namespace HddBackup.Core.Progress
 
         private double ShareOf(OperationPhase phase)
         {
+            if (_customShares != null)
+            {
+                return _customShares.TryGetValue(phase, out double share) ? share : 0;
+            }
+
             switch (phase)
             {
                 case OperationPhase.Preparing:

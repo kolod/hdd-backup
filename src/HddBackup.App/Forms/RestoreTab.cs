@@ -29,6 +29,7 @@ namespace HddBackup.App.Forms
         private readonly CheckBox _eject = new CheckBox { AutoSize = true };
         private readonly Button _write = Ui.Button();
         private readonly Button _verifyImage = Ui.Button();
+        private readonly Button _shrink = Ui.Button();
         private ImageDescriptor _image;
         private string _imageError;
 
@@ -52,7 +53,7 @@ namespace HddBackup.App.Forms
             Ui.AddRow(root, options);
 
             var actions = Ui.Flow(rightToLeft: true);
-            actions.Controls.AddRange(new Control[] { _write, _verifyImage });
+            actions.Controls.AddRange(new Control[] { _write, _verifyImage, _shrink });
             Ui.AddRow(root, actions);
             Controls.Add(root);
 
@@ -67,12 +68,25 @@ namespace HddBackup.App.Forms
             _eject.CheckedChanged += (s, e) => _settings.EjectAfter = _eject.Checked;
             _write.Click += (s, e) => StartWrite();
             _verifyImage.Click += (s, e) => StartVerify();
+            _shrink.Click += (s, e) =>
+            {
+                if (_image != null)
+                {
+                    ShrinkRequested?.Invoke(this, _image.Path);
+                }
+            };
 
             ApplyStrings();
             UpdateState();
         }
 
         public event EventHandler<OperationRequest> StartRequested;
+
+        /// <summary>The user wants to create a smaller copy of the selected image.</summary>
+        public event EventHandler<string> ShrinkRequested;
+
+        /// <summary>Path of the loaded full-device image, or null.</summary>
+        public string FullImagePath => _image != null && _image.Kind == ImageKind.FullDevice ? _image.Path : null;
 
         public void SetDevices(IReadOnlyList<DeviceInfo> devices)
         {
@@ -98,6 +112,7 @@ namespace HddBackup.App.Forms
             _eject.Text = Strings.Get("Option_Eject");
             _write.Text = Strings.Get("Restore_Write");
             _verifyImage.Text = Strings.Get("Restore_VerifyImage");
+            _shrink.Text = Strings.Get("Restore_Shrink");
             _devices.ApplyStrings();
             _partitions.ApplyStrings();
             UpdateImageInfo();
@@ -203,6 +218,7 @@ namespace HddBackup.App.Forms
                 && (!IsPartitionImage || _partitions.SelectedPartition != null);
             _write.Enabled = Enabled && _image != null && targetOk;
             _verifyImage.Enabled = Enabled && _image != null;
+            _shrink.Enabled = Enabled && _image != null && _image.Kind == ImageKind.FullDevice;
         }
 
         private void StartWrite()

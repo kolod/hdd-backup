@@ -1,6 +1,18 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.0.0 → 1.1.0 (2026-10-15)
+Bump rationale: MINOR — scope of Principle VII materially expanded (feature 002).
+Modified principles:
+- VII. Simplicity — scope now also covers shrinking the last ext4 partition of an image
+  (rebuild into a new image; the original is never modified).
+Modified sections:
+- Technology & Platform Constraints — ext4 handled by own managed code; developer-only Linux
+  tooling (Docker) allowed for test fixtures and independent checks, never used by the product.
+Templates requiring updates: none (plan Constitution Check is derived at plan time).
+Deferred TODOs: none.
+
+Previous report (1.0.0):
 Version change: (template, unversioned) → 1.0.0
 Bump rationale: initial ratification; all placeholders replaced with concrete principles.
 
@@ -137,9 +149,11 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
 
 ### VII. Simplicity
 
-- Scope is limited to backing up and restoring USB/SD media as raw or gzip images. Features
-  outside that scope (file-level backup, cloud upload, scheduling, other compression formats)
-  require a constitution amendment.
+- Scope is limited to backing up and restoring USB/SD media as raw or gzip images, and to
+  shrinking the last ext4 partition of an image so it fits a smaller medium (by rebuilding the
+  file system into a new image; the original image is never modified). Features outside that
+  scope (file-level backup, cloud upload, scheduling, other compression formats, growing or
+  shrinking other file systems) require a constitution amendment.
 - Prefer the simplest design that satisfies the principles above (YAGNI); abstractions MUST be
   justified by a concrete current need.
 
@@ -160,6 +174,10 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
 - **Build**: SDK-style project targeting `net48`, `AnyCPU` (prefer 32-bit off), producing one
   executable; reproducible build via `dotnet build` / MSBuild.
 - **Testing**: an xUnit- or NUnit-based test project that targets `net48`.
+- **File systems**: ext4 is read and written by own managed code (no GPL code, no native
+  libraries). Linux tools (e.g. `mke2fs`, `e2fsck` in Docker) MAY be used on developer machines
+  to create test fixtures and to check outputs independently; the product MUST NOT depend on
+  them.
 
 ## Development Workflow & Quality Gates
 
@@ -185,4 +203,4 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
 - Compliance is reviewed at every plan's Constitution Check and in every code review; any
   justified deviation MUST be recorded in the plan's Complexity Tracking table.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-10-15
+**Version**: 1.1.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-10-15

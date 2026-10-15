@@ -23,7 +23,9 @@ namespace HddBackup.App.Forms
         private readonly Timer _timer = new Timer { Interval = 1000 };
         private int _countdown = DelaySeconds;
 
-        public ConfirmWriteDialog(OperationRequest request, IReadOnlyCollection<ValidationWarning> warnings)
+        /// <param name="imageBytes">Size of an image that does not exist yet (shrink and write); null = file size.</param>
+        /// <param name="imageName">Display name for such an image.</param>
+        public ConfirmWriteDialog(OperationRequest request, IReadOnlyCollection<ValidationWarning> warnings, long? imageBytes = null, string imageName = null)
         {
             Text = Strings.Get("Confirm_Title");
             FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -62,8 +64,15 @@ namespace HddBackup.App.Forms
                     Strings.Format("Partition_Summary", request.Partition.Number, request.Partition.FileSystem, Formatters.Bytes(request.Partition.Length))));
             }
 
-            var image = new FileInfo(request.ImagePath);
-            details.Add(Strings.Format("Confirm_Image", image.Name, Formatters.Bytes(image.Length)));
+            if (imageBytes.HasValue)
+            {
+                details.Add(Strings.Format("Confirm_Image", imageName ?? Path.GetFileName(request.ImagePath), Formatters.Bytes(imageBytes.Value)));
+            }
+            else
+            {
+                var image = new FileInfo(request.ImagePath);
+                details.Add(Strings.Format("Confirm_Image", image.Name, Formatters.Bytes(image.Length)));
+            }
             root.Controls.Add(new Label { AutoSize = true, Text = string.Join(Environment.NewLine, details), MaximumSize = new Size(560, 0), Margin = new Padding(3, 8, 3, 8) });
 
             var notes = warnings

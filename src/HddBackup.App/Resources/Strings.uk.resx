@@ -556,4 +556,126 @@
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>Середня швидкість: {0}</value>
   </data>
+  <data name="Restore_Shrink" xml:space="preserve">
+    <value>Зменшити образ…</value>
+  </data>
+  <data name="Shrink_Title" xml:space="preserve">
+    <value>Зменшення образу</value>
+  </data>
+  <data name="Shrink_Analyzing" xml:space="preserve">
+    <value>Аналіз образу…</value>
+  </data>
+  <data name="Shrink_Summary" xml:space="preserve">
+    <value>Образ: {0} ({1})
+Розділи: {2}
+Зайнято в розділі Linux (ext4): {3}
+Найменший можливий образ: {4}</value>
+  </data>
+  <data name="Shrink_TargetMinimum" xml:space="preserve">
+    <value>Якомога менший</value>
+  </data>
+  <data name="Shrink_TargetCard" xml:space="preserve">
+    <value>Під карту розміром:</value>
+  </data>
+  <data name="Shrink_Output" xml:space="preserve">
+    <value>Зберегти менший образ як:</value>
+  </data>
+  <data name="Shrink_Start" xml:space="preserve">
+    <value>Почати</value>
+  </data>
+  <data name="Shrink_OfferTitle" xml:space="preserve">
+    <value>Образ більший за пристрій</value>
+  </data>
+  <data name="Shrink_OfferText" xml:space="preserve">
+    <value>Образ ({0}) більший за вибраний пристрій ({1}).
+
+У його розділі Linux (ext4) лише {2} даних. HddBackup може створити меншу копію образу, що вміститься на пристрій ({3}), і записати цю копію.
+
+Оригінальний образ не змінюється. Менша копія буде збережена як:
+{4}</value>
+  </data>
+  <data name="Shrink_AndWrite" xml:space="preserve">
+    <value>Зменшити й записати</value>
+  </data>
+  <data name="Shrink_NotPossible" xml:space="preserve">
+    <value>Образ ({0}) більший за вибраний пристрій ({1}), і його не можна зменшити так, щоб він уміщувався:</value>
+  </data>
+  <data name="Shrink_ResultSaved" xml:space="preserve">
+    <value>Менший образ збережено: {0} ({1})</value>
+  </data>
+  <data name="Shrink_NothingSaved" xml:space="preserve">
+    <value>Файл образу не створено; оригінальний образ не змінено.</value>
+  </data>
+  <data name="Shrink_Step" xml:space="preserve">
+    <value>Крок {0} з {1}</value>
+  </data>
+  <data name="Shrink_StepPhase" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Phase_Shrink_Preparing" xml:space="preserve">
+    <value>Розпакування образу…</value>
+  </data>
+  <data name="Phase_Shrink_Transferring" xml:space="preserve">
+    <value>Перебудова файлової системи…</value>
+  </data>
+  <data name="Phase_Shrink_Verifying" xml:space="preserve">
+    <value>Перевірка результату…</value>
+  </data>
+  <data name="Phase_Shrink_Flushing" xml:space="preserve">
+    <value>Збереження образу…</value>
+  </data>
+  <data name="Phase_Shrink_Releasing" xml:space="preserve">
+    <value>Завершення…</value>
+  </data>
+  <data name="Phase_Shrink_Ejecting" xml:space="preserve">
+    <value>Завершення…</value>
+  </data>
+  <data name="Dialog_ShrinkFilter" xml:space="preserve">
+    <value>Нестиснений образ (*.img)|*.img|Стиснений образ (*.img.gz)|*.img.gz</value>
+  </data>
+  <data name="Error_ShrinkNotPossible" xml:space="preserve">
+    <value>Образ не можна зменшити.</value>
+  </data>
+  <data name="Error_ShrinkVerifyFailed" xml:space="preserve">
+    <value>Менший образ не пройшов перевірку й не був збережений. Оригінальний образ не змінено.</value>
+  </data>
+  <data name="Blocker_NotEnoughSpaceEvenAtMinimum" xml:space="preserve">
+    <value>Дані не вміщуються навіть за найменшого можливого розміру.</value>
+  </data>
+  <data name="Blocker_RootNotLastPartition" xml:space="preserve">
+    <value>Розділ Linux (ext4) не є останнім розділом образу.</value>
+  </data>
+  <data name="Blocker_RootNotExt4" xml:space="preserve">
+    <value>Останній розділ не містить файлової системи ext4.</value>
+  </data>
+  <data name="Blocker_UnsupportedLayout" xml:space="preserve">
+    <value>Таке розташування розділів не підтримується.</value>
+  </data>
+  <data name="Blocker_FsNotClean" xml:space="preserve">
+    <value>Файлову систему не було коректно відмонтовано. Правильно вимкніть пристрій і зробіть нову резервну копію.</value>
+  </data>
+  <data name="Blocker_FsHasErrors" xml:space="preserve">
+    <value>У файловій системі зафіксовано помилки. Спершу перевірте й виправте її на оригінальному пристрої.</value>
+  </data>
+  <data name="Blocker_OrphanInodes" xml:space="preserve">
+    <value>У файловій системі є незавершені видалення. Правильно вимкніть пристрій і зробіть нову резервну копію.</value>
+  </data>
+  <data name="Blocker_JournalNeedsRecovery" xml:space="preserve">
+    <value>Журнал файлової системи потребує відновлення (карту вийняли під час роботи). Увімкніть пристрій, правильно вимкніть його й зробіть нову резервну копію.</value>
+  </data>
+  <data name="Blocker_UnsupportedFeature" xml:space="preserve">
+    <value>Файлова система використовує можливості, які не можна перебудувати</value>
+  </data>
+  <data name="Blocker_ChecksumMismatch" xml:space="preserve">
+    <value>Метадані файлової системи пошкоджено</value>
+  </data>
+  <data name="Blocker_UnsupportedBlockSize" xml:space="preserve">
+    <value>Непідтримуваний розмір блоку файлової системи</value>
+  </data>
+  <data name="Blocker_UnsupportedInodeSize" xml:space="preserve">
+    <value>Непідтримуваний розмір inode</value>
+  </data>
+  <data name="Blocker_AlreadyFits" xml:space="preserve">
+    <value>Образ уже вміщується; зменшення не потрібне.</value>
+  </data>
 </root>

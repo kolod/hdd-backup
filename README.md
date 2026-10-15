@@ -11,6 +11,10 @@ SD/microSD cards.
   (`disk.img.sha256`; for gzip images also `disk.img.gz.sha256`).
 - Progress, current and average speed, elapsed and remaining time. Progress reaches 100% only
   when the device can be removed safely.
+- Shrinking Linux images (for example Raspberry Pi OS) so they fit a smaller card: the last
+  ext4 partition is rebuilt at a smaller size in a new image file, natively on Windows. Use
+  **Shrink image…** on the Restore tab, or accept the offer that appears when an image is too
+  large for the selected card ("Shrink and write"). The original image is never changed.
 - UI languages: English, Ukrainian, German, French, Spanish, Japanese.
 
 ## Disclaimer
@@ -65,8 +69,37 @@ This check relies on the partition table. A reader that misreports the capacity 
 whose partitions all fit within the reported size cannot be detected this way. For such cards,
 compare the SHA-256 of images made with two different readers.
 
+### Shrinking images
+
+Shrinking works on full-device images with an MBR or GPT table whose **last** partition holds
+ext4, as in Raspberry Pi OS and most single-board-computer images. Partitions before it (such as
+the FAT32 boot partition) are copied byte for byte. The ext4 file system is rebuilt rather than
+resized in place, and the result is checked before it is kept: a full metadata check, a
+comparison of every file, directory, link, owner, permission and extended attribute with the
+source, and a byte comparison of everything before the root partition.
+
+Supported ext4 features: `has_journal`, `ext_attr`, `resize_inode`, `dir_index`, `filetype`,
+`extent`, `64bit`, `flex_bg`, `metadata_csum` (+ `metadata_csum_seed`), `sparse_super`,
+`large_file`, `huge_file`, `uninit_bg`, `dir_nlink`, `extra_isize`; 1, 2 or 4 KiB blocks;
+128- or 256-byte inodes.
+
+Images are refused, with the reason shown, when:
+- the file system was not shut down cleanly or its journal needs recovery (start the device
+  once, shut it down properly, and make a new backup);
+- the file system has recorded errors or unfinished deletions (orphan inodes);
+- it uses other features, such as `inline_data`, `bigalloc`, `encrypt`, `casefold` or
+  `quota`;
+- ext4 is not the last partition, or there are extended (logical) partitions;
+- the data would not fit even at the smallest possible size.
+
+The smallest result is the used data plus a journal and free space of 5% of the data or
+128 MiB, whichever is larger (less for very small images). The shrink needs free space in the output folder for the result
+and, for an `.img.gz` source, for a temporary uncompressed copy. The temporary copy is deleted
+afterwards.
+
 Hardware validation steps: [docs/manual-hardware-checklist.md](docs/manual-hardware-checklist.md).
-Design documents: [specs/001-usb-sd-imaging/](specs/001-usb-sd-imaging/).
+Design documents: [specs/001-usb-sd-imaging/](specs/001-usb-sd-imaging/),
+[specs/002-ext4-image-shrink/](specs/002-ext4-image-shrink/).
 
 ## License
 

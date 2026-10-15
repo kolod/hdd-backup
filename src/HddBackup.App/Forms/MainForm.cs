@@ -13,6 +13,8 @@ using HddBackup.Core.Errors;
 using HddBackup.Core.Formats;
 using HddBackup.Core.Imaging;
 using HddBackup.Core.Progress;
+using HddBackup.Core.Shrinking;
+using System.IO;
 
 namespace HddBackup.App.Forms
 {
@@ -72,7 +74,7 @@ namespace HddBackup.App.Forms
             };
             _diagnosticsItem.Click += (s, e) =>
             {
-                using (var diagnostics = new DiagnosticsDialog())
+                using (var diagnostics = new DiagnosticsDialog(_restore.FullImagePath))
                 {
                     diagnostics.ShowDialog(this);
                 }
@@ -88,6 +90,7 @@ namespace HddBackup.App.Forms
 
             _backup.StartRequested += (s, request) => StartOperation(request);
             _restore.StartRequested += (s, request) => StartOperation(request);
+            _restore.ShrinkRequested += (s, imagePath) => OpenShrinkDialog(imagePath);
             LanguageService.LanguageChanged += OnLanguageChanged;
             ApplyStrings();
         }
@@ -205,6 +208,11 @@ namespace HddBackup.App.Forms
                 return;
             }
 
+            if (request.Kind == OperationKind.RestoreDevice && await OfferShrinkIfTooLargeAsync(request))
+            {
+                return;
+            }
+
             var engine = new ImagingEngine(_access);
             IReadOnlyList<ValidationWarning> warnings;
             try
@@ -245,28 +253,9 @@ namespace HddBackup.App.Forms
                 }
             }
 
-            _running = request;
-            _cts = new CancellationTokenSource();
-            SetBusy(true);
-            _operation.Start(engine, request);
-            OperationResult result;
-            try
+            var result = await RunEngineAsync(engine, request, null, null);
+            if (result == null)
             {
-                result = await engine.RunAsync(request, _cts.Token);
-            }
-            finally
-            {
-                _running = null;
-                SetBusy(false);
-            }
-
-            _operation.ShowResult(result);
-            _cts.Dispose();
-            _cts = null;
-
-            if (_closeWhenDone)
-            {
-                Close();
                 return;
             }
 
@@ -279,6 +268,176 @@ namespace HddBackup.App.Forms
             {
                 _refreshPending = false;
                 RefreshDevices();
+            }
+        }
+
+        /// <summary>Runs one engine operation with the shared panel; null when the window is closing.</summary>
+        private async Task<OperationResult> RunEngineAsync(ImagingEngine engine, OperationRequest request, Func<string> step, Func<string> extraResultLine)
+        {
+            _running = request;
+            _cts = new CancellationTokenSource();
+            SetBusy(true);
+            _operation.Start(engine, request, step);
+            OperationResult result;
+            try
+            {
+                result = await engine.RunAsync(request, _cts.Token);
+            }
+            finally
+            {
+                _running = null;
+                SetBusy(false);
+            }
+
+            _operation.ShowResult(result, extraResultLine);
+            _cts.Dispose();
+            _cts = null;
+
+            if (_closeWhenDone)
+            {
+                Close();
+                return null;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// FR-001/FR-002/FR-003a: when an image is larger than the target device, analyze it and,
+        /// if its last ext4 partition can be shrunk to fit, offer "shrink and write". Returns true
+        /// when the request was handled here (offered, refused or run).
+        /// </summary>
+        private async Task<bool> OfferShrinkIfTooLargeAsync(OperationRequest request)
+        {
+            long required;
+            try
+            {
+                var image = ImageDescriptor.Load(request.ImagePath);
+                required = image.Format == ImageFormat.Raw ? image.FileSize : ShrinkPlanner.RequiredDeviceBytes(request.ImagePath);
+                if (image.Format == ImageFormat.Raw)
+                {
+                    long logical = ShrinkPlanner.RequiredDeviceBytes(request.ImagePath);
+                    if (logical > 0 && logical <= request.Device.Size)
+                    {
+                        return false; // only unused space past the last partition does not fit
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false; // the normal validation reports the problem
+            }
+
+            if (required <= request.Device.Size)
+            {
+                return false;
+            }
+
+            ShrinkPlan plan;
+            UseWaitCursor = true;
+            try
+            {
+                plan = await Task.Run(() => ShrinkPlanner.Analyze(request.ImagePath, CancellationToken.None));
+            }
+            catch (Exception ex) when (ex is ImagingException || ex is System.IO.IOException || ex is HddBackup.Core.Ext4.Ext4FormatException)
+            {
+                return false;
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
+
+            if (!plan.Fits(request.Device.Size))
+            {
+                var reasons = plan.IsShrinkable
+                    ? Strings.Get("Blocker_NotEnoughSpaceEvenAtMinimum")
+                    : Formatters.Blockers(plan.Blockers);
+                MessageBox.Show(
+                    this,
+                    Strings.Format("Shrink_NotPossible", Formatters.Bytes(required), Formatters.Bytes(request.Device.Size)) + Environment.NewLine + Environment.NewLine + reasons,
+                    Strings.Get("App_Name"),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return true;
+            }
+
+            string output = ShrinkDialog.DefaultOutputPath(request.ImagePath, request.Device.Size, false);
+            using (var offer = new ShrinkOfferDialog(plan, required, request.Device.Size, output))
+            {
+                if (offer.ShowDialog(this) != DialogResult.OK)
+                {
+                    return true;
+                }
+            }
+
+            // Same confirmation as a normal write, for the image that will be produced.
+            var writeRequest = new OperationRequest
+            {
+                Kind = OperationKind.RestoreDevice,
+                Device = request.Device,
+                ImagePath = output,
+                VerifyAfter = request.VerifyAfter,
+                EjectAfter = request.EjectAfter
+            };
+            using (var confirm = new ConfirmWriteDialog(writeRequest, Array.Empty<ValidationWarning>(), request.Device.Size, Path.GetFileName(output)))
+            {
+                if (confirm.ShowDialog(this) != DialogResult.OK)
+                {
+                    return true;
+                }
+
+                writeRequest.ExternalDiskConfirmed = request.Device.IsRemovableMedia || confirm.ExternalDiskConfirmed;
+            }
+
+            var shrinkRequest = new OperationRequest
+            {
+                Kind = OperationKind.ShrinkImage,
+                ImagePath = request.ImagePath,
+                ShrinkOutputPath = output,
+                ShrinkTargetBytes = request.Device.Size,
+                EjectAfter = false
+            };
+            var shrinkResult = await RunEngineAsync(new ImagingEngine(_access), shrinkRequest, () => Strings.Format("Shrink_Step", 1, 2), null);
+            if (shrinkResult == null || shrinkResult.State != OperationState.Completed)
+            {
+                return true;
+            }
+
+            var engine = new ImagingEngine(_access);
+            try
+            {
+                engine.Validate(writeRequest);
+            }
+            catch (ImagingException ex)
+            {
+                ShowError(ex.Code, ex.Offset, ex.Detail);
+                return true;
+            }
+
+            long savedBytes = shrinkResult.DataBytes;
+            await RunEngineAsync(
+                engine,
+                writeRequest,
+                () => Strings.Format("Shrink_Step", 2, 2),
+                () => Strings.Format("Shrink_ResultSaved", output, Formatters.Bytes(savedBytes)));
+            RefreshDevices();
+            return true;
+        }
+
+        private void OpenShrinkDialog(string imagePath)
+        {
+            if (_running != null)
+            {
+                return;
+            }
+
+            using (var dialog = new ShrinkDialog(imagePath, _settings))
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    StartOperation(dialog.Request);
+                }
             }
         }
 
@@ -321,9 +480,10 @@ namespace HddBackup.App.Forms
 
         private void SetBusy(bool busy)
         {
+            // The language menu stays available: every visible text, including the progress
+            // panel, is re-rendered on a switch and the running operation is not affected.
             _backup.Enabled = !busy;
             _restore.Enabled = !busy;
-            _languageMenu.Enabled = !busy;
         }
 
         private bool Ask(string key, MessageBoxIcon icon = MessageBoxIcon.Warning)

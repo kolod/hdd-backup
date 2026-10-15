@@ -556,4 +556,126 @@ Source code: {0}</value>
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>Average speed: {0}</value>
   </data>
+  <data name="Restore_Shrink" xml:space="preserve">
+    <value>Shrink image…</value>
+  </data>
+  <data name="Shrink_Title" xml:space="preserve">
+    <value>Shrink image</value>
+  </data>
+  <data name="Shrink_Analyzing" xml:space="preserve">
+    <value>Analyzing the image…</value>
+  </data>
+  <data name="Shrink_Summary" xml:space="preserve">
+    <value>Image: {0} ({1})
+Partitions: {2}
+Used in the Linux (ext4) partition: {3}
+Smallest possible image: {4}</value>
+  </data>
+  <data name="Shrink_TargetMinimum" xml:space="preserve">
+    <value>Smallest possible</value>
+  </data>
+  <data name="Shrink_TargetCard" xml:space="preserve">
+    <value>Fit a card of size:</value>
+  </data>
+  <data name="Shrink_Output" xml:space="preserve">
+    <value>Save the smaller image as:</value>
+  </data>
+  <data name="Shrink_Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Shrink_OfferTitle" xml:space="preserve">
+    <value>Image is larger than the device</value>
+  </data>
+  <data name="Shrink_OfferText" xml:space="preserve">
+    <value>The image ({0}) is larger than the selected device ({1}).
+
+Its Linux (ext4) partition contains only {2} of data. HddBackup can create a smaller copy of the image that fits the device ({3}) and then write that copy.
+
+The original image is not changed. The smaller copy is saved as:
+{4}</value>
+  </data>
+  <data name="Shrink_AndWrite" xml:space="preserve">
+    <value>Shrink and write</value>
+  </data>
+  <data name="Shrink_NotPossible" xml:space="preserve">
+    <value>The image ({0}) is larger than the selected device ({1}) and cannot be shrunk to fit:</value>
+  </data>
+  <data name="Shrink_ResultSaved" xml:space="preserve">
+    <value>Smaller image saved: {0} ({1})</value>
+  </data>
+  <data name="Shrink_NothingSaved" xml:space="preserve">
+    <value>No image file was created; the original image is unchanged.</value>
+  </data>
+  <data name="Shrink_Step" xml:space="preserve">
+    <value>Step {0} of {1}</value>
+  </data>
+  <data name="Shrink_StepPhase" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Phase_Shrink_Preparing" xml:space="preserve">
+    <value>Unpacking the image…</value>
+  </data>
+  <data name="Phase_Shrink_Transferring" xml:space="preserve">
+    <value>Rebuilding the file system…</value>
+  </data>
+  <data name="Phase_Shrink_Verifying" xml:space="preserve">
+    <value>Checking the result…</value>
+  </data>
+  <data name="Phase_Shrink_Flushing" xml:space="preserve">
+    <value>Saving the image…</value>
+  </data>
+  <data name="Phase_Shrink_Releasing" xml:space="preserve">
+    <value>Finishing…</value>
+  </data>
+  <data name="Phase_Shrink_Ejecting" xml:space="preserve">
+    <value>Finishing…</value>
+  </data>
+  <data name="Dialog_ShrinkFilter" xml:space="preserve">
+    <value>Uncompressed image (*.img)|*.img|Compressed image (*.img.gz)|*.img.gz</value>
+  </data>
+  <data name="Error_ShrinkNotPossible" xml:space="preserve">
+    <value>The image cannot be shrunk.</value>
+  </data>
+  <data name="Error_ShrinkVerifyFailed" xml:space="preserve">
+    <value>The smaller image failed verification and was not saved. The original image is unchanged.</value>
+  </data>
+  <data name="Blocker_NotEnoughSpaceEvenAtMinimum" xml:space="preserve">
+    <value>The data does not fit even at the smallest possible size.</value>
+  </data>
+  <data name="Blocker_RootNotLastPartition" xml:space="preserve">
+    <value>The Linux (ext4) partition is not the last partition of the image.</value>
+  </data>
+  <data name="Blocker_RootNotExt4" xml:space="preserve">
+    <value>The last partition does not contain an ext4 file system.</value>
+  </data>
+  <data name="Blocker_UnsupportedLayout" xml:space="preserve">
+    <value>This partition layout is not supported.</value>
+  </data>
+  <data name="Blocker_FsNotClean" xml:space="preserve">
+    <value>The file system was not cleanly unmounted. Shut the device down properly and make a new backup.</value>
+  </data>
+  <data name="Blocker_FsHasErrors" xml:space="preserve">
+    <value>The file system has recorded errors. Check and repair it on the original device first.</value>
+  </data>
+  <data name="Blocker_OrphanInodes" xml:space="preserve">
+    <value>The file system has unfinished deletions. Shut the device down properly and make a new backup.</value>
+  </data>
+  <data name="Blocker_JournalNeedsRecovery" xml:space="preserve">
+    <value>The file system journal needs recovery (the card was removed while in use). Start the device once, shut it down properly and make a new backup.</value>
+  </data>
+  <data name="Blocker_UnsupportedFeature" xml:space="preserve">
+    <value>The file system uses features that cannot be rebuilt</value>
+  </data>
+  <data name="Blocker_ChecksumMismatch" xml:space="preserve">
+    <value>The file system metadata is damaged</value>
+  </data>
+  <data name="Blocker_UnsupportedBlockSize" xml:space="preserve">
+    <value>Unsupported file system block size</value>
+  </data>
+  <data name="Blocker_UnsupportedInodeSize" xml:space="preserve">
+    <value>Unsupported inode size</value>
+  </data>
+  <data name="Blocker_AlreadyFits" xml:space="preserve">
+    <value>The image already fits; shrinking is not needed.</value>
+  </data>
 </root>

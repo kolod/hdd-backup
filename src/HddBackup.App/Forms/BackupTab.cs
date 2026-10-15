@@ -108,11 +108,18 @@ namespace HddBackup.App.Forms
             _imageCaption.Text = Strings.Get("Backup_ImageFile");
             _browse.Text = Strings.Get("Common_Browse");
             _formatCaption.Text = Strings.Get("Backup_Format");
-            int format = Math.Max(0, _format.SelectedIndex);
-            _format.Items.Clear();
-            _format.Items.Add(Strings.Get("Format_Gzip"));
-            _format.Items.Add(Strings.Get("Format_Raw"));
-            _format.SelectedIndex = format;
+            // Relabel in place: rebuilding the list would fire SelectedIndexChanged and rewrite the path.
+            if (_format.Items.Count == 2)
+            {
+                _format.Items[0] = Strings.Get("Format_Gzip");
+                _format.Items[1] = Strings.Get("Format_Raw");
+            }
+            else
+            {
+                _format.Items.Add(Strings.Get("Format_Gzip"));
+                _format.Items.Add(Strings.Get("Format_Raw"));
+                _format.SelectedIndex = 0;
+            }
             _fast.Text = Strings.Get("Option_FastCompression");
             _verify.Text = Strings.Get("Option_VerifyAfterBackup");
             _eject.Text = Strings.Get("Option_Eject");

@@ -3,6 +3,30 @@ namespace HddBackup.Core.Partitioning
     /// <summary>Little-endian field access for on-disk structures.</summary>
     internal static class BinaryHelpers
     {
+        public static ushort U16(byte[] b, int o)
+        {
+            return (ushort)(b[o] | (b[o + 1] << 8));
+        }
+
+        public static void PutU16(byte[] b, int o, int v)
+        {
+            b[o] = (byte)v;
+            b[o + 1] = (byte)(v >> 8);
+        }
+
+        public static uint U32BE(byte[] b, int o)
+        {
+            return (uint)((b[o] << 24) | (b[o + 1] << 16) | (b[o + 2] << 8) | b[o + 3]);
+        }
+
+        public static void PutU32BE(byte[] b, int o, uint v)
+        {
+            b[o] = (byte)(v >> 24);
+            b[o + 1] = (byte)(v >> 16);
+            b[o + 2] = (byte)(v >> 8);
+            b[o + 3] = (byte)v;
+        }
+
         public static uint U32(byte[] b, int o)
         {
             return (uint)(b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24));

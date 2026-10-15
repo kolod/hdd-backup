@@ -556,4 +556,126 @@ Windows 7 SP1 から Windows 11 で動作します。イメージは標準の .i
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>平均速度: {0}</value>
   </data>
+  <data name="Restore_Shrink" xml:space="preserve">
+    <value>イメージを縮小…</value>
+  </data>
+  <data name="Shrink_Title" xml:space="preserve">
+    <value>イメージの縮小</value>
+  </data>
+  <data name="Shrink_Analyzing" xml:space="preserve">
+    <value>イメージを分析しています…</value>
+  </data>
+  <data name="Shrink_Summary" xml:space="preserve">
+    <value>イメージ: {0} ({1})
+パーティション: {2}
+Linux (ext4) パーティションの使用量: {3}
+最小のイメージ サイズ: {4}</value>
+  </data>
+  <data name="Shrink_TargetMinimum" xml:space="preserve">
+    <value>できるだけ小さく</value>
+  </data>
+  <data name="Shrink_TargetCard" xml:space="preserve">
+    <value>次のサイズのカードに合わせる:</value>
+  </data>
+  <data name="Shrink_Output" xml:space="preserve">
+    <value>縮小したイメージの保存先:</value>
+  </data>
+  <data name="Shrink_Start" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="Shrink_OfferTitle" xml:space="preserve">
+    <value>イメージがデバイスより大きい</value>
+  </data>
+  <data name="Shrink_OfferText" xml:space="preserve">
+    <value>イメージ ({0}) は選択したデバイス ({1}) より大きいです。
+
+その Linux (ext4) パーティションのデータは {2} だけです。HddBackup は、デバイスに収まる縮小コピー ({3}) を作成し、そのコピーを書き込むことができます。
+
+元のイメージは変更されません。縮小コピーの保存先:
+{4}</value>
+  </data>
+  <data name="Shrink_AndWrite" xml:space="preserve">
+    <value>縮小して書き込む</value>
+  </data>
+  <data name="Shrink_NotPossible" xml:space="preserve">
+    <value>イメージ ({0}) は選択したデバイス ({1}) より大きく、収まるように縮小できません:</value>
+  </data>
+  <data name="Shrink_ResultSaved" xml:space="preserve">
+    <value>縮小したイメージを保存しました: {0} ({1})</value>
+  </data>
+  <data name="Shrink_NothingSaved" xml:space="preserve">
+    <value>イメージ ファイルは作成されませんでした。元のイメージは変更されていません。</value>
+  </data>
+  <data name="Shrink_Step" xml:space="preserve">
+    <value>ステップ {0}/{1}</value>
+  </data>
+  <data name="Shrink_StepPhase" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Phase_Shrink_Preparing" xml:space="preserve">
+    <value>イメージを展開しています…</value>
+  </data>
+  <data name="Phase_Shrink_Transferring" xml:space="preserve">
+    <value>ファイル システムを再構築しています…</value>
+  </data>
+  <data name="Phase_Shrink_Verifying" xml:space="preserve">
+    <value>結果を確認しています…</value>
+  </data>
+  <data name="Phase_Shrink_Flushing" xml:space="preserve">
+    <value>イメージを保存しています…</value>
+  </data>
+  <data name="Phase_Shrink_Releasing" xml:space="preserve">
+    <value>完了処理中…</value>
+  </data>
+  <data name="Phase_Shrink_Ejecting" xml:space="preserve">
+    <value>完了処理中…</value>
+  </data>
+  <data name="Dialog_ShrinkFilter" xml:space="preserve">
+    <value>非圧縮イメージ (*.img)|*.img|圧縮イメージ (*.img.gz)|*.img.gz</value>
+  </data>
+  <data name="Error_ShrinkNotPossible" xml:space="preserve">
+    <value>イメージを縮小できません。</value>
+  </data>
+  <data name="Error_ShrinkVerifyFailed" xml:space="preserve">
+    <value>縮小したイメージは検証に失敗したため保存されませんでした。元のイメージは変更されていません。</value>
+  </data>
+  <data name="Blocker_NotEnoughSpaceEvenAtMinimum" xml:space="preserve">
+    <value>最小サイズにしてもデータが収まりません。</value>
+  </data>
+  <data name="Blocker_RootNotLastPartition" xml:space="preserve">
+    <value>Linux (ext4) パーティションがイメージの最後のパーティションではありません。</value>
+  </data>
+  <data name="Blocker_RootNotExt4" xml:space="preserve">
+    <value>最後のパーティションに ext4 ファイル システムがありません。</value>
+  </data>
+  <data name="Blocker_UnsupportedLayout" xml:space="preserve">
+    <value>このパーティション構成はサポートされていません。</value>
+  </data>
+  <data name="Blocker_FsNotClean" xml:space="preserve">
+    <value>ファイル システムが正しくアンマウントされていません。デバイスを正しくシャットダウンしてから、新しいバックアップを作成してください。</value>
+  </data>
+  <data name="Blocker_FsHasErrors" xml:space="preserve">
+    <value>ファイル システムにエラーが記録されています。まず元のデバイスで確認・修復してください。</value>
+  </data>
+  <data name="Blocker_OrphanInodes" xml:space="preserve">
+    <value>ファイル システムに未完了の削除があります。デバイスを正しくシャットダウンしてから、新しいバックアップを作成してください。</value>
+  </data>
+  <data name="Blocker_JournalNeedsRecovery" xml:space="preserve">
+    <value>ファイル システムのジャーナルの回復が必要です (使用中にカードが取り外されました)。デバイスを一度起動して正しくシャットダウンし、新しいバックアップを作成してください。</value>
+  </data>
+  <data name="Blocker_UnsupportedFeature" xml:space="preserve">
+    <value>再構築できない機能がファイル システムで使用されています</value>
+  </data>
+  <data name="Blocker_ChecksumMismatch" xml:space="preserve">
+    <value>ファイル システムのメタデータが破損しています</value>
+  </data>
+  <data name="Blocker_UnsupportedBlockSize" xml:space="preserve">
+    <value>サポートされていないファイル システムのブロック サイズ</value>
+  </data>
+  <data name="Blocker_UnsupportedInodeSize" xml:space="preserve">
+    <value>サポートされていない inode サイズ</value>
+  </data>
+  <data name="Blocker_AlreadyFits" xml:space="preserve">
+    <value>イメージは既に収まります。縮小は不要です。</value>
+  </data>
 </root>

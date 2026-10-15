@@ -556,4 +556,126 @@ Code source : {0}</value>
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>Vitesse moyenne : {0}</value>
   </data>
+  <data name="Restore_Shrink" xml:space="preserve">
+    <value>Réduire l&apos;image…</value>
+  </data>
+  <data name="Shrink_Title" xml:space="preserve">
+    <value>Réduire l&apos;image</value>
+  </data>
+  <data name="Shrink_Analyzing" xml:space="preserve">
+    <value>Analyse de l&apos;image…</value>
+  </data>
+  <data name="Shrink_Summary" xml:space="preserve">
+    <value>Image : {0} ({1})
+Partitions : {2}
+Occupé dans la partition Linux (ext4) : {3}
+Plus petite image possible : {4}</value>
+  </data>
+  <data name="Shrink_TargetMinimum" xml:space="preserve">
+    <value>La plus petite possible</value>
+  </data>
+  <data name="Shrink_TargetCard" xml:space="preserve">
+    <value>Adaptée à une carte de :</value>
+  </data>
+  <data name="Shrink_Output" xml:space="preserve">
+    <value>Enregistrer l&apos;image réduite sous :</value>
+  </data>
+  <data name="Shrink_Start" xml:space="preserve">
+    <value>Démarrer</value>
+  </data>
+  <data name="Shrink_OfferTitle" xml:space="preserve">
+    <value>Image plus grande que le périphérique</value>
+  </data>
+  <data name="Shrink_OfferText" xml:space="preserve">
+    <value>L&apos;image ({0}) est plus grande que le périphérique sélectionné ({1}).
+
+Sa partition Linux (ext4) ne contient que {2} de données. HddBackup peut créer une copie réduite de l&apos;image qui tient sur le périphérique ({3}), puis écrire cette copie.
+
+L&apos;image d&apos;origine n&apos;est pas modifiée. La copie réduite sera enregistrée sous :
+{4}</value>
+  </data>
+  <data name="Shrink_AndWrite" xml:space="preserve">
+    <value>Réduire et écrire</value>
+  </data>
+  <data name="Shrink_NotPossible" xml:space="preserve">
+    <value>L&apos;image ({0}) est plus grande que le périphérique sélectionné ({1}) et ne peut pas être réduite pour y tenir :</value>
+  </data>
+  <data name="Shrink_ResultSaved" xml:space="preserve">
+    <value>Image réduite enregistrée : {0} ({1})</value>
+  </data>
+  <data name="Shrink_NothingSaved" xml:space="preserve">
+    <value>Aucun fichier image n&apos;a été créé ; l&apos;image d&apos;origine est inchangée.</value>
+  </data>
+  <data name="Shrink_Step" xml:space="preserve">
+    <value>Étape {0} sur {1}</value>
+  </data>
+  <data name="Shrink_StepPhase" xml:space="preserve">
+    <value>{0} : {1}</value>
+  </data>
+  <data name="Phase_Shrink_Preparing" xml:space="preserve">
+    <value>Décompression de l&apos;image…</value>
+  </data>
+  <data name="Phase_Shrink_Transferring" xml:space="preserve">
+    <value>Reconstruction du système de fichiers…</value>
+  </data>
+  <data name="Phase_Shrink_Verifying" xml:space="preserve">
+    <value>Vérification du résultat…</value>
+  </data>
+  <data name="Phase_Shrink_Flushing" xml:space="preserve">
+    <value>Enregistrement de l&apos;image…</value>
+  </data>
+  <data name="Phase_Shrink_Releasing" xml:space="preserve">
+    <value>Finalisation…</value>
+  </data>
+  <data name="Phase_Shrink_Ejecting" xml:space="preserve">
+    <value>Finalisation…</value>
+  </data>
+  <data name="Dialog_ShrinkFilter" xml:space="preserve">
+    <value>Image non compressée (*.img)|*.img|Image compressée (*.img.gz)|*.img.gz</value>
+  </data>
+  <data name="Error_ShrinkNotPossible" xml:space="preserve">
+    <value>L&apos;image ne peut pas être réduite.</value>
+  </data>
+  <data name="Error_ShrinkVerifyFailed" xml:space="preserve">
+    <value>L&apos;image réduite n&apos;a pas passé la vérification et n&apos;a pas été enregistrée. L&apos;image d&apos;origine est inchangée.</value>
+  </data>
+  <data name="Blocker_NotEnoughSpaceEvenAtMinimum" xml:space="preserve">
+    <value>Les données ne tiennent pas, même à la plus petite taille possible.</value>
+  </data>
+  <data name="Blocker_RootNotLastPartition" xml:space="preserve">
+    <value>La partition Linux (ext4) n&apos;est pas la dernière partition de l&apos;image.</value>
+  </data>
+  <data name="Blocker_RootNotExt4" xml:space="preserve">
+    <value>La dernière partition ne contient pas de système de fichiers ext4.</value>
+  </data>
+  <data name="Blocker_UnsupportedLayout" xml:space="preserve">
+    <value>Cette disposition des partitions n&apos;est pas prise en charge.</value>
+  </data>
+  <data name="Blocker_FsNotClean" xml:space="preserve">
+    <value>Le système de fichiers n&apos;a pas été démonté proprement. Arrêtez correctement le périphérique et refaites une sauvegarde.</value>
+  </data>
+  <data name="Blocker_FsHasErrors" xml:space="preserve">
+    <value>Le système de fichiers comporte des erreurs enregistrées. Vérifiez-le et réparez-le d&apos;abord sur le périphérique d&apos;origine.</value>
+  </data>
+  <data name="Blocker_OrphanInodes" xml:space="preserve">
+    <value>Le système de fichiers contient des suppressions inachevées. Arrêtez correctement le périphérique et refaites une sauvegarde.</value>
+  </data>
+  <data name="Blocker_JournalNeedsRecovery" xml:space="preserve">
+    <value>Le journal du système de fichiers doit être récupéré (la carte a été retirée en cours d&apos;utilisation). Démarrez le périphérique une fois, arrêtez-le correctement et refaites une sauvegarde.</value>
+  </data>
+  <data name="Blocker_UnsupportedFeature" xml:space="preserve">
+    <value>Le système de fichiers utilise des fonctions qui ne peuvent pas être reconstruites</value>
+  </data>
+  <data name="Blocker_ChecksumMismatch" xml:space="preserve">
+    <value>Les métadonnées du système de fichiers sont endommagées</value>
+  </data>
+  <data name="Blocker_UnsupportedBlockSize" xml:space="preserve">
+    <value>Taille de bloc du système de fichiers non prise en charge</value>
+  </data>
+  <data name="Blocker_UnsupportedInodeSize" xml:space="preserve">
+    <value>Taille d&apos;inode non prise en charge</value>
+  </data>
+  <data name="Blocker_AlreadyFits" xml:space="preserve">
+    <value>L&apos;image tient déjà ; aucune réduction n&apos;est nécessaire.</value>
+  </data>
 </root>
