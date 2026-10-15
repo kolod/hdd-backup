@@ -39,6 +39,9 @@ Test-ReleaseAbsent.ps1 -Tag <string> -Repo <owner/name>
   has the tag, draft or published (FR-013). `gh release view <tag>` cannot be used, because the
   by-tag lookup ignores drafts. That was found in the dry run: a re-run created a second draft.
 - Used by `release.yml` in `validate` and again in `publish` right before `gh release create`.
+  GitHub shows drafts only to tokens with write access, so the `validate` call (read-only token)
+  sees published releases only. The `publish` call is the one that blocks a duplicate draft;
+  this was verified in the dry run (run 38783227405).
 ## `tools/release/New-ReleaseBody.ps1`
 
 ```text

@@ -37,7 +37,9 @@ jobs:
         shell: pwsh
         run: ./tools/release/Get-ReleaseNotes.ps1 -Version '${{ steps.tag.outputs.version }}' | Out-Null
 
-      # Lists all releases: `gh release view <tag>` does not see drafts.
+      # Lists all releases: `gh release view <tag>` does not see drafts. With this job's read-only
+      # token GitHub also hides drafts, so this catches published releases only; the same check in
+      # `publish` (write token) is the one that sees drafts. Kept read-only on purpose (FR-015).
       - name: No release (draft or published) exists for this tag yet
         shell: pwsh
         env:

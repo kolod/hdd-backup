@@ -149,7 +149,7 @@ stamped exe, config, `SHA256SUMS` and the notes section. It never overwrites a r
   5. A failed release means fixing and using a new version number (published tags cannot move).
   6. Emergency bypass procedures (merge-dialog bypass; `Set-RepoProtection.ps1 -Suspend`).
   Link it from `README.md` (Build and test section).
-- [ ] T022 [US2] After merging to main (Pester tests also pass in CI, see T030), run the dry run from quickstart §3:
+- [X] T022 [US2] After merging to main (Pester tests also pass in CI, see T030), run the dry run from quickstart §3:
   1. Add a `## 1.1.0-rc.1 — CI dry run` section via a PR.
   2. Push the tag `v1.1.0-rc.1`.
   3. Verify the draft pre-release, its assets and its body; check that the downloaded exe's SHA-256 and the About version match.
@@ -217,7 +217,7 @@ immutable.
   - `-Suspend <name>` with typed confirmation;
   - never delete unmanaged rulesets.
 - [X] T030 [US1] Add a Pester step to the composite action `.github/actions/build-test/action.yml` (`Invoke-Pester tools/tests -CI`, before the artifact check) so script and ruleset tests run in every CI and release build
-- [ ] T031 [US1] After the feature PR is squash-merged, the owner runs `Set-RepoProtection.ps1 -WhatIf`, then a plain run, then `-Show` (expect exit 0). Walk through the quickstart §5 table, including a direct owner push to main being rejected and the PR bypass option being offered. Record the results in the Validation log
+- [X] T031 [US1] After the feature PR is squash-merged, the owner runs `Set-RepoProtection.ps1 -WhatIf`, then a plain run, then `-Show` (expect exit 0). Walk through the quickstart §5 table, including a direct owner push to main being rejected and the PR bypass option being offered. Record the results in the Validation log
 
 **Checkpoint**: SC-006 verified; main and release tags are protected.
 
@@ -228,7 +228,7 @@ immutable.
 - [X] T032 [P] Update `README.md`: CI status badge for `ci.yml`; "Releases" section pointing to GitHub Releases, the `SHA256SUMS` check (`Get-FileHash`/`certutil`), the SmartScreen note (unsigned exe) and `docs/releasing.md`
 - [X] T033 [P] Add a short note at the top of `docs/release-notes.md` that each `## X.Y.Z` section is the source of the GitHub release text (the heading format is required by `Get-ReleaseNotes.ps1`)
 - [X] T034 [P] Update `docs/safety-review.md` with a "Release integrity" section: tag-on-main check, draft-only creation, immutable published releases, SHA-256 in body and `SHA256SUMS`, SHA-pinned GitHub-owned actions, write permission only in `publish`
-- [ ] T035 Run all quickstart.md sections that are not yet logged, complete the Validation log, and confirm that SC-001…SC-006 are met. Mark tasks.md checkboxes
+- [X] T035 Run all quickstart.md sections that are not yet logged, complete the Validation log, and confirm that SC-001…SC-006 are met. Mark tasks.md checkboxes
 
 ---
 
