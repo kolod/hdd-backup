@@ -49,7 +49,7 @@ Outputs `version`, `is_prerelease`.
 2. `tools/release/Test-ReleaseTag.ps1 -Tag ${{ github.ref_name }}`. Fails on a malformed tag
    or a commit that is not on main.
 3. `tools/release/Get-ReleaseNotes.ps1 -Version <version>`. Fails if the section is missing.
-4. `gh release view <tag>`. Fails if a release (draft or published) already exists.
+4. `tools/release/Test-ReleaseAbsent.ps1`. Fails if a release (draft or published) already exists.
 
 ### Job `build` (windows-2025, needs `validate`)
 
@@ -62,7 +62,7 @@ Outputs `version`, `is_prerelease`.
 - Permissions: `contents: write`. This is the only job with write access (FR-015).
 - Steps:
   1. Download `release-files`.
-  2. `tools/release/New-ReleaseBody.ps1` writes `body.md` and `SHA256SUMS`.
+  2. `tools/release/New-ReleaseBody.ps1` writes `body.md` and `SHA256SUMS`; `Test-ReleaseAbsent.ps1` runs again.
   3. `gh release create <tag> --draft --verify-tag --title "HddBackup <version>" --notes-file
      body.md [--prerelease] HddBackup.exe HddBackup.exe.config SHA256SUMS`.
 - Fails if the release appeared in the meantime; it never edits an existing release.

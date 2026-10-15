@@ -37,21 +37,12 @@ jobs:
         shell: pwsh
         run: ./tools/release/Get-ReleaseNotes.ps1 -Version '${{ steps.tag.outputs.version }}' | Out-Null
 
-      - name: No release exists for this tag yet
+      # Lists all releases: `gh release view <tag>` does not see drafts.
+      - name: No release (draft or published) exists for this tag yet
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          $out = gh release view '${{ github.ref_name }}' --repo '${{ github.repository }}' --json isDraft 2>&1
-          if ($LASTEXITCODE -eq 0) {
-            Write-Host "::error::A release for ${{ github.ref_name }} already exists (draft or published). Releases are never overwritten; use a new version."
-            exit 1
-          }
-          if ("$out" -notmatch 'release not found') {
-            Write-Host "::error::Could not check existing releases: $out"
-            exit 1
-          }
-          exit 0
+        run: ./tools/release/Test-ReleaseAbsent.ps1 -Tag '${{ github.ref_name }}' -Repo '${{ github.repository }}'
 
   build:
     name: build
@@ -110,6 +101,12 @@ jobs:
       - name: Release text and checksums
         shell: pwsh
         run: ./tools/release/New-ReleaseBody.ps1 -Version '${{ needs.validate.outputs.version }}' -FilesDir '${{ runner.temp }}/files' -OutDir '${{ runner.temp }}/out'
+
+      - name: Check again that no release exists (a re-run may have created one meanwhile)
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./tools/release/Test-ReleaseAbsent.ps1 -Tag '${{ github.ref_name }}' -Repo '${{ github.repository }}'
 
       - name: Create draft release
         shell: pwsh

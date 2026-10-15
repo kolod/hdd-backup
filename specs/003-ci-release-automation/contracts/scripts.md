@@ -29,6 +29,16 @@ Get-ReleaseNotes.ps1 -Version <string> [-Path docs/release-notes.md]
 - A heading matches only when it is `## <version>` followed by end of line, a space, or ` — `.
   Example: `1.1.0` must not match `1.1.0-rc.1`.
 
+## `tools/release/Test-ReleaseAbsent.ps1`
+
+```text
+Test-ReleaseAbsent.ps1 -Tag <string> -Repo <owner/name>
+```
+
+- Lists **all** releases (`gh api --paginate repos/<repo>/releases`) and fails (exit 1) when one
+  has the tag, draft or published (FR-013). `gh release view <tag>` cannot be used, because the
+  by-tag lookup ignores drafts. That was found in the dry run: a re-run created a second draft.
+- Used by `release.yml` in `validate` and again in `publish` right before `gh release create`.
 ## `tools/release/New-ReleaseBody.ps1`
 
 ```text
