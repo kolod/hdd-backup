@@ -1,0 +1,6 @@
+# Shell scripts run inside Linux containers: keep LF on every checkout.
+*.sh text eol=lf
+# Test fixtures are binary or must stay byte-exact (manifests hold SHA-256 of content).
+*.img.gz binary
+*.tsv -text
+tests/HddBackup.Core.Tests/Fixtures/ext4/layout-reference.txt -text
