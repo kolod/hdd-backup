@@ -31,7 +31,9 @@ namespace HddBackup.Core.Tests.Fixtures
     /// <summary>Access to the committed ext4 fixtures; each is decompressed once per test run.</summary>
     public static class FixtureImages
     {
-        private static readonly ConcurrentDictionary<string, string> Extracted = new ConcurrentDictionary<string, string>();
+        // Lazy: GetOrAdd may run its factory on several threads at once for the same key; parallel
+        // test classes then decompressed the same fixture into one temp file (seen on fresh CI runners).
+        private static readonly ConcurrentDictionary<string, Lazy<string>> Extracted = new ConcurrentDictionary<string, Lazy<string>>();
 
         public static string Directory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fixtures", "ext4");
 
@@ -40,26 +42,39 @@ namespace HddBackup.Core.Tests.Fixtures
         /// <summary>Path of the decompressed image (shared, must not be modified by tests).</summary>
         public static string RawPath(string name)
         {
-            return Extracted.GetOrAdd(name, n =>
-            {
-                var target = Path.Combine(Path.GetTempPath(), "HddBackupTests", "fixture-" + n + ".img");
-                System.IO.Directory.CreateDirectory(Path.GetDirectoryName(target));
-                var source = CompressedPath(n);
-                if (!File.Exists(target) || File.GetLastWriteTimeUtc(target) < File.GetLastWriteTimeUtc(source))
-                {
-                    var temp = target + ".tmp";
-                    using (var input = new GZipStream(File.OpenRead(source), CompressionMode.Decompress))
-                    using (var output = File.Create(temp))
-                    {
-                        input.CopyTo(output);
-                    }
+            return Extracted.GetOrAdd(name, n => new Lazy<string>(() => Extract(n))).Value;
+        }
 
-                    File.Copy(temp, target, true);
-                    File.Delete(temp);
+        private static string Extract(string name)
+        {
+            var target = Path.Combine(Path.GetTempPath(), "HddBackupTests", "fixture-" + name + ".img");
+            System.IO.Directory.CreateDirectory(Path.GetDirectoryName(target));
+            var source = CompressedPath(name);
+            if (!File.Exists(target) || File.GetLastWriteTimeUtc(target) < File.GetLastWriteTimeUtc(source))
+            {
+                // Unique temp name: another test process may be extracting the same fixture.
+                var temp = target + "." + Guid.NewGuid().ToString("N") + ".tmp";
+                using (var input = new GZipStream(File.OpenRead(source), CompressionMode.Decompress))
+                using (var output = File.Create(temp))
+                {
+                    input.CopyTo(output);
                 }
 
-                return target;
-            });
+                try
+                {
+                    File.Copy(temp, target, true);
+                }
+                catch (IOException) when (File.Exists(target))
+                {
+                    // Another process just wrote the same content and has it open read-only.
+                }
+                finally
+                {
+                    File.Delete(temp);
+                }
+            }
+
+            return target;
         }
 
         /// <summary>Opens the decompressed image read-only.</summary>

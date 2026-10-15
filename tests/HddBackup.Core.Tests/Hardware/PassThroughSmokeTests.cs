@@ -12,16 +12,11 @@ namespace HddBackup.Core.Tests.Hardware
     /// </summary>
     public class PassThroughSmokeTests
     {
-        [Fact]
+        [OptInFact("HDDBACKUP_PT_DISK")]
         [Trait("Category", "Hardware")]
         public void PassThroughRead_MatchesNormalRead()
         {
             var value = Environment.GetEnvironmentVariable("HDDBACKUP_PT_DISK");
-            if (string.IsNullOrEmpty(value))
-            {
-                return; // not configured on this machine
-            }
-
             int disk = int.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
             using (var handle = DiskIoctl.Open(PhysicalDiskDevice.PathFor(disk), NativeMethods.GenericRead | NativeMethods.GenericWrite))
             {

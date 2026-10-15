@@ -48,7 +48,9 @@ inode_list() { # fs
         # it), flags (htree index), block count, and the byte size of directories.
         raw=$(debugfs -R "stat \"/$p\"" "$fs" 2>/dev/null)
         stat_out=$(echo "$raw" | grep -E '^(Inode|User|Links)|time:' | grep -v '^Inode checksum' | sed -E 's/Inode: [0-9]+ +//; s/Flags: 0x[0-9a-f]+//; s/Blockcount: [0-9]+//; s/  +/ /g')
-        if echo "$raw" | grep -q 'Type: directory'; then stat_out=$(echo "$stat_out" | sed -E 's/Size: [0-9]+//'); fi
+        # No `echo | grep -q` here: with pipefail, grep -q exiting early can make echo fail with
+        # SIGPIPE and the test randomly false (seen in CI).
+        if [[ $raw == *'Type: directory'* ]]; then stat_out=$(echo "$stat_out" | sed -E 's/Size: [0-9]+//'); fi
         xa=$(debugfs -R "ea_list \"/$p\"" "$fs" 2>/dev/null | tr '\n' ' ')
         sum=-
         [ -f "$dump/$p" ] && [ ! -L "$dump/$p" ] && sum=$(sha256sum "$dump/$p" | cut -d' ' -f1)

@@ -1,5 +1,7 @@
 # HddBackup
 
+[![CI](https://github.com/kolod/hdd-backup/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kolod/hdd-backup/actions/workflows/ci.yml)
+
 A compact, portable Windows utility for backing up and restoring USB flash drives and
 SD/microSD cards.
 
@@ -40,11 +42,31 @@ registry. Settings are kept in an optional `HddBackup.ini` next to the executabl
 ## Build and test
 
 ```powershell
-dotnet build HddBackup.sln -c Release
+dotnet build HddBackup.sln -c Release -warnaserror
 dotnet test  tests/HddBackup.Core.Tests -c Release
+Invoke-Pester tools/tests            # scripts used by CI and releases (Pester 5)
 ```
 
 The executable is produced at `src/HddBackup.App/bin/Release/net48/HddBackup.exe`.
+
+Every pull request and push to `main` runs the same build and tests on GitHub Actions (`CI`),
+plus an independent check of the ext4 images produced by the tests with the Linux `e2fsck`.
+Changes reach `main` only through pull requests with green checks. How releases are made:
+[docs/releasing.md](docs/releasing.md).
+
+## Releases
+
+Download `HddBackup.exe` from the
+[GitHub Releases page](https://github.com/kolod/hdd-backup/releases). Every release lists the
+SHA-256 of its files in the release text and in `SHA256SUMS`; check your download with:
+
+```powershell
+Get-FileHash .\HddBackup.exe          # or: certutil -hashfile HddBackup.exe SHA256
+```
+
+Releases are published only after the manual hardware checklist has passed, and published
+releases cannot be changed afterwards. The executable is not code-signed, so Windows SmartScreen
+may warn about an unrecognized app the first time it runs.
 
 ## Safety
 
