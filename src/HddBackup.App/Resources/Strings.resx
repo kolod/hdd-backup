@@ -1,0 +1,555 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>HddBackup</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>HddBackup — USB and SD card imaging</value>
+  </data>
+  <data name="Menu_Language" xml:space="preserve">
+    <value>&amp;Language</value>
+  </data>
+  <data name="Menu_Help" xml:space="preserve">
+    <value>&amp;Help</value>
+  </data>
+  <data name="Menu_About" xml:space="preserve">
+    <value>&amp;About HddBackup…</value>
+  </data>
+  <data name="Tab_Backup" xml:space="preserve">
+    <value>Back up</value>
+  </data>
+  <data name="Tab_Restore" xml:space="preserve">
+    <value>Restore / Verify</value>
+  </data>
+  <data name="Backup_SourceDevice" xml:space="preserve">
+    <value>Source device:</value>
+  </data>
+  <data name="Backup_ScopeWhole" xml:space="preserve">
+    <value>Whole device (partition table, boot sectors and all partitions)</value>
+  </data>
+  <data name="Backup_ScopePartition" xml:space="preserve">
+    <value>Single partition</value>
+  </data>
+  <data name="Backup_ImageFile" xml:space="preserve">
+    <value>Save image as:</value>
+  </data>
+  <data name="Backup_Format" xml:space="preserve">
+    <value>Format:</value>
+  </data>
+  <data name="Backup_Start" xml:space="preserve">
+    <value>Start backup</value>
+  </data>
+  <data name="Backup_ConfirmOverwrite" xml:space="preserve">
+    <value>&quot;{0}&quot; already exists. Replace it and its checksum files?</value>
+  </data>
+  <data name="Backup_DefaultName" xml:space="preserve">
+    <value>backup</value>
+  </data>
+  <data name="Common_Browse" xml:space="preserve">
+    <value>Browse…</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common_Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Common_None" xml:space="preserve">
+    <value>none</value>
+  </data>
+  <data name="Common_AnotherProgram" xml:space="preserve">
+    <value>another program</value>
+  </data>
+  <data name="Format_Gzip" xml:space="preserve">
+    <value>Compressed (.img.gz)</value>
+  </data>
+  <data name="Format_Raw" xml:space="preserve">
+    <value>Uncompressed (.img)</value>
+  </data>
+  <data name="Option_FastCompression" xml:space="preserve">
+    <value>Fast compression (larger file)</value>
+  </data>
+  <data name="Option_VerifyAfterBackup" xml:space="preserve">
+    <value>Verify the image file after backup</value>
+  </data>
+  <data name="Option_VerifyAfterRestore" xml:space="preserve">
+    <value>Read back and verify after writing</value>
+  </data>
+  <data name="Option_Eject" xml:space="preserve">
+    <value>Eject the device when finished</value>
+  </data>
+  <data name="Restore_ImageFile" xml:space="preserve">
+    <value>Image file:</value>
+  </data>
+  <data name="Restore_TargetDevice" xml:space="preserve">
+    <value>Target device:</value>
+  </data>
+  <data name="Restore_TargetPartition" xml:space="preserve">
+    <value>Target partition:</value>
+  </data>
+  <data name="Restore_Write" xml:space="preserve">
+    <value>Write to device…</value>
+  </data>
+  <data name="Restore_VerifyImage" xml:space="preserve">
+    <value>Verify image</value>
+  </data>
+  <data name="Restore_NoImage" xml:space="preserve">
+    <value>Select an image file.</value>
+  </data>
+  <data name="Restore_ImageInfo" xml:space="preserve">
+    <value>{0} image, {1}, {2}</value>
+  </data>
+  <data name="Restore_SizeUnknown" xml:space="preserve">
+    <value>size known after decompression</value>
+  </data>
+  <data name="Restore_ChecksumsFound" xml:space="preserve">
+    <value>Checksum files: {0}</value>
+  </data>
+  <data name="Restore_ChecksumsNone" xml:space="preserve">
+    <value>No checksum files found next to the image.</value>
+  </data>
+  <data name="Restore_ImageError" xml:space="preserve">
+    <value>Cannot read the image: {0}</value>
+  </data>
+  <data name="ImageKind_Full" xml:space="preserve">
+    <value>whole device</value>
+  </data>
+  <data name="ImageKind_Partition" xml:space="preserve">
+    <value>partition {0} ({1})</value>
+  </data>
+  <data name="ImageFormat_Raw" xml:space="preserve">
+    <value>Uncompressed</value>
+  </data>
+  <data name="ImageFormat_Gzip" xml:space="preserve">
+    <value>Compressed</value>
+  </data>
+  <data name="Column_Device" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="Column_Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Column_Bus" xml:space="preserve">
+    <value>Bus</value>
+  </data>
+  <data name="Column_Volumes" xml:space="preserve">
+    <value>Volumes</value>
+  </data>
+  <data name="Column_Table" xml:space="preserve">
+    <value>Partition table</value>
+  </data>
+  <data name="Column_Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Column_Number" xml:space="preserve">
+    <value>No.</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Column_FileSystem" xml:space="preserve">
+    <value>File system</value>
+  </data>
+  <data name="Column_Offset" xml:space="preserve">
+    <value>Offset (bytes)</value>
+  </data>
+  <data name="Bus_Usb" xml:space="preserve">
+    <value>USB</value>
+  </data>
+  <data name="Bus_Sd" xml:space="preserve">
+    <value>SD</value>
+  </data>
+  <data name="Bus_Mmc" xml:space="preserve">
+    <value>MMC</value>
+  </data>
+  <data name="Table_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Table_Mbr" xml:space="preserve">
+    <value>MBR</value>
+  </data>
+  <data name="Table_Gpt" xml:space="preserve">
+    <value>GPT</value>
+  </data>
+  <data name="Table_Unknown" xml:space="preserve">
+    <value>Not recognized</value>
+  </data>
+  <data name="Note_WriteProtected" xml:space="preserve">
+    <value>write-protected</value>
+  </data>
+  <data name="Note_External" xml:space="preserve">
+    <value>external disk</value>
+  </data>
+  <data name="Note_RunsFromHere" xml:space="preserve">
+    <value>this program runs from it</value>
+  </data>
+  <data name="Device_Unnamed" xml:space="preserve">
+    <value>Unnamed device</value>
+  </data>
+  <data name="Partitions_NoTable" xml:space="preserve">
+    <value>This device has no partition table.</value>
+  </data>
+  <data name="Partitions_Damaged" xml:space="preserve">
+    <value>The partition table is damaged or not recognized.</value>
+  </data>
+  <data name="Partition_Summary" xml:space="preserve">
+    <value>#{0} {1} {2}</value>
+  </data>
+  <data name="Phase_Preparing" xml:space="preserve">
+    <value>Preparing…</value>
+  </data>
+  <data name="Phase_Transferring" xml:space="preserve">
+    <value>Copying…</value>
+  </data>
+  <data name="Phase_Transferring_Backup" xml:space="preserve">
+    <value>Reading the device…</value>
+  </data>
+  <data name="Phase_Transferring_Restore" xml:space="preserve">
+    <value>Writing to the device…</value>
+  </data>
+  <data name="Phase_Transferring_Verify" xml:space="preserve">
+    <value>Checking the image…</value>
+  </data>
+  <data name="Phase_Flushing" xml:space="preserve">
+    <value>Committing data…</value>
+  </data>
+  <data name="Phase_Verifying" xml:space="preserve">
+    <value>Verifying…</value>
+  </data>
+  <data name="Phase_Releasing" xml:space="preserve">
+    <value>Releasing the device…</value>
+  </data>
+  <data name="Phase_Ejecting" xml:space="preserve">
+    <value>Ejecting the device…</value>
+  </data>
+  <data name="Phase_Done" xml:space="preserve">
+    <value>Finished</value>
+  </data>
+  <data name="Phase_Stopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="Progress_BytesOf" xml:space="preserve">
+    <value>{0} of {1}</value>
+  </data>
+  <data name="Progress_Speed" xml:space="preserve">
+    <value>Speed: {0} (average {1})</value>
+  </data>
+  <data name="Progress_Time" xml:space="preserve">
+    <value>Elapsed: {0}    Remaining: {1}</value>
+  </data>
+  <data name="Progress_Calculating" xml:space="preserve">
+    <value>calculating…</value>
+  </data>
+  <data name="Speed_PerSecond" xml:space="preserve">
+    <value>{0}/s</value>
+  </data>
+  <data name="Unit_B" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Unit_KiB" xml:space="preserve">
+    <value>KiB</value>
+  </data>
+  <data name="Unit_MiB" xml:space="preserve">
+    <value>MiB</value>
+  </data>
+  <data name="Unit_GiB" xml:space="preserve">
+    <value>GiB</value>
+  </data>
+  <data name="Unit_TiB" xml:space="preserve">
+    <value>TiB</value>
+  </data>
+  <data name="Result_SafeToRemove" xml:space="preserve">
+    <value>The device can now be safely removed.</value>
+  </data>
+  <data name="Result_BackupSaved" xml:space="preserve">
+    <value>Image saved: {0}</value>
+  </data>
+  <data name="Result_RestoreDone" xml:space="preserve">
+    <value>The image was written successfully.</value>
+  </data>
+  <data name="Result_VerifyDone" xml:space="preserve">
+    <value>The image is intact.</value>
+  </data>
+  <data name="Result_EjectVetoed" xml:space="preserve">
+    <value>Windows did not eject the device because of {0}. All data is written. Close programs that use the device or use &quot;Safely Remove Hardware&quot; before unplugging it.</value>
+  </data>
+  <data name="Result_Failed" xml:space="preserve">
+    <value>The operation failed: {0}</value>
+  </data>
+  <data name="Result_AtOffset" xml:space="preserve">
+    <value>Position: byte {0}</value>
+  </data>
+  <data name="Result_Cancelled" xml:space="preserve">
+    <value>The operation was cancelled.</value>
+  </data>
+  <data name="Result_DeviceReleased" xml:space="preserve">
+    <value>The device is no longer in use and can be removed.</value>
+  </data>
+  <data name="Result_DeviceAlreadyRemoved" xml:space="preserve">
+    <value>The device was disconnected.</value>
+  </data>
+  <data name="Result_DeviceMayBeBusy" xml:space="preserve">
+    <value>The device could not be released cleanly. Use &quot;Safely Remove Hardware&quot; before unplugging it.</value>
+  </data>
+  <data name="Result_ContentIncomplete" xml:space="preserve">
+    <value>The device now contains incomplete data.</value>
+  </data>
+  <data name="Result_NoImageSaved" xml:space="preserve">
+    <value>No image file was saved.</value>
+  </data>
+  <data name="Result_Sha256" xml:space="preserve">
+    <value>SHA-256: {0}</value>
+  </data>
+  <data name="Result_CopySha" xml:space="preserve">
+    <value>Copy SHA-256</value>
+  </data>
+  <data name="Result_Duration" xml:space="preserve">
+    <value>Time: {0}</value>
+  </data>
+  <data name="Check_File" xml:space="preserve">
+    <value>Image file checksum</value>
+  </data>
+  <data name="Check_Content" xml:space="preserve">
+    <value>Content checksum</value>
+  </data>
+  <data name="Check_Match" xml:space="preserve">
+    <value>verified</value>
+  </data>
+  <data name="Check_Mismatch" xml:space="preserve">
+    <value>DOES NOT MATCH</value>
+  </data>
+  <data name="Check_NotAvailable" xml:space="preserve">
+    <value>no checksum file</value>
+  </data>
+  <data name="Verify_SaveChecksumsQuestion" xml:space="preserve">
+    <value>No checksum files were found for this image. Save the computed checksums next to the image?</value>
+  </data>
+  <data name="Verify_ChecksumsSaved" xml:space="preserve">
+    <value>The checksum files were saved.</value>
+  </data>
+  <data name="Confirm_Title" xml:space="preserve">
+    <value>Confirm writing</value>
+  </data>
+  <data name="Confirm_Warning" xml:space="preserve">
+    <value>ALL DATA on this device will be permanently erased:</value>
+  </data>
+  <data name="Confirm_Device" xml:space="preserve">
+    <value>Device: {0}</value>
+  </data>
+  <data name="Confirm_Capacity" xml:space="preserve">
+    <value>Capacity: {0}</value>
+  </data>
+  <data name="Confirm_Bus" xml:space="preserve">
+    <value>Connection: {0}</value>
+  </data>
+  <data name="Confirm_Volumes" xml:space="preserve">
+    <value>Volumes: {0}</value>
+  </data>
+  <data name="Confirm_Partitions" xml:space="preserve">
+    <value>Partitions: {0}</value>
+  </data>
+  <data name="Confirm_PartitionTarget" xml:space="preserve">
+    <value>Target partition: {0}</value>
+  </data>
+  <data name="Confirm_Image" xml:space="preserve">
+    <value>Image: {0} ({1})</value>
+  </data>
+  <data name="Confirm_ExternalCheck" xml:space="preserve">
+    <value>I understand that this is an external disk, not a memory card or flash drive.</value>
+  </data>
+  <data name="Confirm_Write" xml:space="preserve">
+    <value>Write</value>
+  </data>
+  <data name="Confirm_WriteCountdown" xml:space="preserve">
+    <value>Write ({0})</value>
+  </data>
+  <data name="Warning_TargetLarger" xml:space="preserve">
+    <value>The device is larger than the image. The remaining space will stay unallocated.</value>
+  </data>
+  <data name="Warning_ImageSizeUnknown" xml:space="preserve">
+    <value>The uncompressed size of the image is not known in advance. Writing stops with an error if the image does not fit.</value>
+  </data>
+  <data name="Warning_MayExceedFat32Limit" xml:space="preserve">
+    <value>The destination drive uses FAT, which cannot store files larger than 4 GB. The compressed image may exceed this limit.</value>
+  </data>
+  <data name="Warning_ExternalDisk" xml:space="preserve">
+    <value>The target is an external disk, not removable media.</value>
+  </data>
+  <data name="Warning_NoStoredChecksum" xml:space="preserve">
+    <value>No checksum file was found next to the image, so it cannot be checked against a stored checksum.</value>
+  </data>
+  <data name="Warning_ChecksumLabelMismatch" xml:space="preserve">
+    <value>A checksum file names a different file than this image. It is still used for checking.</value>
+  </data>
+  <data name="Warning_ChecksumUnreadable" xml:space="preserve">
+    <value>A checksum file next to the image could not be read and is ignored.</value>
+  </data>
+  <data name="Warning_ContentChecksumCollides" xml:space="preserve">
+    <value>An uncompressed image with the same name exists in this folder. Its checksum file will be replaced by the content checksum of the new compressed image.</value>
+  </data>
+  <data name="Warning_Continue" xml:space="preserve">
+    <value>Continue?</value>
+  </data>
+  <data name="Cancel_ConfirmRestore" xml:space="preserve">
+    <value>Stop writing? The device will contain incomplete data and will not work until an image is written again.</value>
+  </data>
+  <data name="Cancel_ConfirmOther" xml:space="preserve">
+    <value>Stop the operation? Any incomplete image file will be deleted.</value>
+  </data>
+  <data name="Close_ConfirmRunning" xml:space="preserve">
+    <value>An operation is running. Stop it and close the program?</value>
+  </data>
+  <data name="Close_ConfirmRunningRestore" xml:space="preserve">
+    <value>Writing is in progress. Stopping leaves the device with incomplete data. Stop and close the program?</value>
+  </data>
+  <data name="About_Title" xml:space="preserve">
+    <value>About HddBackup</value>
+  </data>
+  <data name="About_Text" xml:space="preserve">
+    <value>Portable utility for backing up and restoring USB flash drives and SD cards.
+
+Works on Windows 7 SP1 to Windows 11. Images are standard .img or .img.gz files with SHA-256 checksum files.</value>
+  </data>
+  <data name="Dialog_ImageFilter_Save" xml:space="preserve">
+    <value>Compressed image (*.img.gz)|*.img.gz|Uncompressed image (*.img)|*.img</value>
+  </data>
+  <data name="Dialog_ImageFilter_Open" xml:space="preserve">
+    <value>Disk images (*.img;*.img.gz;*.gz)|*.img;*.img.gz;*.gz|All files (*.*)|*.*</value>
+  </data>
+  <data name="Error_Unhandled" xml:space="preserve">
+    <value>An unexpected error occurred:
+{0}</value>
+  </data>
+  <data name="Error_Details" xml:space="preserve">
+    <value>Details: {0}</value>
+  </data>
+  <data name="Error_None" xml:space="preserve">
+    <value>No error.</value>
+  </data>
+  <data name="Error_DeviceRemoved" xml:space="preserve">
+    <value>The device was disconnected.</value>
+  </data>
+  <data name="Error_ReadError" xml:space="preserve">
+    <value>A read error occurred.</value>
+  </data>
+  <data name="Error_WriteError" xml:space="preserve">
+    <value>A write error occurred.</value>
+  </data>
+  <data name="Error_DestinationFull" xml:space="preserve">
+    <value>There is not enough free space on the destination drive.</value>
+  </data>
+  <data name="Error_FileTooLargeForFs" xml:space="preserve">
+    <value>The destination file system cannot store files larger than 4 GB. Choose an NTFS or exFAT drive.</value>
+  </data>
+  <data name="Error_CorruptImage" xml:space="preserve">
+    <value>The image file is damaged or truncated.</value>
+  </data>
+  <data name="Error_WriteProtected" xml:space="preserve">
+    <value>The device is write-protected. Check the lock switch on the SD card.</value>
+  </data>
+  <data name="Error_LockFailed" xml:space="preserve">
+    <value>The device is in use by another program. Close windows and programs that use it and try again.</value>
+  </data>
+  <data name="Error_SizeMismatch" xml:space="preserve">
+    <value>The image does not fit on the target.</value>
+  </data>
+  <data name="Error_VerifyMismatch" xml:space="preserve">
+    <value>Verification failed: the data read back differs from the image.</value>
+  </data>
+  <data name="Error_ChecksumMismatch" xml:space="preserve">
+    <value>The image does not match its checksum file. The image is damaged or was modified.</value>
+  </data>
+  <data name="Error_EjectVetoed" xml:space="preserve">
+    <value>The device could not be ejected.</value>
+  </data>
+  <data name="Error_ImageOnTarget" xml:space="preserve">
+    <value>The image file is stored on the target device. Choose an image on another drive.</value>
+  </data>
+  <data name="Error_ImageOnSource" xml:space="preserve">
+    <value>The image cannot be saved on the device being backed up. Choose another drive.</value>
+  </data>
+  <data name="Error_TargetHostsExecutable" xml:space="preserve">
+    <value>This program runs from the selected device, so the device cannot be overwritten.</value>
+  </data>
+  <data name="Error_ExternalDiskNotConfirmed" xml:space="preserve">
+    <value>Writing to an external disk was not confirmed.</value>
+  </data>
+  <data name="Error_MissingPartitionMetadata" xml:space="preserve">
+    <value>This image has no partition information file (.partition.json), so it cannot be written into a partition.</value>
+  </data>
+  <data name="Error_UnsupportedMetadata" xml:space="preserve">
+    <value>The partition information file is damaged or comes from a newer version.</value>
+  </data>
+  <data name="Error_DeviceChanged" xml:space="preserve">
+    <value>The device changed after it was listed. Select it again.</value>
+  </data>
+  <data name="Error_InvalidRequest" xml:space="preserve">
+    <value>The selected settings are not valid for this operation.</value>
+  </data>
+  <data name="Error_Unexpected" xml:space="preserve">
+    <value>An unexpected error occurred.</value>
+  </data>
+  <data name="Devices_None" xml:space="preserve">
+    <value>No USB or SD devices found. Insert a USB flash drive or an SD card.</value>
+  </data>
+  <data name="Bus_Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Menu_Diagnostics" xml:space="preserve">
+    <value>&amp;Device diagnostics…</value>
+  </data>
+  <data name="Diagnostics_Title" xml:space="preserve">
+    <value>Device diagnostics</value>
+  </data>
+  <data name="Diagnostics_Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Diagnostics_Save" xml:space="preserve">
+    <value>Save…</value>
+  </data>
+  <data name="Diagnostics_Collecting" xml:space="preserve">
+    <value>Collecting device information…</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Dialog_TextFilter" xml:space="preserve">
+    <value>Text files (*.txt)|*.txt</value>
+  </data>
+  <data name="Error_PartitionBeyondDevice" xml:space="preserve">
+    <value>This partition lies beyond the capacity the device reports, so it cannot be read. Use a different card reader, for example a USB one.</value>
+  </data>
+  <data name="Note_SizeTruncated" xml:space="preserve">
+    <value>unsuitable reader: wrong card capacity</value>
+  </data>
+  <data name="Error_UnsuitableReader" xml:space="preserve">
+    <value>This card reader cannot be used with the inserted card: it reports less capacity than the card&apos;s partitions use, so a backup or restore would be incomplete. Use another card reader, for example a USB one.</value>
+  </data>
+  <data name="Device_Unsuitable" xml:space="preserve">
+    <value>The selected reader cannot be used with this card: it reports less capacity than the card&apos;s partitions use. Use another card reader, for example a USB one.</value>
+  </data>
+  <data name="Option_AllowIncomplete" xml:space="preserve">
+    <value>Back up anyway (incomplete image: the reader hides the end of the card)</value>
+  </data>
+  <data name="Warning_IncompleteBackup" xml:space="preserve">
+    <value>This reader hides the end of the card. The image will contain only what the reader shows and will be INCOMPLETE. Use it only for comparison, not as a real backup.</value>
+  </data>
+  <data name="Result_ImageIncomplete" xml:space="preserve">
+    <value>The image is INCOMPLETE: the card reader hid the end of the card.</value>
+  </data>
+  <data name="Progress_AverageSpeed" xml:space="preserve">
+    <value>Average speed: {0}</value>
+  </data>
+</root>

@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <AssemblyName>HddBackup</AssemblyName>
+    <RootNamespace>HddBackup.App</RootNamespace>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <Version>1.0.0</Version>
+    <Product>HddBackup</Product>
+    <Description>Portable USB/SD card imaging utility</Description>
+    <!-- Single executable: never produce culture satellite folders. -->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <!-- Core sources are compiled into the executable (no project reference, no DLL). -->
+  <ItemGroup>
+    <Compile Include="..\HddBackup.Core\**\*.cs"
+             Exclude="..\HddBackup.Core\obj\**;..\HddBackup.Core\bin\**"
+             Link="Core\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!--
+    All languages are embedded in the main assembly. WithCulture="false" stops MSBuild
+    from turning culture-suffixed .resx files into satellite assemblies.
+  -->
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Strings.resx" WithCulture="false" LogicalName="HddBackup.Strings.en.resources" />
+    <EmbeddedResource Update="Resources\Strings.uk.resx" WithCulture="false" LogicalName="HddBackup.Strings.uk.resources" />
+    <EmbeddedResource Update="Resources\Strings.de.resx" WithCulture="false" LogicalName="HddBackup.Strings.de.resources" />
+    <EmbeddedResource Update="Resources\Strings.fr.resx" WithCulture="false" LogicalName="HddBackup.Strings.fr.resources" />
+    <EmbeddedResource Update="Resources\Strings.es.resx" WithCulture="false" LogicalName="HddBackup.Strings.es.resources" />
+    <EmbeddedResource Update="Resources\Strings.ja.resx" WithCulture="false" LogicalName="HddBackup.Strings.ja.resources" />
+  </ItemGroup>
+
+</Project>

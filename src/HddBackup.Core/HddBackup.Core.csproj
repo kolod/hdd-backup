@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    UI-independent imaging core. Built as a library only for unit tests and to guarantee
+    that no Windows Forms dependency creeps in. The shipped executable compiles these
+    sources directly (see HddBackup.App.csproj), so no DLL is deployed.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <RootNamespace>HddBackup.Core</RootNamespace>
+    <AssemblyName>HddBackup.Core</AssemblyName>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+</Project>
