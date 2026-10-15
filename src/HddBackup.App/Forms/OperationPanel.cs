@@ -39,8 +39,12 @@ namespace HddBackup.App.Forms
         private OperationRequest _request;
         private OperationResult _result;
         private OperationProgress _last = OperationProgress.Idle;
-        private string _step;
-        private string _extraLine;
+        // Formatted on every render so a language switch during the operation applies at once.
+        private Func<string> _step;
+        private Func<string> _extraLine;
+
+        // Bytes seen in the main data phase; the result carries DataBytes only on success.
+        private long _dataBytesSeen;
 
         public OperationPanel(TaskbarProgress taskbar)
         {
@@ -84,12 +88,13 @@ namespace HddBackup.App.Forms
 
         public event EventHandler CancelRequested;
 
-        public void Start(IImagingEngine engine, OperationRequest request, string step = null)
+        public void Start(IImagingEngine engine, OperationRequest request, Func<string> step = null)
         {
             _engine = engine;
             _request = request;
             _step = step;
             _extraLine = null;
+            _dataBytesSeen = 0;
             _result = null;
             _last = OperationProgress.Idle;
             _banner.Visible = false;
@@ -111,7 +116,7 @@ namespace HddBackup.App.Forms
             _taskbar.SetState(confirming ? TaskbarState.Paused : TaskbarState.Normal);
         }
 
-        public void ShowResult(OperationResult result, string extraLine = null)
+        public void ShowResult(OperationResult result, Func<string> extraLine = null)
         {
             _timer.Stop();
             _result = result;
@@ -168,16 +173,24 @@ namespace HddBackup.App.Forms
         private void Refresh(OperationProgress p)
         {
             _last = p;
-            _phase.Text = _step == null ? PhaseText(p.Phase) : Strings.Format("Shrink_StepPhase", _step, PhaseText(p.Phase));
+            _phase.Text = _step == null ? PhaseText(p.Phase) : Strings.Format("Shrink_StepPhase", _step(), PhaseText(p.Phase));
             if (_result != null)
             {
                 // After the end the last phase (release/eject) has no data; show the whole run instead.
                 double seconds = _result.Duration.TotalSeconds;
+                long bytes = _result.DataBytes > 0 ? _result.DataBytes : _dataBytesSeen;
                 _bar.Value = (int)Math.Round(Math.Max(0, Math.Min(100, p.Percent)) * 10);
-                _bytes.Text = Formatters.Bytes(_result.DataBytes) + "    " + p.Percent.ToString("0.0", LanguageService.Culture) + " %";
-                _speed.Text = Strings.Format("Progress_AverageSpeed", Formatters.Speed(seconds > 0 ? _result.DataBytes / seconds : 0));
+                _bytes.Text = Formatters.Bytes(bytes) + "    " + p.Percent.ToString("0.0", LanguageService.Culture) + " %";
+                _speed.Text = Strings.Format("Progress_AverageSpeed", Formatters.Speed(seconds > 0 ? bytes / seconds : 0));
                 _time.Text = Strings.Format("Progress_Time", Formatters.Duration(_result.Duration), Formatters.Duration(TimeSpan.Zero));
                 return;
+            }
+
+            bool mainPhase = p.Phase == OperationPhase.Transferring
+                || (p.Phase == OperationPhase.Verifying && _request?.Kind == OperationKind.VerifyImage);
+            if (mainPhase)
+            {
+                _dataBytesSeen = Math.Max(_dataBytesSeen, p.BytesProcessed);
             }
 
             _bar.Value = (int)Math.Round(Math.Max(0, Math.Min(100, p.Percent)) * 10);
@@ -300,9 +313,9 @@ namespace HddBackup.App.Forms
                 lines.Add(Strings.Format("Result_Sha256", sha));
             }
 
-            if (!string.IsNullOrEmpty(_extraLine))
+            if (_extraLine != null)
             {
-                lines.Add(_extraLine);
+                lines.Add(_extraLine());
             }
 
             lines.Add(Strings.Format("Result_Duration", Formatters.Duration(r.Duration)));

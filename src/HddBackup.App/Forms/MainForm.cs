@@ -272,7 +272,7 @@ namespace HddBackup.App.Forms
         }
 
         /// <summary>Runs one engine operation with the shared panel; null when the window is closing.</summary>
-        private async Task<OperationResult> RunEngineAsync(ImagingEngine engine, OperationRequest request, string step, string extraResultLine)
+        private async Task<OperationResult> RunEngineAsync(ImagingEngine engine, OperationRequest request, Func<string> step, Func<string> extraResultLine)
         {
             _running = request;
             _cts = new CancellationTokenSource();
@@ -398,7 +398,7 @@ namespace HddBackup.App.Forms
                 ShrinkTargetBytes = request.Device.Size,
                 EjectAfter = false
             };
-            var shrinkResult = await RunEngineAsync(new ImagingEngine(_access), shrinkRequest, Strings.Format("Shrink_Step", 1, 2), null);
+            var shrinkResult = await RunEngineAsync(new ImagingEngine(_access), shrinkRequest, () => Strings.Format("Shrink_Step", 1, 2), null);
             if (shrinkResult == null || shrinkResult.State != OperationState.Completed)
             {
                 return true;
@@ -415,8 +415,12 @@ namespace HddBackup.App.Forms
                 return true;
             }
 
-            string saved = Strings.Format("Shrink_ResultSaved", output, Formatters.Bytes(shrinkResult.DataBytes));
-            await RunEngineAsync(engine, writeRequest, Strings.Format("Shrink_Step", 2, 2), saved);
+            long savedBytes = shrinkResult.DataBytes;
+            await RunEngineAsync(
+                engine,
+                writeRequest,
+                () => Strings.Format("Shrink_Step", 2, 2),
+                () => Strings.Format("Shrink_ResultSaved", output, Formatters.Bytes(savedBytes)));
             RefreshDevices();
             return true;
         }
@@ -476,9 +480,10 @@ namespace HddBackup.App.Forms
 
         private void SetBusy(bool busy)
         {
+            // The language menu stays available: every visible text, including the progress
+            // panel, is re-rendered on a switch and the running operation is not affected.
             _backup.Enabled = !busy;
             _restore.Enabled = !busy;
-            _languageMenu.Enabled = !busy;
         }
 
         private bool Ask(string key, MessageBoxIcon icon = MessageBoxIcon.Warning)
