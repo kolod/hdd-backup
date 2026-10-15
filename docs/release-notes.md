@@ -5,6 +5,10 @@ copies it verbatim (see [releasing.md](releasing.md)). Keep the heading format
 `## X.Y.Z — title (date)`; the hashes listed under "Artifact" in older sections are from local
 builds, while the authoritative checksums are the ones attached to each GitHub release.
 
+## 1.1.0-rc.1 — CI dry run (2026-10-15)
+
+Test of the automated release workflow (feature 003): this pre-release draft is created from the
+tag and deleted again after the check. It contains the same changes as 1.1.0 below.
 ## 1.1.0 — release candidate (2026-10-15)
 
 Feature `002-ext4-image-shrink`: fit a Linux (for example Raspberry Pi OS) image onto a smaller
