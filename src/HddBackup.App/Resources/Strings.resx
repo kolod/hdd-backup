@@ -422,6 +422,10 @@
 
 Works on Windows 7 SP1 to Windows 11. Images are standard .img or .img.gz files with SHA-256 checksum files.</value>
   </data>
+  <data name="About_License" xml:space="preserve">
+    <value>License: GNU General Public License version 3 or later. This program comes with ABSOLUTELY NO WARRANTY.
+Source code: {0}</value>
+  </data>
   <data name="Dialog_ImageFilter_Save" xml:space="preserve">
     <value>Compressed image (*.img.gz)|*.img.gz|Uncompressed image (*.img)|*.img</value>
   </data>

@@ -422,6 +422,10 @@
 
 Läuft unter Windows 7 SP1 bis Windows 11. Abbilder sind normale .img- oder .img.gz-Dateien mit SHA-256-Prüfsummendateien.</value>
   </data>
+  <data name="About_License" xml:space="preserve">
+    <value>Lizenz: GNU General Public License Version 3 oder später. Dieses Programm wird OHNE JEGLICHE GEWÄHRLEISTUNG bereitgestellt.
+Quellcode: {0}</value>
+  </data>
   <data name="Dialog_ImageFilter_Save" xml:space="preserve">
     <value>Komprimiertes Abbild (*.img.gz)|*.img.gz|Unkomprimiertes Abbild (*.img)|*.img</value>
   </data>

@@ -7,6 +7,8 @@ namespace HddBackup.App.Forms
 {
     internal sealed class AboutDialog : Form
     {
+        private const string SourceUrl = "https://github.com/kolod/hdd-backup";
+
         public AboutDialog()
         {
             Text = Strings.Get("About_Title");
@@ -33,6 +35,17 @@ namespace HddBackup.App.Forms
                 MaximumSize = new Size(420, 0),
                 Margin = new Padding(3, 8, 3, 12),
                 Text = Strings.Get("About_Text")
+            });
+
+            // GPL-3.0 section 5(d): an interactive program shows the copyright, the absence of
+            // warranty and where the license can be read.
+            var copyright = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright;
+            root.Controls.Add(new Label
+            {
+                AutoSize = true,
+                MaximumSize = new Size(420, 0),
+                Margin = new Padding(3, 0, 3, 12),
+                Text = copyright + "\n" + Strings.Format("About_License", SourceUrl)
             });
 
             var ok = Ui.Button();

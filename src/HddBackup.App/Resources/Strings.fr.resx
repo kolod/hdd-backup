@@ -422,6 +422,10 @@
 
 Fonctionne de Windows 7 SP1 à Windows 11. Les images sont des fichiers .img ou .img.gz standard accompagnés de fichiers de somme de contrôle SHA-256.</value>
   </data>
+  <data name="About_License" xml:space="preserve">
+    <value>Licence : GNU General Public License version 3 ou ultérieure. Ce programme est fourni SANS AUCUNE GARANTIE.
+Code source : {0}</value>
+  </data>
   <data name="Dialog_ImageFilter_Save" xml:space="preserve">
     <value>Image compressée (*.img.gz)|*.img.gz|Image non compressée (*.img)|*.img</value>
   </data>

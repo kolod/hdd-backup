@@ -57,3 +57,12 @@ compare the SHA-256 of images made with two different readers.
 
 Hardware validation steps: [docs/manual-hardware-checklist.md](docs/manual-hardware-checklist.md).
 Design documents: [specs/001-usb-sd-imaging/](specs/001-usb-sd-imaging/).
+
+## License
+
+Copyright © 2026 Oleksandr Kolodkin.
+
+HddBackup is free software: you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version. It is distributed WITHOUT ANY WARRANTY.
+See [LICENSE](LICENSE) and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

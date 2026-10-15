@@ -422,6 +422,10 @@
 
 Windows 7 SP1 から Windows 11 で動作します。イメージは標準の .img または .img.gz ファイルで、SHA-256 チェックサム ファイルが付きます。</value>
   </data>
+  <data name="About_License" xml:space="preserve">
+    <value>ライセンス: GNU General Public License バージョン 3 以降。このプログラムは完全に無保証です。
+ソースコード: {0}</value>
+  </data>
   <data name="Dialog_ImageFilter_Save" xml:space="preserve">
     <value>圧縮イメージ (*.img.gz)|*.img.gz|非圧縮イメージ (*.img)|*.img</value>
   </data>

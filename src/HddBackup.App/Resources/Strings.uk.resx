@@ -422,6 +422,10 @@
 
 Працює у Windows 7 SP1 – Windows 11. Образи — це стандартні файли .img або .img.gz із файлами контрольних сум SHA-256.</value>
   </data>
+  <data name="About_License" xml:space="preserve">
+    <value>Ліцензія: GNU General Public License версії 3 або новішої. Ця програма постачається БЕЗ БУДЬ-ЯКИХ ГАРАНТІЙ.
+Вихідний код: {0}</value>
+  </data>
   <data name="Dialog_ImageFilter_Save" xml:space="preserve">
     <value>Стиснений образ (*.img.gz)|*.img.gz|Нестиснений образ (*.img)|*.img</value>
   </data>
