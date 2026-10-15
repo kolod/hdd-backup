@@ -24,4 +24,4 @@ HddBackup.ini
 .remember/
 
 # Local test images (not part of the repository)
-data/
+/data/
