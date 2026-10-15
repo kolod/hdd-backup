@@ -86,3 +86,7 @@ Record the results in `specs/003-ci-release-automation/quickstart.md` (Validatio
 | 2026-10-15 | Full test run: skipped tests | 231 passed, 2 skipped (hardware, 16 GiB benchmark), shown as skipped in TRX summary |
 | 2026-10-15 | Peak temp usage of a full test run (T008) | before per-test cleanup: 9.0 GB left behind per run; after `TempDirs` in Ext4/shrink tests: peak 1.57 GB, 0.72 GB left (removed by the next run). The test host is killed without `ProcessExit`, so exit cleanup is best effort |
 | 2026-10-15 | Pester `Write-TestSummary.Tests.ps1` | 5/5 passed |
+| 2026-10-15 | Local `Invoke-Ext4Checks.sh` in Docker (T024) | 12/12 exported images OK in 3.0 min (4 CPUs); a copy with one flipped group-descriptor byte → exit 1, image named with the e2fsck findings |
+| 2026-10-15 | First CI run on PR #2 (T012) | failed: Pester data files were excluded by a too-broad `data/` ignore rule; fixed (`/data/`) |
+| 2026-10-15 | CI run 38773508509 on PR #2 (T012, SC-001) | `build-test` 3m08s (build 0 warnings; 231 passed, 2 skipped; Pester 52/52; artifact check passed) → `ext4-check` 3m33s (12/12 images OK); whole run 6.8 min ≤ 15 min |
+| 2026-10-15 | Negative CI checks (T013, SC-005), temporary branches via `workflow_dispatch` | failing assertion → run 38774567003 fails, log and summary name `CiNegativeTests.DeliberatelyFails_ForCiCheck` with "Assert.Equal() Failure: Values differ"; unused variable → run 38774571597 fails at build with `error CS0168` at `Checksums.cs(9,55)`. Branches deleted |

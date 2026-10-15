@@ -95,8 +95,8 @@ warning turns it red and names the cause.
   - concurrency `ci-${{ github.ref }}`, cancelling in progress only for pull requests;
   - job **`build-test`** on `windows-2025` (timeout 30 min): `actions/checkout` pinned by SHA, the composite action with `version: 0.0.0-ci.${{ github.run_number }}` and `export-ext4: true`;
   - `actions/upload-artifact` pinned by SHA for `hddbackup-exe` (exe + config, 14 days), `test-results` (TRX, 14 days, `if: always()`) and `ext4-exports` (1 day, `if-no-files-found: error`).
-- [ ] T012 [US1] Push the branch and open the feature PR. Confirm that `build-test` runs, the summary shows the totals, and the artifacts download. Fix any warnings or test failures that only appear on the hosted image. Record the duration (SC-001 ≤ 15 min) in `specs/003-ci-release-automation/quickstart.md`
-- [ ] T013 [US1] Negative checks on a throwaway branch (quickstart §2.2–2.3): a failing assertion names the test in the summary, and an unused variable fails the build. Record both in the Validation log, then delete the branch
+- [X] T012 [US1] Push the branch and open the feature PR. Confirm that `build-test` runs, the summary shows the totals, and the artifacts download. Fix any warnings or test failures that only appear on the hosted image. Record the duration (SC-001 ≤ 15 min) in `specs/003-ci-release-automation/quickstart.md`
+- [X] T013 [US1] Negative checks on a throwaway branch (quickstart §2.2–2.3): a failing assertion names the test in the summary, and an unused variable fails the build. Record both in the Validation log, then delete the branch
 
 **Checkpoint**: MVP. CI runs on every change. Protection comes in Phase 6.
 
