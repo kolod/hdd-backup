@@ -252,8 +252,9 @@ namespace HddBackup.Core.Imaging
                 ct.ThrowIfCancellationRequested();
                 if (request.VerifyAfter)
                 {
-                    model.BeginPhase(OperationPhase.Verifying, writer.FileLength, result.DataBytes);
-                    VerifyWrittenImage(writer.PartialPath, result, model, ct);
+                    var progress = new ImageProgress(writer.FileLength, result.DataBytes);
+                    model.BeginPhase(OperationPhase.Verifying, progress.Total, result.DataBytes);
+                    VerifyWrittenImage(writer.PartialPath, result, model, progress, ct);
                 }
 
                 ct.ThrowIfCancellationRequested();
@@ -330,7 +331,8 @@ namespace HddBackup.Core.Imaging
                 using (var content = new Sha256Accumulator())
                 {
                     model.SetState(OperationState.Running);
-                    model.BeginPhase(OperationPhase.Transferring, reader.FileLength, image.DataSize);
+                    var progress = new ImageProgress(reader.FileLength, image.ProgressSize);
+                    model.BeginPhase(OperationPhase.Transferring, progress.Total, image.DataSize);
                     var source = reader;
                     BufferPipeline.Run(
                         _bufferSize,
@@ -357,7 +359,7 @@ namespace HddBackup.Core.Imaging
                             chunk.Offset = next;
                             chunk.Count = n;
                             chunk.AlignedCount = aligned;
-                            chunk.Units = source.FilePosition;
+                            chunk.Units = progress.Units(source.FilePosition, next + n);
                             next += n;
                             return true;
                         },
@@ -460,7 +462,8 @@ namespace HddBackup.Core.Imaging
                 using (var content = new Sha256Accumulator())
                 {
                     model.SetState(OperationState.Running);
-                    model.BeginPhase(OperationPhase.Verifying, reader.FileLength, image.DataSize);
+                    var progress = new ImageProgress(reader.FileLength, image.ProgressSize);
+                    model.BeginPhase(OperationPhase.Verifying, progress.Total, image.DataSize);
                     BufferPipeline.Run(
                         _bufferSize,
                         _bufferCount,
@@ -474,7 +477,7 @@ namespace HddBackup.Core.Imaging
 
                             chunk.Offset = reader.Position - n;
                             chunk.Count = n;
-                            chunk.Units = reader.FilePosition;
+                            chunk.Units = progress.Units(reader.FilePosition, reader.Position);
                             return true;
                         },
                         new Action<Chunk>[]
@@ -587,7 +590,7 @@ namespace HddBackup.Core.Imaging
             }
         }
 
-        private void VerifyWrittenImage(string partialPath, OperationResult result, PhaseModel model, CancellationToken ct)
+        private void VerifyWrittenImage(string partialPath, OperationResult result, PhaseModel model, ImageProgress progress, CancellationToken ct)
         {
             using (var reader = new ImageReader(partialPath))
             using (var content = new Sha256Accumulator())
@@ -605,7 +608,7 @@ namespace HddBackup.Core.Imaging
 
                         chunk.Offset = reader.Position - n;
                         chunk.Count = n;
-                        chunk.Units = reader.FilePosition;
+                        chunk.Units = progress.Units(reader.FilePosition, reader.Position);
                         return true;
                     },
                     new Action<Chunk>[]

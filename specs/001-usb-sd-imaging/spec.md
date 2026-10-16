@@ -402,9 +402,13 @@ flow.
   this step when enabled.
 - For a backup, 100% additionally means the destination image file and its checksum file(s)
   are fully flushed to their storage.
-- For `.img.gz` restores, progress percentage is based on the portion of the compressed file
-  consumed (the uncompressed size is not reliably known in advance for images over 4 GB); speed
-  is reported in uncompressed bytes written to the medium.
+- For `.img.gz` restores and verification, progress percentage is based on uncompressed bytes
+  against the uncompressed size when it is known (partition images) or can be estimated (whole-
+  device images: the smallest size that covers the last partition and matches the gzip trailer,
+  which stores the size modulo 4 GiB). It never falls behind the portion of the compressed file
+  consumed, which is used alone when no size is available. (Amended 2026-10-16: the compressed
+  portion alone showed 0.5% after 11.8 GiB of a mostly empty 29 GiB image.) Speed is reported in
+  uncompressed bytes.
 - Progress phases are weighted by estimated duration; verification, when enabled, accounts for a
   share proportional to its expected read time.
 - Read-back verification after restore is enabled by default; verification after backup reads

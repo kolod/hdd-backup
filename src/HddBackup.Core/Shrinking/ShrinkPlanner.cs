@@ -20,7 +20,7 @@ namespace HddBackup.Core.Shrinking
     {
         public const long Alignment = 1024 * 1024;
         public const long MinimumMarginBytes = 128L * 1024 * 1024;
-        public const int GptTailSectors = 34;
+        public const int GptTailSectors = ImageHead.GptTailSectors;
         private const int PrefixBytes = 1024 * 1024;
 
         public static ShrinkPlan Analyze(string imagePath, CancellationToken cancel)
@@ -93,19 +93,7 @@ namespace HddBackup.Core.Shrinking
         }
 
         /// <summary>Logical size an image needs on a device (end of the last partition, plus backup GPT).</summary>
-        public static long RequiredDeviceBytes(string imagePath)
-        {
-            using (var device = OpenForAnalysis(imagePath, out _))
-            {
-                var table = PartitionTableReader.Read(device);
-                if (table.Partitions.Count == 0)
-                {
-                    return 0;
-                }
-
-                return table.Partitions.Max(p => p.End) + (table.Style == TableStyle.Gpt ? GptTailSectors * 512L : 0);
-            }
-        }
+        public static long RequiredDeviceBytes(string imagePath) => ImageHead.RequiredDeviceBytes(imagePath);
 
         /// <summary>Converts <see cref="Ext4Reader.Validate"/> problem codes into blockers.</summary>
         internal static List<ShrinkBlockerInfo> FromReaderProblems(IEnumerable<string> problems)
