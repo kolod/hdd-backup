@@ -79,6 +79,11 @@ namespace HddBackup.Core.Imaging
                 return ValidateShrink(request);
             }
 
+            if (request.Kind == OperationKind.ConvertImage)
+            {
+                return ValidateConvert(request, ImageDescriptor.Load(request.ImagePath));
+            }
+
             var image = ImageDescriptor.Load(request.ImagePath);
             return request.IsRestore
                 ? RestoreGuard.Check(request, image, _access.GetPathInfo(request.ImagePath))
@@ -99,7 +104,7 @@ namespace HddBackup.Core.Imaging
 
             var model = request.Kind == OperationKind.ShrinkImage
                 ? new PhaseModel(ShrinkShares(request))
-                : new PhaseModel(request.VerifyAfter && request.Kind != OperationKind.VerifyImage);
+                : new PhaseModel(request.Kind == OperationKind.ConvertImage || (request.VerifyAfter && request.Kind != OperationKind.VerifyImage));
             Volatile.Write(ref _model, model);
             return Task.Factory.StartNew(
                 () => Run(request, model, cancellationToken),
@@ -139,6 +144,10 @@ namespace HddBackup.Core.Imaging
                 else if (request.Kind == OperationKind.ShrinkImage)
                 {
                     RunShrink(request, model, result, ct);
+                }
+                else if (request.Kind == OperationKind.ConvertImage)
+                {
+                    RunConvert(request, model, result, ct);
                 }
                 else if (request.IsRestore)
                 {
@@ -502,6 +511,12 @@ namespace HddBackup.Core.Imaging
                     throw new ImagingException(ErrorCode.ChecksumMismatch, "The image does not match its stored checksum.");
                 }
 
+                if (request.SaveMissingChecksums)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    result.SavedChecksumFiles = SaveMissingChecksumFiles(image, result);
+                }
+
                 result.ContentComplete = true;
                 result.SafeToRemove = true;
                 result.State = OperationState.Completed;
@@ -511,6 +526,213 @@ namespace HddBackup.Core.Imaging
                 RecordFailure(result, ex);
                 result.SafeToRemove = true;
             }
+        }
+
+        /// <summary>Writes the checksum files an image does not have yet; returns their file names.</summary>
+        private static IReadOnlyList<string> SaveMissingChecksumFiles(ImageDescriptor image, OperationResult result)
+        {
+            var partials = new List<string>();
+            var saved = new List<string>();
+            string path = image.Path;
+            if (image.FileChecksum == null)
+            {
+                partials.Add(WritePartialChecksum(ImageDescriptor.FileSidecarPath(path), result.FileSha256, Path.GetFileName(path)));
+                saved.Add(Path.GetFileName(ImageDescriptor.FileSidecarPath(path)));
+            }
+
+            if (image.Format == ImageFormat.Gzip && image.ContentChecksum == null)
+            {
+                partials.Add(WritePartialChecksum(ImageDescriptor.ContentSidecarPath(path), result.ContentSha256, ImageDescriptor.ContentFileName(path)));
+                saved.Add(Path.GetFileName(ImageDescriptor.ContentSidecarPath(path)));
+            }
+
+            try
+            {
+                CommitFiles(partials);
+            }
+            catch (Exception)
+            {
+                foreach (var partial in partials)
+                {
+                    TryDelete(partial);
+                }
+
+                throw;
+            }
+
+            return saved;
+        }
+
+        private IReadOnlyList<ValidationWarning> ValidateConvert(OperationRequest request, ImageDescriptor image)
+        {
+            if (string.IsNullOrWhiteSpace(request.OutputPath))
+            {
+                throw new ImagingException(ErrorCode.InvalidRequest, "No output file selected.");
+            }
+
+            if (string.Equals(Path.GetFullPath(request.OutputPath), Path.GetFullPath(request.ImagePath), StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ImagingException(ErrorCode.InvalidRequest, "The output is the source image.");
+            }
+
+            bool gzip = ImageDescriptor.IsGzipPath(request.OutputPath);
+            if (gzip == (image.Format == ImageFormat.Gzip))
+            {
+                throw new ImagingException(ErrorCode.InvalidRequest, "The output has the same format as the source.");
+            }
+
+            long? size = gzip ? null : image.DataSize ?? image.ProgressSize;
+            return DestinationChecks.CheckOutputFile(request.OutputPath, size, _access.GetPathInfo(request.OutputPath));
+        }
+
+        /// <summary>
+        /// ConvertImage: copies the content of an image into the other format. The source is checked
+        /// against its stored checksums; the output gets the sidecars of a backup in its format, is
+        /// verified by reading it back and is committed only then. The source is never written.
+        /// </summary>
+        private void RunConvert(OperationRequest request, PhaseModel model, OperationResult result, CancellationToken ct)
+        {
+            ImageWriter writer = null;
+            var partials = new List<string>();
+            var sidecars = new List<string>();
+            bool committed = false;
+            result.SafeToRemove = true; // no device is involved
+            try
+            {
+                var image = ImageDescriptor.Load(request.ImagePath);
+                ValidateConvert(request, image);
+                ct.ThrowIfCancellationRequested();
+
+                string output = request.OutputPath;
+                bool gzip = ImageDescriptor.IsGzipPath(output);
+                result.IsGzipImage = gzip;
+                using (var reader = new ImageReader(request.ImagePath))
+                using (var content = new Sha256Accumulator())
+                {
+                    writer = new ImageWriter(
+                        output, gzip, request.Compression == CompressionChoice.Fastest ? CompressionLevel.Fastest : CompressionLevel.Optimal);
+                    var progress = new ImageProgress(reader.FileLength, image.ProgressSize);
+                    model.SetState(OperationState.Running);
+                    model.BeginPhase(OperationPhase.Transferring, progress.Total, image.DataSize);
+                    var sink = writer;
+                    BufferPipeline.Run(
+                        _bufferSize,
+                        _bufferCount,
+                        chunk =>
+                        {
+                            int n = reader.ReadFull(chunk.Buffer, 0, chunk.Buffer.Length);
+                            if (n == 0)
+                            {
+                                return false;
+                            }
+
+                            chunk.Offset = reader.Position - n;
+                            chunk.Count = n;
+                            chunk.Units = progress.Units(reader.FilePosition, reader.Position);
+                            return true;
+                        },
+                        new Action<Chunk>[]
+                        {
+                            c => content.Append(c.Buffer, 0, c.Count),
+                            c =>
+                            {
+                                sink.Write(c.Buffer, 0, c.Count, c.Offset);
+                                model.SetUnits(c.Units, c.Offset + c.Count);
+                            }
+                        },
+                        ct);
+
+                    result.DataBytes = reader.Position;
+                    result.ContentSha256 = content.Finish();
+                    result.FileSha256 = reader.FinishFileHash();
+                }
+
+                // A corrupt source must not become a new image with fresh, matching checksums.
+                result.Verifications = CompareChecksums(image, result);
+                if (result.Verifications.Any(v => v.Status == VerificationStatus.Mismatch))
+                {
+                    throw new ImagingException(ErrorCode.ChecksumMismatch, "The image does not match its stored checksum.");
+                }
+
+                model.SetState(OperationState.Finalizing);
+                model.BeginPhase(OperationPhase.Flushing, 0, null);
+                writer.Complete();
+                result.FileSha256 = gzip ? writer.FileHash : result.ContentSha256;
+
+                if (gzip)
+                {
+                    AddSidecar(partials, sidecars, ImageDescriptor.FileSidecarPath(output), result.FileSha256, Path.GetFileName(output));
+                    AddSidecar(partials, sidecars, ImageDescriptor.ContentSidecarPath(output), result.ContentSha256, ImageDescriptor.ContentFileName(output));
+                }
+                else
+                {
+                    AddSidecar(partials, sidecars, ImageDescriptor.FileSidecarPath(output), result.ContentSha256, Path.GetFileName(output));
+                }
+
+                if (image.Kind == ImageKind.Partition)
+                {
+                    string metadataPartial = PartitionMetadataFile.PathFor(output) + PartialSuffix;
+                    partials.Add(metadataPartial);
+                    File.Copy(PartitionMetadataFile.PathFor(request.ImagePath), metadataPartial, true);
+                }
+
+                ct.ThrowIfCancellationRequested();
+                model.BeginPhase(OperationPhase.Verifying, writer.FileLength, result.DataBytes);
+                VerifyWrittenImage(writer.PartialPath, result, model, new ImageProgress(writer.FileLength, result.DataBytes), ct);
+
+                ct.ThrowIfCancellationRequested();
+                partials.Add(writer.PartialPath); // the image itself is renamed last
+                CommitFiles(partials);
+                committed = true;
+                result.OutputPath = output;
+                result.SavedChecksumFiles = sidecars;
+                result.ContentComplete = true;
+                result.State = OperationState.Completed;
+            }
+            catch (Exception ex) when (IsExpected(ex))
+            {
+                RecordFailure(result, ex);
+            }
+            finally
+            {
+                if (!committed)
+                {
+                    writer?.Abort();
+                    foreach (var partial in partials)
+                    {
+                        TryDelete(partial);
+                    }
+                }
+
+                writer?.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Adds a checksum sidecar as a partial file, unless the same checksum for the same name is
+        /// already there (a .img and the .img.gz of the same content share the content sidecar).
+        /// </summary>
+        private static void AddSidecar(List<string> partials, List<string> saved, string path, string sha256, string label)
+        {
+            if (File.Exists(path))
+            {
+                try
+                {
+                    var existing = ChecksumFile.Read(path, ChecksumKind.File);
+                    if (string.Equals(existing.Sha256, sha256, StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(existing.Label, label, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return;
+                    }
+                }
+                catch (Exception ex) when (ex is InvalidDataException || ex is IOException || ex is UnauthorizedAccessException)
+                {
+                    // Unreadable: it is replaced.
+                }
+            }
+
+            partials.Add(WritePartialChecksum(path, sha256, label));
+            saved.Add(Path.GetFileName(path));
         }
 
         private IReadOnlyList<ValidationWarning> ValidateShrink(OperationRequest request)

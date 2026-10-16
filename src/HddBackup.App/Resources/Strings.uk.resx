@@ -327,12 +327,6 @@
   <data name="Check_NotAvailable" xml:space="preserve">
     <value>немає файлу контрольної суми</value>
   </data>
-  <data name="Verify_SaveChecksumsQuestion" xml:space="preserve">
-    <value>Для цього образу не знайдено файлів контрольних сум. Зберегти обчислені контрольні суми поруч з образом?</value>
-  </data>
-  <data name="Verify_ChecksumsSaved" xml:space="preserve">
-    <value>Файли контрольних сум збережено.</value>
-  </data>
   <data name="Confirm_Title" xml:space="preserve">
     <value>Підтвердження запису</value>
   </data>
@@ -556,9 +550,6 @@
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>Якомога менший</value>
   </data>
-  <data name="Shrink_Output" xml:space="preserve">
-    <value>Зберегти менший образ як:</value>
-  </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>Образ більший за пристрій</value>
   </data>
@@ -666,9 +657,6 @@
   <data name="Group_AfterWriting" xml:space="preserve">
     <value>Після запису</value>
   </data>
-  <data name="Group_ShrinkTo" xml:space="preserve">
-    <value>Зменшити до</value>
-  </data>
   <data name="Group_OutputFormat" xml:space="preserve">
     <value>Формат результату</value>
   </data>
@@ -690,7 +678,7 @@
     <value>Розмір карти:</value>
   </data>
   <data name="Image_Create" xml:space="preserve">
-    <value>Створити менший образ</value>
+    <value>Створити образ</value>
   </data>
   <data name="Image_Verify" xml:space="preserve">
     <value>Перевірити образ</value>
@@ -724,5 +712,29 @@
   </data>
   <data name="Tooltip_ColumnOffset" xml:space="preserve">
     <value>У байтах</value>
+  </data>
+  <data name="Image_SameSize" xml:space="preserve">
+    <value>Як у образу</value>
+  </data>
+  <data name="Group_NewImageSize" xml:space="preserve">
+    <value>Розмір нового образу</value>
+  </data>
+  <data name="Image_Output" xml:space="preserve">
+    <value>Зберегти новий образ як:</value>
+  </data>
+  <data name="Image_SameAsSource" xml:space="preserve">
+    <value>Новий образ був би таким самим, як вихідний. Виберіть інший формат або розмір.</value>
+  </data>
+  <data name="Image_CalculateChecksums" xml:space="preserve">
+    <value>Обчислити контрольні суми</value>
+  </data>
+  <data name="Phase_Convert_Transferring" xml:space="preserve">
+    <value>Конвертування образу…</value>
+  </data>
+  <data name="Result_Converted" xml:space="preserve">
+    <value>Конвертований образ збережено: {0}</value>
+  </data>
+  <data name="Result_ChecksumsSaved" xml:space="preserve">
+    <value>Збережено файли контрольних сум: {0}</value>
   </data>
 </root>

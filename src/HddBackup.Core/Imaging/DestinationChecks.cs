@@ -67,10 +67,35 @@ namespace HddBackup.Core.Imaging
             }
 
             bool gzip = ImageDescriptor.IsGzipPath(request.ImagePath);
-            bool fat = destination.FileSystem.StartsWith("FAT", StringComparison.OrdinalIgnoreCase);
-            if (fat && size > Fat32MaxFileSize)
+            warnings.AddRange(CheckOutputFile(request.ImagePath, size, destination));
+
+            if (gzip && File.Exists(Path.Combine(directory, ImageDescriptor.ContentFileName(request.ImagePath))))
             {
-                if (!gzip)
+                warnings.Add(ValidationWarning.ContentChecksumCollides);
+            }
+
+            return warnings;
+        }
+
+        /// <summary>
+        /// Checks that an image file of <paramref name="size"/> uncompressed bytes (null when unknown)
+        /// can be written to <paramref name="path"/>: the folder exists, a FAT file system can hold it
+        /// and, for an uncompressed image of known size, there is enough free space.
+        /// </summary>
+        public static IReadOnlyList<ValidationWarning> CheckOutputFile(string path, long? size, PathInfo destination)
+        {
+            var warnings = new List<ValidationWarning>();
+            string directory = Path.GetDirectoryName(Path.GetFullPath(path));
+            if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+            {
+                throw new ImagingException(ErrorCode.InvalidRequest, "Destination folder does not exist.");
+            }
+
+            bool gzip = ImageDescriptor.IsGzipPath(path);
+            bool fat = destination.FileSystem.StartsWith("FAT", StringComparison.OrdinalIgnoreCase);
+            if (fat && (size == null || size.Value > Fat32MaxFileSize))
+            {
+                if (!gzip && size != null)
                 {
                     throw new ImagingException(ErrorCode.FileTooLargeForFs, "The destination file system cannot store files over 4 GB.");
                 }
@@ -78,16 +103,11 @@ namespace HddBackup.Core.Imaging
                 warnings.Add(ValidationWarning.MayExceedFat32Limit);
             }
 
-            if (!gzip && destination.FreeBytes.HasValue && destination.FreeBytes.Value < size + SidecarReserve)
+            if (!gzip && size.HasValue && destination.FreeBytes.HasValue && destination.FreeBytes.Value < size.Value + SidecarReserve)
             {
                 throw new ImagingException(
                     ErrorCode.DestinationFull,
-                    string.Format(CultureInfo.InvariantCulture, "{0} bytes are needed, {1} are free.", size + SidecarReserve, destination.FreeBytes.Value));
-            }
-
-            if (gzip && File.Exists(Path.Combine(directory, ImageDescriptor.ContentFileName(request.ImagePath))))
-            {
-                warnings.Add(ValidationWarning.ContentChecksumCollides);
+                    string.Format(CultureInfo.InvariantCulture, "{0} bytes are needed, {1} are free.", size.Value + SidecarReserve, destination.FreeBytes.Value));
             }
 
             return warnings;

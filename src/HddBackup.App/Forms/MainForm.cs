@@ -254,7 +254,7 @@ namespace HddBackup.App.Forms
                     request.ExternalDiskConfirmed = request.Device.IsRemovableMedia || confirm.ExternalDiskConfirmed;
                 }
             }
-            else if (request.IsBackup && warnings.Count > 0)
+            else if ((request.IsBackup || request.Kind == OperationKind.ConvertImage) && warnings.Count > 0)
             {
                 var text = string.Join(Environment.NewLine, warnings.Select(w => "• " + Strings.Get("Warning_" + w)))
                     + Environment.NewLine + Environment.NewLine + Strings.Get("Warning_Continue");
@@ -270,9 +270,10 @@ namespace HddBackup.App.Forms
                 return;
             }
 
-            if (request.Kind == OperationKind.VerifyImage)
+            // New checksum files, or a converted image sharing a sidecar with the source: show them.
+            if (result.SavedChecksumFiles.Count > 0 || (request.Kind == OperationKind.ConvertImage && result.State == OperationState.Completed))
             {
-                OfferToSaveChecksums(result);
+                _image.Reload();
             }
 
             if (_refreshPending || !request.IsBackup || request.EjectAfter)
@@ -439,27 +440,6 @@ namespace HddBackup.App.Forms
                 () => Strings.Format("Shrink_ResultSaved", output, Formatters.Bytes(savedBytes)));
             RefreshDevices();
             return true;
-        }
-
-        private void OfferToSaveChecksums(OperationResult result)
-        {
-            if (result.State != OperationState.Completed
-                || result.Verifications.Any(v => v.Status != VerificationStatus.NotAvailable)
-                || !Ask("Verify_SaveChecksumsQuestion", MessageBoxIcon.Question))
-            {
-                return;
-            }
-
-            try
-            {
-                ImagingEngine.SaveChecksumFiles(result.ImagePath, result.IsGzipImage, result.FileSha256, result.ContentSha256);
-                MessageBox.Show(this, Strings.Get("Verify_ChecksumsSaved"), Strings.Get("App_Name"), MessageBoxButtons.OK, MessageBoxIcon.Information);
-                _image.Reload();
-            }
-            catch (Exception ex) when (ex is System.IO.IOException || ex is UnauthorizedAccessException)
-            {
-                MessageBox.Show(this, ex.Message, Strings.Get("App_Name"), MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void ConfirmCancel()

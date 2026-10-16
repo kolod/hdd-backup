@@ -54,5 +54,11 @@ namespace HddBackup.Core.Imaging
         public long DataBytes { get; set; }
 
         public TimeSpan Duration { get; set; }
+
+        /// <summary>ConvertImage: the committed new image.</summary>
+        public string OutputPath { get; set; }
+
+        /// <summary>File names of checksum files written by the operation (conversion or checksum calculation).</summary>
+        public IReadOnlyList<string> SavedChecksumFiles { get; set; } = Array.Empty<string>();
     }
 }

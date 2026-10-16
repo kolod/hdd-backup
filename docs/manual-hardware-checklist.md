@@ -52,4 +52,6 @@ properly) and an 8 GB card F. Back up E to `pi.img.gz` first (step 4).
 | 24 | **Image** tab → Smallest possible, output format Compressed → **Create smaller image** | Result ≤ used data + 10 % (or + 256 MB) (SC-005); writing it to F and booting works as in step 21 | ☐ | ☐ |
 | 25 | Cancel a shrink halfway | Amber banner "no image file was created"; no `.partial` or `.work` file left next to the output | ☐ | ☐ |
 | 26 | Shrink with too little free space on the output drive | Refused at the start with "not enough free space"; nothing left behind | ☐ | ☐ |
-| 27 | **Image** tab → `pi.img.gz` → Size of a device → card F → **Create smaller image** | `pi_shrunk_<size>G.img` fits F; nothing is written to F (its volumes stay mounted, contents unchanged) | ☐ | ☐ |
+| 27 | **Image** tab → `pi.img.gz` → Size of a device → card F → **Create image** | `pi_shrunk_<size>G.img` fits F; nothing is written to F (its volumes stay mounted, contents unchanged) | ☐ | ☐ |
+| 28 | **Image** tab → `pi.img.gz` → Same as the image, Uncompressed → **Create image**, then write the `pi.img` to F | `pi.img` and `pi.img.sha256` saved, `certutil -hashfile pi.img SHA256` equals the sidecar; the Pi boots from F | ☐ | ☐ |
+| 29 | Copy an image without checksum files to a USB stick, **Image** tab → **Calculate checksums** | Checksum files saved next to it on the stick; the button then reads **Verify image** | ☐ | ☐ |
