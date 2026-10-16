@@ -5,6 +5,20 @@ copies it verbatim (see [releasing.md](releasing.md)). Keep the heading format
 `## X.Y.Z — title (date)`; the hashes listed under "Artifact" in older sections are from local
 builds, while the authoritative checksums are the ones attached to each GitHub release.
 
+## Unreleased — feature `004-two-column-layout`
+
+- Back up and Restore tabs: device list on the left, options grouped in a right column, image
+  path and the start button at the bottom.
+- New **Image** tab for work that does not touch a device: **Verify image** and **Create smaller
+  image** (smallest possible, size of a connected device, or a card size). It replaces the
+  Shrink image dialog; the Restore tab keeps only **Write to device…**.
+- The Restore and Image tabs share the selected image.
+- The Restore tab warns as soon as the image is larger than the selected device, and says
+  whether it can be shrunk to fit.
+- Explanations formerly in parentheses (whole device, formats, fast compression, back up anyway,
+  offset) are now tooltips.
+- Default window width 980 px (was 820 px).
+
 ## 1.1.0 — release candidate (2026-10-15)
 
 Feature `002-ext4-image-shrink`: fit a Linux (for example Raspberry Pi OS) image onto a smaller

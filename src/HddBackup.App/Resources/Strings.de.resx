@@ -31,22 +31,19 @@
     <value>Sichern</value>
   </data>
   <data name="Tab_Restore" xml:space="preserve">
-    <value>Wiederherstellen / Prüfen</value>
+    <value>Wiederherstellen</value>
   </data>
   <data name="Backup_SourceDevice" xml:space="preserve">
     <value>Quellgerät:</value>
   </data>
   <data name="Backup_ScopeWhole" xml:space="preserve">
-    <value>Ganzes Gerät (Partitionstabelle, Bootsektoren und alle Partitionen)</value>
+    <value>Ganzes Gerät</value>
   </data>
   <data name="Backup_ScopePartition" xml:space="preserve">
     <value>Einzelne Partition</value>
   </data>
   <data name="Backup_ImageFile" xml:space="preserve">
     <value>Abbild speichern unter:</value>
-  </data>
-  <data name="Backup_Format" xml:space="preserve">
-    <value>Format:</value>
   </data>
   <data name="Backup_Start" xml:space="preserve">
     <value>Sicherung starten</value>
@@ -73,13 +70,13 @@
     <value>ein anderes Programm</value>
   </data>
   <data name="Format_Gzip" xml:space="preserve">
-    <value>Komprimiert (.img.gz)</value>
+    <value>Komprimiert</value>
   </data>
   <data name="Format_Raw" xml:space="preserve">
-    <value>Unkomprimiert (.img)</value>
+    <value>Unkomprimiert</value>
   </data>
   <data name="Option_FastCompression" xml:space="preserve">
-    <value>Schnelle Komprimierung (größere Datei)</value>
+    <value>Schnelle Komprimierung</value>
   </data>
   <data name="Option_VerifyAfterBackup" xml:space="preserve">
     <value>Abbilddatei nach der Sicherung prüfen</value>
@@ -101,9 +98,6 @@
   </data>
   <data name="Restore_Write" xml:space="preserve">
     <value>Auf Gerät schreiben…</value>
-  </data>
-  <data name="Restore_VerifyImage" xml:space="preserve">
-    <value>Abbild prüfen</value>
   </data>
   <data name="Restore_NoImage" xml:space="preserve">
     <value>Wählen Sie eine Abbilddatei aus.</value>
@@ -163,7 +157,7 @@
     <value>Dateisystem</value>
   </data>
   <data name="Column_Offset" xml:space="preserve">
-    <value>Offset (Bytes)</value>
+    <value>Offset</value>
   </data>
   <data name="Bus_Usb" xml:space="preserve">
     <value>USB</value>
@@ -545,7 +539,7 @@ Quellcode: {0}</value>
     <value>Der gewählte Kartenleser ist für diese Karte ungeeignet: Er meldet weniger Kapazität, als die Partitionen der Karte belegen. Verwenden Sie einen anderen Kartenleser, z. B. einen USB-Kartenleser.</value>
   </data>
   <data name="Option_AllowIncomplete" xml:space="preserve">
-    <value>Trotzdem sichern (unvollständiges Abbild: der Kartenleser verbirgt das Ende der Karte)</value>
+    <value>Trotzdem sichern</value>
   </data>
   <data name="Warning_IncompleteBackup" xml:space="preserve">
     <value>Dieser Kartenleser verbirgt das Ende der Karte. Das Abbild enthält nur, was der Leser anzeigt, und ist UNVOLLSTÄNDIG. Verwenden Sie es nur zum Vergleich, nicht als echte Sicherung.</value>
@@ -556,32 +550,14 @@ Quellcode: {0}</value>
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>Durchschnittliche Geschwindigkeit: {0}</value>
   </data>
-  <data name="Restore_Shrink" xml:space="preserve">
-    <value>Abbild verkleinern…</value>
-  </data>
-  <data name="Shrink_Title" xml:space="preserve">
-    <value>Abbild verkleinern</value>
-  </data>
   <data name="Shrink_Analyzing" xml:space="preserve">
     <value>Abbild wird analysiert…</value>
-  </data>
-  <data name="Shrink_Summary" xml:space="preserve">
-    <value>Abbild: {0} ({1})
-Partitionen: {2}
-Belegt in der Linux-Partition (ext4): {3}
-Kleinstmögliches Abbild: {4}</value>
   </data>
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>So klein wie möglich</value>
   </data>
-  <data name="Shrink_TargetCard" xml:space="preserve">
-    <value>Passend für eine Karte mit:</value>
-  </data>
   <data name="Shrink_Output" xml:space="preserve">
     <value>Kleineres Abbild speichern unter:</value>
-  </data>
-  <data name="Shrink_Start" xml:space="preserve">
-    <value>Starten</value>
   </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>Abbild ist größer als das Gerät</value>
@@ -677,5 +653,76 @@ Das ursprüngliche Abbild wird nicht verändert. Die kleinere Kopie wird gespeic
   </data>
   <data name="Blocker_AlreadyFits" xml:space="preserve">
     <value>Das Abbild passt bereits; eine Verkleinerung ist nicht nötig.</value>
+  </data>
+  <data name="Group_BackupScope" xml:space="preserve">
+    <value>Umfang der Sicherung</value>
+  </data>
+  <data name="Group_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Group_AfterBackup" xml:space="preserve">
+    <value>Nach der Sicherung</value>
+  </data>
+  <data name="Group_AfterWriting" xml:space="preserve">
+    <value>Nach dem Schreiben</value>
+  </data>
+  <data name="Group_ShrinkTo" xml:space="preserve">
+    <value>Verkleinern auf</value>
+  </data>
+  <data name="Group_OutputFormat" xml:space="preserve">
+    <value>Ausgabeformat</value>
+  </data>
+  <data name="Tab_Image" xml:space="preserve">
+    <value>Abbild</value>
+  </data>
+  <data name="Image_AnalysisHeading" xml:space="preserve">
+    <value>Analyse für die Verkleinerung</value>
+  </data>
+  <data name="Image_Analysis" xml:space="preserve">
+    <value>Partitionen: {0}
+Belegt in der Linux-Partition (ext4): {1}
+Kleinstmögliches Abbild: {2}</value>
+  </data>
+  <data name="Image_TargetDevice" xml:space="preserve">
+    <value>Größe eines Geräts:</value>
+  </data>
+  <data name="Image_TargetCard" xml:space="preserve">
+    <value>Kartengröße:</value>
+  </data>
+  <data name="Image_Create" xml:space="preserve">
+    <value>Kleineres Abbild erstellen</value>
+  </data>
+  <data name="Image_Verify" xml:space="preserve">
+    <value>Abbild prüfen</value>
+  </data>
+  <data name="Image_NotFullDevice" xml:space="preserve">
+    <value>Nur Abbilder eines ganzen Geräts können verkleinert werden.</value>
+  </data>
+  <data name="Restore_TooLarge" xml:space="preserve">
+    <value>Das Abbild ist größer als das Gerät.</value>
+  </data>
+  <data name="Restore_TooLargeShrink" xml:space="preserve">
+    <value>Das Abbild ist größer als das Gerät. Es wird vor dem Schreiben passend verkleinert.</value>
+  </data>
+  <data name="Restore_TooLargeCannot" xml:space="preserve">
+    <value>Das Abbild ist größer als das Gerät und kann nicht passend verkleinert werden: {0}</value>
+  </data>
+  <data name="Tooltip_ScopeWhole" xml:space="preserve">
+    <value>Partitionstabelle, Bootsektoren und alle Partitionen</value>
+  </data>
+  <data name="Tooltip_FormatGzip" xml:space="preserve">
+    <value>Mit gzip komprimiertes Abbild, .img.gz</value>
+  </data>
+  <data name="Tooltip_FormatRaw" xml:space="preserve">
+    <value>Rohes Abbild, .img</value>
+  </data>
+  <data name="Tooltip_FastCompression" xml:space="preserve">
+    <value>Größere Datei</value>
+  </data>
+  <data name="Tooltip_AllowIncomplete" xml:space="preserve">
+    <value>Unvollständiges Abbild: der Kartenleser verbirgt das Ende der Karte</value>
+  </data>
+  <data name="Tooltip_ColumnOffset" xml:space="preserve">
+    <value>In Bytes</value>
   </data>
 </root>

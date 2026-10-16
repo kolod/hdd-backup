@@ -8,6 +8,7 @@ using HddBackup.App.Settings;
 using HddBackup.Core.Devices;
 using HddBackup.Core.Errors;
 using HddBackup.Core.Imaging;
+using HddBackup.Core.Shrinking;
 
 namespace HddBackup.App.Forms
 {
@@ -15,78 +16,83 @@ namespace HddBackup.App.Forms
     internal sealed class RestoreTab : UserControl, ILocalizable
     {
         private readonly PortableSettings _settings;
+        private readonly SelectedImage _selected;
         private readonly Label _imageCaption = Ui.Caption();
         private readonly TextBox _path = new TextBox();
         private readonly Button _browse = Ui.Button();
         private readonly Label _imageInfo = new Label { AutoSize = true, Margin = new Padding(3, 2, 3, 2) };
+        private readonly Label _sizeWarning = new Label { AutoSize = true, ForeColor = System.Drawing.Color.DarkRed, Visible = false, Margin = new Padding(3, 2, 3, 2), UseMnemonic = false };
         private readonly Label _deviceCaption = Ui.Caption();
         private readonly DeviceListView _devices = new DeviceListView();
         private readonly Label _noDevices = new Label { AutoSize = true, ForeColor = System.Drawing.SystemColors.GrayText, Visible = false };
-        private readonly Label _unsuitable = new Label { AutoSize = true, ForeColor = System.Drawing.Color.DarkRed, Visible = false, MaximumSize = new System.Drawing.Size(760, 0) };
+        private readonly Label _unsuitable = new Label { AutoSize = true, ForeColor = System.Drawing.Color.DarkRed, Visible = false };
         private readonly Label _partitionCaption = Ui.Caption();
         private readonly PartitionGrid _partitions = new PartitionGrid();
+        private readonly Label _afterCaption = Ui.GroupCaption();
         private readonly CheckBox _verify = new CheckBox { AutoSize = true };
         private readonly CheckBox _eject = new CheckBox { AutoSize = true };
         private readonly Button _write = Ui.Button();
-        private readonly Button _verifyImage = Ui.Button();
-        private readonly Button _shrink = Ui.Button();
-        private ImageDescriptor _image;
-        private string _imageError;
+        private readonly TableLayoutPanel _root;
+        private readonly TableLayoutPanel _right;
+        private readonly TableLayoutPanel _bottom;
+        private bool _settingPath;
 
-        public RestoreTab(PortableSettings settings)
+        public RestoreTab(PortableSettings settings, SelectedImage selected)
         {
             _settings = settings;
-            var root = Ui.Column();
-            Ui.AddRow(root, _imageCaption);
-            Ui.AddRow(root, Ui.PathRow(_path, _browse));
-            Ui.AddRow(root, _imageInfo);
-            Ui.AddRow(root, _deviceCaption);
-            Ui.AddRow(root, _devices, fill: true);
-            Ui.AddRow(root, _noDevices);
-            Ui.AddRow(root, _unsuitable);
-            Ui.AddRow(root, _partitionCaption);
+            _selected = selected;
+            _root = Ui.TwoColumn(out var left, out _right, out var bottom);
+            _deviceCaption.Margin = new Padding(3, 0, 3, 2);
+            Ui.AddRow(left, _deviceCaption);
+            Ui.AddRow(left, _devices, fill: true);
+            Ui.AddRow(left, _noDevices);
+            Ui.AddRow(left, _unsuitable);
+            Ui.AddRow(left, _partitionCaption);
             _partitions.Dock = DockStyle.Top;
-            Ui.AddRow(root, _partitions);
+            Ui.AddRow(left, _partitions);
 
-            var options = Ui.Flow();
-            options.Controls.AddRange(new Control[] { _verify, _eject });
-            Ui.AddRow(root, options);
+            _afterCaption.Margin = new Padding(3, 0, 3, 2);
+            Ui.AddRow(_right, _afterCaption);
+            Ui.AddRow(_right, _verify);
+            Ui.AddRow(_right, _eject);
+            Ui.AddRow(_right, new Panel(), fill: true);
 
+            Ui.AddRow(bottom, _imageCaption);
+            Ui.AddRow(bottom, Ui.PathRow(_path, _browse));
+            Ui.AddRow(bottom, _imageInfo);
+            Ui.AddRow(bottom, _sizeWarning);
+            // Docked auto-size labels are measured too narrow and wrap; their width is set in OnLayout.
+            _imageInfo.Dock = _sizeWarning.Dock = DockStyle.None;
+            _bottom = bottom;
             var actions = Ui.Flow(rightToLeft: true);
-            actions.Controls.AddRange(new Control[] { _write, _verifyImage, _shrink });
-            Ui.AddRow(root, actions);
-            Controls.Add(root);
+            actions.WrapContents = false; // measured at a narrow width it would wrap and reserve a second row
+            actions.Controls.Add(_write);
+            Ui.AddRow(bottom, actions);
+            Controls.Add(_root);
 
             _verify.Checked = settings.VerifyAfterRestore;
             _eject.Checked = settings.EjectAfter;
 
-            _path.TextChanged += (s, e) => LoadImage();
+            _path.TextChanged += (s, e) =>
+            {
+                if (!_settingPath)
+                {
+                    _selected.SetPath(_path.Text);
+                }
+            };
+            _selected.Changed += (s, e) => OnImageChanged();
             _browse.Click += (s, e) => Browse();
             _devices.SelectedIndexChanged += (s, e) => OnDeviceChanged();
             _partitions.SelectionChanged += (s, e) => UpdateState();
             _verify.CheckedChanged += (s, e) => _settings.VerifyAfterRestore = _verify.Checked;
             _eject.CheckedChanged += (s, e) => _settings.EjectAfter = _eject.Checked;
             _write.Click += (s, e) => StartWrite();
-            _verifyImage.Click += (s, e) => StartVerify();
-            _shrink.Click += (s, e) =>
-            {
-                if (_image != null)
-                {
-                    ShrinkRequested?.Invoke(this, _image.Path);
-                }
-            };
 
             ApplyStrings();
             UpdateState();
         }
 
         public event EventHandler<OperationRequest> StartRequested;
-
-        /// <summary>The user wants to create a smaller copy of the selected image.</summary>
-        public event EventHandler<string> ShrinkRequested;
-
-        /// <summary>Path of the loaded full-device image, or null.</summary>
-        public string FullImagePath => _image != null && _image.Kind == ImageKind.FullDevice ? _image.Path : null;
 
         public void SetDevices(IReadOnlyList<DeviceInfo> devices)
         {
@@ -97,8 +103,6 @@ namespace HddBackup.App.Forms
             OnDeviceChanged();
         }
 
-        /// <summary>Re-reads the image sidecars (e.g. after checksum files were saved).</summary>
-        public void ReloadImage() => LoadImage();
 
         public void ApplyStrings()
         {
@@ -108,17 +112,46 @@ namespace HddBackup.App.Forms
             _noDevices.Text = Strings.Get("Devices_None");
             _unsuitable.Text = Strings.Get("Device_Unsuitable");
             _partitionCaption.Text = Strings.Get("Restore_TargetPartition");
+            _afterCaption.Text = Strings.Get("Group_AfterWriting");
+            Ui.Embolden(Font, _afterCaption);
             _verify.Text = Strings.Get("Option_VerifyAfterRestore");
             _eject.Text = Strings.Get("Option_Eject");
             _write.Text = Strings.Get("Restore_Write");
-            _verifyImage.Text = Strings.Get("Restore_VerifyImage");
-            _shrink.Text = Strings.Get("Restore_Shrink");
             _devices.ApplyStrings();
             _partitions.ApplyStrings();
             UpdateImageInfo();
+            FitLayout();
         }
 
-        private bool IsPartitionImage => _image != null && _image.Kind == ImageKind.Partition;
+        private void FitLayout()
+        {
+            Ui.FitRightColumn(_root, _right);
+        }
+
+        protected override void OnFontChanged(EventArgs e)
+        {
+            base.OnFontChanged(e);
+            FitLayout();
+        }
+
+        protected override void OnLayout(LayoutEventArgs e)
+        {
+            base.OnLayout(e);
+            if (_devices.Width > 100 && _unsuitable.MaximumSize.Width != _devices.Width)
+            {
+                _unsuitable.MaximumSize = new System.Drawing.Size(_devices.Width, 0);
+            }
+
+            int infoWidth = _bottom.ClientSize.Width - _bottom.Padding.Horizontal - _imageInfo.Margin.Horizontal;
+            if (infoWidth > 100 && _imageInfo.MaximumSize.Width != infoWidth)
+            {
+                _imageInfo.MaximumSize = _sizeWarning.MaximumSize = new System.Drawing.Size(infoWidth, 0);
+            }
+        }
+
+        private ImageDescriptor Image => _selected.Descriptor;
+
+        private bool IsPartitionImage => Image != null && Image.Kind == ImageKind.Partition;
 
         private void Browse()
         {
@@ -139,25 +172,13 @@ namespace HddBackup.App.Forms
             }
         }
 
-        private void LoadImage()
+        private void OnImageChanged()
         {
-            _image = null;
-            _imageError = null;
-            var path = _path.Text.Trim();
-            if (path.Length > 0)
+            if (!string.Equals(_path.Text.Trim(), _selected.Path, StringComparison.Ordinal))
             {
-                try
-                {
-                    _image = ImageDescriptor.Load(path);
-                }
-                catch (ImagingException ex)
-                {
-                    _imageError = Formatters.Error(ex.Code);
-                }
-                catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is ArgumentException || ex is NotSupportedException)
-                {
-                    _imageError = ex.Message;
-                }
+                _settingPath = true;
+                _path.Text = _selected.Path;
+                _settingPath = false;
             }
 
             UpdateImageInfo();
@@ -166,44 +187,51 @@ namespace HddBackup.App.Forms
 
         private void UpdateImageInfo()
         {
-            if (_imageError != null)
+            _imageInfo.Text = ImageInfoText.For(_selected);
+            UpdateSizeWarning();
+        }
+
+        /// <summary>FR-018: warn as soon as the selected image does not fit the selected device.</summary>
+        private void UpdateSizeWarning()
+        {
+            var device = _devices.SelectedDevice;
+            if (device == null || !_selected.IsFullDevice)
             {
-                _imageInfo.Text = Strings.Format("Restore_ImageError", _imageError);
+                _sizeWarning.Visible = false;
                 return;
             }
 
-            if (_image == null)
+            var result = ImageFit.Evaluate(
+                Image.Format == ImageFormat.Raw,
+                Image.FileSize,
+                _selected.RequiredDeviceBytes,
+                _selected.AnalysisState == AnalysisState.Done ? _selected.Analysis : null,
+                _selected.AnalysisState == AnalysisState.Failed,
+                device.Size);
+            switch (result)
             {
-                _imageInfo.Text = Strings.Get("Restore_NoImage");
-                return;
+                case ImageFitResult.Pending:
+                    _sizeWarning.Text = Strings.Get("Restore_TooLarge");
+                    break;
+                case ImageFitResult.ShrinkToFit:
+                    _sizeWarning.Text = Strings.Get("Restore_TooLargeShrink");
+                    break;
+                case ImageFitResult.CannotFit:
+                    var plan = _selected.Analysis;
+                    string reasons = plan == null
+                        ? _selected.AnalysisError
+                        : plan.IsShrinkable ? Strings.Get("Blocker_NotEnoughSpaceEvenAtMinimum") : Formatters.Blockers(plan.Blockers);
+                    _sizeWarning.Text = Strings.Format("Restore_TooLargeCannot", reasons);
+                    break;
             }
 
-            string format = Strings.Get(_image.Format == ImageFormat.Gzip ? "ImageFormat_Gzip" : "ImageFormat_Raw");
-            string size = _image.DataSize.HasValue ? Formatters.Bytes(_image.DataSize.Value) : Strings.Get("Restore_SizeUnknown");
-            string kind = _image.Kind == ImageKind.Partition
-                ? Strings.Format("ImageKind_Partition", _image.PartitionMetadata.PartitionNumber, _image.PartitionMetadata.FileSystem)
-                : Strings.Get("ImageKind_Full");
-
-            var sidecars = new List<string>();
-            if (_image.FileChecksum != null)
-            {
-                sidecars.Add(Path.GetFileName(_image.FileChecksum.Path));
-            }
-
-            if (_image.ContentChecksum != null && !ReferenceEquals(_image.ContentChecksum, _image.FileChecksum))
-            {
-                sidecars.Add(Path.GetFileName(_image.ContentChecksum.Path));
-            }
-
-            string checksums = sidecars.Count > 0
-                ? Strings.Format("Restore_ChecksumsFound", string.Join(", ", sidecars))
-                : Strings.Get("Restore_ChecksumsNone");
-            _imageInfo.Text = Strings.Format("Restore_ImageInfo", format, size, kind) + Environment.NewLine + checksums;
+            _sizeWarning.Visible = result != ImageFitResult.Fits;
         }
 
         private void OnDeviceChanged()
         {
             _partitions.SetTable(_devices.SelectedDevice?.PartitionTable);
+            UpdateSizeWarning();
             UpdateState();
         }
 
@@ -216,14 +244,12 @@ namespace HddBackup.App.Forms
             bool targetOk = _devices.SelectedDevice != null
                 && !unsuitable
                 && (!IsPartitionImage || _partitions.SelectedPartition != null);
-            _write.Enabled = Enabled && _image != null && targetOk;
-            _verifyImage.Enabled = Enabled && _image != null;
-            _shrink.Enabled = Enabled && _image != null && _image.Kind == ImageKind.FullDevice;
+            _write.Enabled = Enabled && Image != null && targetOk;
         }
 
         private void StartWrite()
         {
-            if (_image == null || _devices.SelectedDevice == null)
+            if (Image == null || _devices.SelectedDevice == null)
             {
                 return;
             }
@@ -233,20 +259,10 @@ namespace HddBackup.App.Forms
                 Kind = IsPartitionImage ? OperationKind.RestorePartition : OperationKind.RestoreDevice,
                 Device = _devices.SelectedDevice,
                 Partition = IsPartitionImage ? _partitions.SelectedPartition : null,
-                ImagePath = _image.Path,
+                ImagePath = Image.Path,
                 VerifyAfter = _verify.Checked,
                 EjectAfter = _eject.Checked
             });
-        }
-
-        private void StartVerify()
-        {
-            if (_image == null)
-            {
-                return;
-            }
-
-            StartRequested?.Invoke(this, new OperationRequest { Kind = OperationKind.VerifyImage, ImagePath = _image.Path, EjectAfter = false });
         }
 
         protected override void OnEnabledChanged(EventArgs e)

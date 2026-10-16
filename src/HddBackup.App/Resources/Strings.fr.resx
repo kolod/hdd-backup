@@ -31,22 +31,19 @@
     <value>Sauvegarder</value>
   </data>
   <data name="Tab_Restore" xml:space="preserve">
-    <value>Restaurer / Vérifier</value>
+    <value>Restaurer</value>
   </data>
   <data name="Backup_SourceDevice" xml:space="preserve">
     <value>Périphérique source :</value>
   </data>
   <data name="Backup_ScopeWhole" xml:space="preserve">
-    <value>Périphérique entier (table de partitions, secteurs d&apos;amorçage et toutes les partitions)</value>
+    <value>Périphérique entier</value>
   </data>
   <data name="Backup_ScopePartition" xml:space="preserve">
     <value>Une seule partition</value>
   </data>
   <data name="Backup_ImageFile" xml:space="preserve">
     <value>Enregistrer l&apos;image sous :</value>
-  </data>
-  <data name="Backup_Format" xml:space="preserve">
-    <value>Format :</value>
   </data>
   <data name="Backup_Start" xml:space="preserve">
     <value>Démarrer la sauvegarde</value>
@@ -73,13 +70,13 @@
     <value>un autre programme</value>
   </data>
   <data name="Format_Gzip" xml:space="preserve">
-    <value>Compressée (.img.gz)</value>
+    <value>Compressée</value>
   </data>
   <data name="Format_Raw" xml:space="preserve">
-    <value>Non compressée (.img)</value>
+    <value>Non compressée</value>
   </data>
   <data name="Option_FastCompression" xml:space="preserve">
-    <value>Compression rapide (fichier plus gros)</value>
+    <value>Compression rapide</value>
   </data>
   <data name="Option_VerifyAfterBackup" xml:space="preserve">
     <value>Vérifier le fichier image après la sauvegarde</value>
@@ -101,9 +98,6 @@
   </data>
   <data name="Restore_Write" xml:space="preserve">
     <value>Écrire sur le périphérique…</value>
-  </data>
-  <data name="Restore_VerifyImage" xml:space="preserve">
-    <value>Vérifier l&apos;image</value>
   </data>
   <data name="Restore_NoImage" xml:space="preserve">
     <value>Sélectionnez un fichier image.</value>
@@ -163,7 +157,7 @@
     <value>Système de fichiers</value>
   </data>
   <data name="Column_Offset" xml:space="preserve">
-    <value>Décalage (octets)</value>
+    <value>Décalage</value>
   </data>
   <data name="Bus_Usb" xml:space="preserve">
     <value>USB</value>
@@ -545,7 +539,7 @@ Code source : {0}</value>
     <value>Le lecteur sélectionné ne convient pas à cette carte : il signale une capacité inférieure à celle occupée par les partitions de la carte. Utilisez un autre lecteur de cartes, par exemple un lecteur USB.</value>
   </data>
   <data name="Option_AllowIncomplete" xml:space="preserve">
-    <value>Sauvegarder quand même (image incomplète : le lecteur masque la fin de la carte)</value>
+    <value>Sauvegarder quand même</value>
   </data>
   <data name="Warning_IncompleteBackup" xml:space="preserve">
     <value>Ce lecteur masque la fin de la carte. L&apos;image ne contiendra que ce que le lecteur expose et sera INCOMPLÈTE. Utilisez-la uniquement pour comparer, pas comme une vraie sauvegarde.</value>
@@ -556,32 +550,14 @@ Code source : {0}</value>
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>Vitesse moyenne : {0}</value>
   </data>
-  <data name="Restore_Shrink" xml:space="preserve">
-    <value>Réduire l&apos;image…</value>
-  </data>
-  <data name="Shrink_Title" xml:space="preserve">
-    <value>Réduire l&apos;image</value>
-  </data>
   <data name="Shrink_Analyzing" xml:space="preserve">
     <value>Analyse de l&apos;image…</value>
-  </data>
-  <data name="Shrink_Summary" xml:space="preserve">
-    <value>Image : {0} ({1})
-Partitions : {2}
-Occupé dans la partition Linux (ext4) : {3}
-Plus petite image possible : {4}</value>
   </data>
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>La plus petite possible</value>
   </data>
-  <data name="Shrink_TargetCard" xml:space="preserve">
-    <value>Adaptée à une carte de :</value>
-  </data>
   <data name="Shrink_Output" xml:space="preserve">
     <value>Enregistrer l&apos;image réduite sous :</value>
-  </data>
-  <data name="Shrink_Start" xml:space="preserve">
-    <value>Démarrer</value>
   </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>Image plus grande que le périphérique</value>
@@ -677,5 +653,76 @@ L&apos;image d&apos;origine n&apos;est pas modifiée. La copie réduite sera enr
   </data>
   <data name="Blocker_AlreadyFits" xml:space="preserve">
     <value>L&apos;image tient déjà ; aucune réduction n&apos;est nécessaire.</value>
+  </data>
+  <data name="Group_BackupScope" xml:space="preserve">
+    <value>Étendue de la sauvegarde</value>
+  </data>
+  <data name="Group_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Group_AfterBackup" xml:space="preserve">
+    <value>Après la sauvegarde</value>
+  </data>
+  <data name="Group_AfterWriting" xml:space="preserve">
+    <value>Après l&apos;écriture</value>
+  </data>
+  <data name="Group_ShrinkTo" xml:space="preserve">
+    <value>Réduire à</value>
+  </data>
+  <data name="Group_OutputFormat" xml:space="preserve">
+    <value>Format de sortie</value>
+  </data>
+  <data name="Tab_Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="Image_AnalysisHeading" xml:space="preserve">
+    <value>Analyse de réduction</value>
+  </data>
+  <data name="Image_Analysis" xml:space="preserve">
+    <value>Partitions : {0}
+Occupé dans la partition Linux (ext4) : {1}
+Plus petite image possible : {2}</value>
+  </data>
+  <data name="Image_TargetDevice" xml:space="preserve">
+    <value>Taille d&apos;un périphérique :</value>
+  </data>
+  <data name="Image_TargetCard" xml:space="preserve">
+    <value>Taille de carte :</value>
+  </data>
+  <data name="Image_Create" xml:space="preserve">
+    <value>Créer une image réduite</value>
+  </data>
+  <data name="Image_Verify" xml:space="preserve">
+    <value>Vérifier l&apos;image</value>
+  </data>
+  <data name="Image_NotFullDevice" xml:space="preserve">
+    <value>Seules les images d&apos;un périphérique entier peuvent être réduites.</value>
+  </data>
+  <data name="Restore_TooLarge" xml:space="preserve">
+    <value>L&apos;image est plus grande que le périphérique.</value>
+  </data>
+  <data name="Restore_TooLargeShrink" xml:space="preserve">
+    <value>L&apos;image est plus grande que le périphérique. Elle sera réduite pour tenir avant l&apos;écriture.</value>
+  </data>
+  <data name="Restore_TooLargeCannot" xml:space="preserve">
+    <value>L&apos;image est plus grande que le périphérique et ne peut pas être réduite pour tenir : {0}</value>
+  </data>
+  <data name="Tooltip_ScopeWhole" xml:space="preserve">
+    <value>Table de partitions, secteurs d&apos;amorçage et toutes les partitions</value>
+  </data>
+  <data name="Tooltip_FormatGzip" xml:space="preserve">
+    <value>Image compressée avec gzip, .img.gz</value>
+  </data>
+  <data name="Tooltip_FormatRaw" xml:space="preserve">
+    <value>Image brute, .img</value>
+  </data>
+  <data name="Tooltip_FastCompression" xml:space="preserve">
+    <value>Fichier plus gros</value>
+  </data>
+  <data name="Tooltip_AllowIncomplete" xml:space="preserve">
+    <value>Image incomplète : le lecteur masque la fin de la carte</value>
+  </data>
+  <data name="Tooltip_ColumnOffset" xml:space="preserve">
+    <value>En octets</value>
   </data>
 </root>

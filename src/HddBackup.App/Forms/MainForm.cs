@@ -18,7 +18,7 @@ using System.IO;
 
 namespace HddBackup.App.Forms
 {
-    /// <summary>Main window: Back Up and Restore/Verify tabs plus the shared operation panel.</summary>
+    /// <summary>Main window: Back Up, Restore and Image tabs plus the shared operation panel.</summary>
     internal sealed class MainForm : Form, ILocalizable
     {
         private readonly PortableSettings _settings;
@@ -32,8 +32,11 @@ namespace HddBackup.App.Forms
         private readonly TabControl _tabs = new TabControl { Dock = DockStyle.Fill };
         private readonly TabPage _backupPage = new TabPage();
         private readonly TabPage _restorePage = new TabPage();
+        private readonly TabPage _imagePage = new TabPage();
         private readonly BackupTab _backup;
         private readonly RestoreTab _restore;
+        private readonly ImageTab _imageTab;
+        private readonly SelectedImage _image;
         private DeviceChangeWatcher _watcher;
         private OperationPanel _operation;
         private CancellationTokenSource _cts;
@@ -46,17 +49,21 @@ namespace HddBackup.App.Forms
             _settings = settings;
             AutoScaleMode = AutoScaleMode.Dpi;
             Font = UiFont.For(LanguageService.Current);
-            ClientSize = new Size(820, 680);
-            MinimumSize = new Size(640, 560);
+            ClientSize = new Size(980, 680);
+            MinimumSize = new Size(800, 560);
             StartPosition = FormStartPosition.CenterScreen;
             Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
+            _image = new SelectedImage(); // after the base constructor installed the UI synchronization context
             _backup = new BackupTab(settings) { Dock = DockStyle.Fill };
-            _restore = new RestoreTab(settings) { Dock = DockStyle.Fill };
+            _restore = new RestoreTab(settings, _image) { Dock = DockStyle.Fill };
             _backupPage.Controls.Add(_backup);
+            _imageTab = new ImageTab(settings, _image) { Dock = DockStyle.Fill };
             _restorePage.Controls.Add(_restore);
+            _imagePage.Controls.Add(_imageTab);
             _tabs.TabPages.Add(_backupPage);
             _tabs.TabPages.Add(_restorePage);
+            _tabs.TabPages.Add(_imagePage);
 
             foreach (var language in LanguageService.Supported)
             {
@@ -74,7 +81,7 @@ namespace HddBackup.App.Forms
             };
             _diagnosticsItem.Click += (s, e) =>
             {
-                using (var diagnostics = new DiagnosticsDialog(_restore.FullImagePath))
+                using (var diagnostics = new DiagnosticsDialog(_image.IsFullDevice ? _image.Descriptor.Path : null))
                 {
                     diagnostics.ShowDialog(this);
                 }
@@ -90,7 +97,7 @@ namespace HddBackup.App.Forms
 
             _backup.StartRequested += (s, request) => StartOperation(request);
             _restore.StartRequested += (s, request) => StartOperation(request);
-            _restore.ShrinkRequested += (s, imagePath) => OpenShrinkDialog(imagePath);
+            _imageTab.StartRequested += (s, request) => StartOperation(request);
             LanguageService.LanguageChanged += OnLanguageChanged;
             ApplyStrings();
         }
@@ -104,6 +111,7 @@ namespace HddBackup.App.Forms
             _diagnosticsItem.Text = Strings.Get("Menu_Diagnostics");
             _backupPage.Text = Strings.Get("Tab_Backup");
             _restorePage.Text = Strings.Get("Tab_Restore");
+            _imagePage.Text = Strings.Get("Tab_Image");
             foreach (ToolStripMenuItem item in _languageMenu.DropDownItems)
             {
                 item.Checked = string.Equals((string)item.Tag, LanguageService.Current, StringComparison.Ordinal);
@@ -111,6 +119,7 @@ namespace HddBackup.App.Forms
 
             _backup.ApplyStrings();
             _restore.ApplyStrings();
+            _imageTab.ApplyStrings();
             _operation?.ApplyStrings();
         }
 
@@ -156,6 +165,7 @@ namespace HddBackup.App.Forms
             {
                 LanguageService.LanguageChanged -= OnLanguageChanged;
                 _watcher?.Dispose();
+                _image.Dispose();
                 _cts?.Dispose();
             }
 
@@ -199,6 +209,7 @@ namespace HddBackup.App.Forms
 
             _backup.SetDevices(devices);
             _restore.SetDevices(devices);
+            _imageTab.SetDevices(devices);
         }
 
         private async void StartOperation(OperationRequest request)
@@ -309,61 +320,66 @@ namespace HddBackup.App.Forms
         /// </summary>
         private async Task<bool> OfferShrinkIfTooLargeAsync(OperationRequest request)
         {
+            bool isRaw;
+            long fileSize;
             long required;
             try
             {
                 var image = ImageDescriptor.Load(request.ImagePath);
-                required = image.Format == ImageFormat.Raw ? image.FileSize : ShrinkPlanner.RequiredDeviceBytes(request.ImagePath);
-                if (image.Format == ImageFormat.Raw)
-                {
-                    long logical = ShrinkPlanner.RequiredDeviceBytes(request.ImagePath);
-                    if (logical > 0 && logical <= request.Device.Size)
-                    {
-                        return false; // only unused space past the last partition does not fit
-                    }
-                }
+                isRaw = image.Format == ImageFormat.Raw;
+                fileSize = image.FileSize;
+                required = ShrinkPlanner.RequiredDeviceBytes(request.ImagePath);
             }
             catch (Exception)
             {
                 return false; // the normal validation reports the problem
             }
 
-            if (required <= request.Device.Size)
+            // Reuse the analysis of the shared image when it is for this file.
+            bool same = string.Equals(_image.Path, request.ImagePath, StringComparison.OrdinalIgnoreCase);
+            ShrinkPlan plan = same && _image.AnalysisState == AnalysisState.Done ? _image.Analysis : null;
+            var fit = ImageFit.Evaluate(isRaw, fileSize, required, plan, false, request.Device.Size);
+            if (fit == ImageFitResult.Fits)
             {
                 return false;
             }
 
-            ShrinkPlan plan;
-            UseWaitCursor = true;
-            try
+            if (plan == null)
             {
-                plan = await Task.Run(() => ShrinkPlanner.Analyze(request.ImagePath, CancellationToken.None));
-            }
-            catch (Exception ex) when (ex is ImagingException || ex is System.IO.IOException || ex is HddBackup.Core.Ext4.Ext4FormatException)
-            {
-                return false;
-            }
-            finally
-            {
-                UseWaitCursor = false;
+                UseWaitCursor = true;
+                try
+                {
+                    plan = await Task.Run(() => ShrinkPlanner.Analyze(request.ImagePath, CancellationToken.None));
+                }
+                catch (Exception ex) when (ex is ImagingException || ex is System.IO.IOException || ex is HddBackup.Core.Ext4.Ext4FormatException)
+                {
+                    return false;
+                }
+                finally
+                {
+                    UseWaitCursor = false;
+                }
+
+                fit = ImageFit.Evaluate(isRaw, fileSize, required, plan, false, request.Device.Size);
             }
 
-            if (!plan.Fits(request.Device.Size))
+            long imageBytes = isRaw ? fileSize : required;
+            if (fit != ImageFitResult.ShrinkToFit)
             {
                 var reasons = plan.IsShrinkable
                     ? Strings.Get("Blocker_NotEnoughSpaceEvenAtMinimum")
                     : Formatters.Blockers(plan.Blockers);
                 MessageBox.Show(
                     this,
-                    Strings.Format("Shrink_NotPossible", Formatters.Bytes(required), Formatters.Bytes(request.Device.Size)) + Environment.NewLine + Environment.NewLine + reasons,
+                    Strings.Format("Shrink_NotPossible", Formatters.Bytes(imageBytes), Formatters.Bytes(request.Device.Size)) + Environment.NewLine + Environment.NewLine + reasons,
                     Strings.Get("App_Name"),
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return true;
             }
 
-            string output = ShrinkDialog.DefaultOutputPath(request.ImagePath, request.Device.Size, false);
-            using (var offer = new ShrinkOfferDialog(plan, required, request.Device.Size, output))
+            string output = ShrinkOutputName.Default(request.ImagePath, request.Device.Size, false);
+            using (var offer = new ShrinkOfferDialog(plan, imageBytes, request.Device.Size, output))
             {
                 if (offer.ShowDialog(this) != DialogResult.OK)
                 {
@@ -425,22 +441,6 @@ namespace HddBackup.App.Forms
             return true;
         }
 
-        private void OpenShrinkDialog(string imagePath)
-        {
-            if (_running != null)
-            {
-                return;
-            }
-
-            using (var dialog = new ShrinkDialog(imagePath, _settings))
-            {
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    StartOperation(dialog.Request);
-                }
-            }
-        }
-
         private void OfferToSaveChecksums(OperationResult result)
         {
             if (result.State != OperationState.Completed
@@ -454,7 +454,7 @@ namespace HddBackup.App.Forms
             {
                 ImagingEngine.SaveChecksumFiles(result.ImagePath, result.IsGzipImage, result.FileSha256, result.ContentSha256);
                 MessageBox.Show(this, Strings.Get("Verify_ChecksumsSaved"), Strings.Get("App_Name"), MessageBoxButtons.OK, MessageBoxIcon.Information);
-                _restore.ReloadImage();
+                _image.Reload();
             }
             catch (Exception ex) when (ex is System.IO.IOException || ex is UnauthorizedAccessException)
             {
@@ -484,6 +484,7 @@ namespace HddBackup.App.Forms
             // panel, is re-rendered on a switch and the running operation is not affected.
             _backup.Enabled = !busy;
             _restore.Enabled = !busy;
+            _imageTab.Enabled = !busy;
         }
 
         private bool Ask(string key, MessageBoxIcon icon = MessageBoxIcon.Warning)

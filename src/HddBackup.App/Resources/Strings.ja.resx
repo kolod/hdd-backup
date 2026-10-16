@@ -31,22 +31,19 @@
     <value>バックアップ</value>
   </data>
   <data name="Tab_Restore" xml:space="preserve">
-    <value>復元 / 検証</value>
+    <value>復元</value>
   </data>
   <data name="Backup_SourceDevice" xml:space="preserve">
     <value>コピー元デバイス:</value>
   </data>
   <data name="Backup_ScopeWhole" xml:space="preserve">
-    <value>デバイス全体 (パーティション テーブル、ブート セクター、全パーティション)</value>
+    <value>デバイス全体</value>
   </data>
   <data name="Backup_ScopePartition" xml:space="preserve">
     <value>単一のパーティション</value>
   </data>
   <data name="Backup_ImageFile" xml:space="preserve">
     <value>イメージの保存先:</value>
-  </data>
-  <data name="Backup_Format" xml:space="preserve">
-    <value>形式:</value>
   </data>
   <data name="Backup_Start" xml:space="preserve">
     <value>バックアップ開始</value>
@@ -73,13 +70,13 @@
     <value>別のプログラム</value>
   </data>
   <data name="Format_Gzip" xml:space="preserve">
-    <value>圧縮 (.img.gz)</value>
+    <value>圧縮</value>
   </data>
   <data name="Format_Raw" xml:space="preserve">
-    <value>非圧縮 (.img)</value>
+    <value>非圧縮</value>
   </data>
   <data name="Option_FastCompression" xml:space="preserve">
-    <value>高速圧縮 (ファイルが大きくなります)</value>
+    <value>高速圧縮</value>
   </data>
   <data name="Option_VerifyAfterBackup" xml:space="preserve">
     <value>バックアップ後にイメージ ファイルを検証する</value>
@@ -101,9 +98,6 @@
   </data>
   <data name="Restore_Write" xml:space="preserve">
     <value>デバイスに書き込む…</value>
-  </data>
-  <data name="Restore_VerifyImage" xml:space="preserve">
-    <value>イメージを検証</value>
   </data>
   <data name="Restore_NoImage" xml:space="preserve">
     <value>イメージ ファイルを選択してください。</value>
@@ -163,7 +157,7 @@
     <value>ファイル システム</value>
   </data>
   <data name="Column_Offset" xml:space="preserve">
-    <value>オフセット (バイト)</value>
+    <value>オフセット</value>
   </data>
   <data name="Bus_Usb" xml:space="preserve">
     <value>USB</value>
@@ -545,7 +539,7 @@ Windows 7 SP1 から Windows 11 で動作します。イメージは標準の .i
     <value>選択したリーダーはこのカードに使用できません。カードのパーティションが使用する容量より小さい容量を報告しています。USB カード リーダーなど、別のリーダーを使用してください。</value>
   </data>
   <data name="Option_AllowIncomplete" xml:space="preserve">
-    <value>それでもバックアップする (不完全なイメージ: リーダーがカードの末尾を隠しています)</value>
+    <value>それでもバックアップする</value>
   </data>
   <data name="Warning_IncompleteBackup" xml:space="preserve">
     <value>このリーダーはカードの末尾を隠しています。イメージにはリーダーが見せる部分だけが含まれ、不完全になります。本当のバックアップではなく、比較用にのみ使用してください。</value>
@@ -556,32 +550,14 @@ Windows 7 SP1 から Windows 11 で動作します。イメージは標準の .i
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>平均速度: {0}</value>
   </data>
-  <data name="Restore_Shrink" xml:space="preserve">
-    <value>イメージを縮小…</value>
-  </data>
-  <data name="Shrink_Title" xml:space="preserve">
-    <value>イメージの縮小</value>
-  </data>
   <data name="Shrink_Analyzing" xml:space="preserve">
     <value>イメージを分析しています…</value>
-  </data>
-  <data name="Shrink_Summary" xml:space="preserve">
-    <value>イメージ: {0} ({1})
-パーティション: {2}
-Linux (ext4) パーティションの使用量: {3}
-最小のイメージ サイズ: {4}</value>
   </data>
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>できるだけ小さく</value>
   </data>
-  <data name="Shrink_TargetCard" xml:space="preserve">
-    <value>次のサイズのカードに合わせる:</value>
-  </data>
   <data name="Shrink_Output" xml:space="preserve">
     <value>縮小したイメージの保存先:</value>
-  </data>
-  <data name="Shrink_Start" xml:space="preserve">
-    <value>開始</value>
   </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>イメージがデバイスより大きい</value>
@@ -677,5 +653,76 @@ Linux (ext4) パーティションの使用量: {3}
   </data>
   <data name="Blocker_AlreadyFits" xml:space="preserve">
     <value>イメージは既に収まります。縮小は不要です。</value>
+  </data>
+  <data name="Group_BackupScope" xml:space="preserve">
+    <value>バックアップ範囲</value>
+  </data>
+  <data name="Group_Format" xml:space="preserve">
+    <value>形式</value>
+  </data>
+  <data name="Group_AfterBackup" xml:space="preserve">
+    <value>バックアップ後</value>
+  </data>
+  <data name="Group_AfterWriting" xml:space="preserve">
+    <value>書き込み後</value>
+  </data>
+  <data name="Group_ShrinkTo" xml:space="preserve">
+    <value>縮小先のサイズ</value>
+  </data>
+  <data name="Group_OutputFormat" xml:space="preserve">
+    <value>出力形式</value>
+  </data>
+  <data name="Tab_Image" xml:space="preserve">
+    <value>イメージ</value>
+  </data>
+  <data name="Image_AnalysisHeading" xml:space="preserve">
+    <value>縮小の分析</value>
+  </data>
+  <data name="Image_Analysis" xml:space="preserve">
+    <value>パーティション: {0}
+Linux (ext4) パーティションの使用量: {1}
+最小のイメージ サイズ: {2}</value>
+  </data>
+  <data name="Image_TargetDevice" xml:space="preserve">
+    <value>デバイスのサイズ:</value>
+  </data>
+  <data name="Image_TargetCard" xml:space="preserve">
+    <value>カードのサイズ:</value>
+  </data>
+  <data name="Image_Create" xml:space="preserve">
+    <value>縮小イメージを作成</value>
+  </data>
+  <data name="Image_Verify" xml:space="preserve">
+    <value>イメージを検証</value>
+  </data>
+  <data name="Image_NotFullDevice" xml:space="preserve">
+    <value>縮小できるのはデバイス全体のイメージだけです。</value>
+  </data>
+  <data name="Restore_TooLarge" xml:space="preserve">
+    <value>イメージがデバイスより大きいです。</value>
+  </data>
+  <data name="Restore_TooLargeShrink" xml:space="preserve">
+    <value>イメージがデバイスより大きいです。書き込み前に収まるサイズへ縮小されます。</value>
+  </data>
+  <data name="Restore_TooLargeCannot" xml:space="preserve">
+    <value>イメージがデバイスより大きく、収まるように縮小できません: {0}</value>
+  </data>
+  <data name="Tooltip_ScopeWhole" xml:space="preserve">
+    <value>パーティション テーブル、ブート セクター、全パーティション</value>
+  </data>
+  <data name="Tooltip_FormatGzip" xml:space="preserve">
+    <value>gzip で圧縮したイメージ (.img.gz)</value>
+  </data>
+  <data name="Tooltip_FormatRaw" xml:space="preserve">
+    <value>非圧縮のイメージ (.img)</value>
+  </data>
+  <data name="Tooltip_FastCompression" xml:space="preserve">
+    <value>ファイルが大きくなります</value>
+  </data>
+  <data name="Tooltip_AllowIncomplete" xml:space="preserve">
+    <value>不完全なイメージ: リーダーがカードの末尾を隠しています</value>
+  </data>
+  <data name="Tooltip_ColumnOffset" xml:space="preserve">
+    <value>バイト単位</value>
   </data>
 </root>

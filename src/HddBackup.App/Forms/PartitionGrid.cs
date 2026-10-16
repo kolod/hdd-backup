@@ -23,11 +23,13 @@ namespace HddBackup.App.Forms
         private readonly ColumnHeader _fileSystem = new ColumnHeader { Width = 90 };
         private readonly ColumnHeader _size = new ColumnHeader { Width = 90, TextAlign = HorizontalAlignment.Right };
         private readonly ColumnHeader _offset = new ColumnHeader { Width = 120, TextAlign = HorizontalAlignment.Right };
+        private readonly HeaderToolTip _offsetTip;
         private PartitionTable _table = PartitionTable.Empty;
 
         public PartitionGrid()
         {
             _list.Columns.AddRange(new[] { _number, _name, _fileSystem, _size, _offset });
+            _offsetTip = new HeaderToolTip(_list, _list.Columns.IndexOf(_offset));
             _list.SelectedIndexChanged += (s, e) => SelectionChanged?.Invoke(this, EventArgs.Empty);
             _list.HandleCreated += (s, e) => DeviceListView.FitColumns(_list);
             _list.FontChanged += (s, e) => DeviceListView.FitColumns(_list);
@@ -38,6 +40,16 @@ namespace HddBackup.App.Forms
         }
 
         public event EventHandler SelectionChanged;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _offsetTip.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
 
         public PartitionInfo SelectedPartition =>
             _list.SelectedItems.Count == 1 ? _list.SelectedItems[0].Tag as PartitionInfo : null;
@@ -77,6 +89,7 @@ namespace HddBackup.App.Forms
             _fileSystem.Text = Strings.Get("Column_FileSystem");
             _size.Text = Strings.Get("Column_Size");
             _offset.Text = Strings.Get("Column_Offset");
+            _offsetTip.Text = Strings.Get("Tooltip_ColumnOffset");
             SetTable(_table);
         }
     }

@@ -14,14 +14,11 @@ namespace HddBackup.App.Forms
     /// <summary>Backup of a whole device or one partition to .img / .img.gz.</summary>
     internal sealed class BackupTab : UserControl, ILocalizable
     {
-        private const string GzipExtension = ".img.gz";
-        private const string RawExtension = ".img";
-
         private readonly PortableSettings _settings;
         private readonly Label _deviceCaption = Ui.Caption();
         private readonly DeviceListView _devices = new DeviceListView();
         private readonly Label _noDevices = new Label { AutoSize = true, ForeColor = System.Drawing.SystemColors.GrayText, Visible = false };
-        private readonly Label _unsuitable = new Label { AutoSize = true, ForeColor = System.Drawing.Color.DarkRed, Visible = false, MaximumSize = new System.Drawing.Size(760, 0) };
+        private readonly Label _unsuitable = new Label { AutoSize = true, ForeColor = System.Drawing.Color.DarkRed, Visible = false };
         private readonly CheckBox _allowIncomplete = new CheckBox { AutoSize = true, Visible = false, ForeColor = System.Drawing.Color.DarkRed };
         private readonly RadioButton _whole = new RadioButton { AutoSize = true, Checked = true };
         private readonly RadioButton _partition = new RadioButton { AutoSize = true };
@@ -29,44 +26,50 @@ namespace HddBackup.App.Forms
         private readonly Label _imageCaption = Ui.Caption();
         private readonly TextBox _path = new TextBox();
         private readonly Button _browse = Ui.Button();
-        private readonly Label _formatCaption = new Label { AutoSize = true, Margin = new Padding(3, 7, 3, 3) };
-        private readonly ComboBox _format = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 220 };
+        private readonly Label _scopeCaption = Ui.GroupCaption();
+        private readonly Label _formatCaption = Ui.GroupCaption();
+        private readonly Label _afterCaption = Ui.GroupCaption();
+        private readonly ComboBox _format = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Top };
         private readonly CheckBox _fast = new CheckBox { AutoSize = true };
         private readonly CheckBox _verify = new CheckBox { AutoSize = true };
         private readonly CheckBox _eject = new CheckBox { AutoSize = true };
         private readonly Button _start = Ui.Button();
+        private readonly ToolTip _tips = new ToolTip();
+        private readonly TableLayoutPanel _root;
+        private readonly TableLayoutPanel _right;
 
         public BackupTab(PortableSettings settings)
         {
             _settings = settings;
-            var root = Ui.Column();
-            Ui.AddRow(root, _deviceCaption);
-            Ui.AddRow(root, _devices, fill: true);
-            Ui.AddRow(root, _noDevices);
-            Ui.AddRow(root, _unsuitable);
-            Ui.AddRow(root, _allowIncomplete);
-
-            var scope = Ui.Flow();
-            scope.Controls.AddRange(new Control[] { _whole, _partition });
-            Ui.AddRow(root, scope);
+            _root = Ui.TwoColumn(out var left, out _right, out var bottom);
+            Ui.AddRow(left, _deviceCaption);
+            Ui.AddRow(left, _devices, fill: true);
+            Ui.AddRow(left, _noDevices);
+            Ui.AddRow(left, _unsuitable);
+            Ui.AddRow(left, _allowIncomplete);
             _partitions.Dock = DockStyle.Top;
-            Ui.AddRow(root, _partitions);
+            Ui.AddRow(left, _partitions);
 
-            Ui.AddRow(root, _imageCaption);
-            Ui.AddRow(root, Ui.PathRow(_path, _browse));
+            _deviceCaption.Margin = new Padding(3, 0, 3, 2);
+            _scopeCaption.Margin = new Padding(3, 0, 3, 2);
+            Ui.AddRow(_right, _scopeCaption);
+            Ui.AddRow(_right, _whole);
+            Ui.AddRow(_right, _partition);
+            Ui.AddRow(_right, _formatCaption);
+            Ui.AddRow(_right, _format);
+            Ui.AddRow(_right, _fast);
+            Ui.AddRow(_right, _afterCaption);
+            Ui.AddRow(_right, _verify);
+            Ui.AddRow(_right, _eject);
+            Ui.AddRow(_right, new Panel(), fill: true);
 
-            var format = Ui.Flow();
-            format.Controls.AddRange(new Control[] { _formatCaption, _format, _fast });
-            Ui.AddRow(root, format);
-
-            var options = Ui.Flow();
-            options.Controls.AddRange(new Control[] { _verify, _eject });
-            Ui.AddRow(root, options);
-
+            Ui.AddRow(bottom, _imageCaption);
+            Ui.AddRow(bottom, Ui.PathRow(_path, _browse));
             var actions = Ui.Flow(rightToLeft: true);
+            actions.WrapContents = false; // measured at a narrow width it would wrap and reserve a second row
             actions.Controls.Add(_start);
-            Ui.AddRow(root, actions);
-            Controls.Add(root);
+            Ui.AddRow(bottom, actions);
+            Controls.Add(_root);
 
             _fast.Checked = settings.FastCompression;
             _verify.Checked = settings.VerifyAfterBackup;
@@ -107,7 +110,10 @@ namespace HddBackup.App.Forms
             _partition.Text = Strings.Get("Backup_ScopePartition");
             _imageCaption.Text = Strings.Get("Backup_ImageFile");
             _browse.Text = Strings.Get("Common_Browse");
-            _formatCaption.Text = Strings.Get("Backup_Format");
+            _scopeCaption.Text = Strings.Get("Group_BackupScope");
+            _formatCaption.Text = Strings.Get("Group_Format");
+            _afterCaption.Text = Strings.Get("Group_AfterBackup");
+            Ui.Embolden(Font, _scopeCaption, _formatCaption, _afterCaption);
             // Relabel in place: rebuilding the list would fire SelectedIndexChanged and rewrite the path.
             if (_format.Items.Count == 2)
             {
@@ -126,6 +132,36 @@ namespace HddBackup.App.Forms
             _start.Text = Strings.Get("Backup_Start");
             _devices.ApplyStrings();
             _partitions.ApplyStrings();
+            _tips.SetToolTip(_whole, Strings.Get("Tooltip_ScopeWhole"));
+            _tips.SetToolTip(_fast, Strings.Get("Tooltip_FastCompression"));
+            _tips.SetToolTip(_allowIncomplete, Strings.Get("Tooltip_AllowIncomplete"));
+            UpdateFormatTip();
+            FitLayout();
+        }
+
+        private void UpdateFormatTip()
+        {
+            _tips.SetToolTip(_format, Strings.Get(IsGzip ? "Tooltip_FormatGzip" : "Tooltip_FormatRaw"));
+        }
+
+        private void FitLayout()
+        {
+            Ui.FitRightColumn(_root, _right);
+        }
+
+        protected override void OnFontChanged(EventArgs e)
+        {
+            base.OnFontChanged(e);
+            FitLayout();
+        }
+
+        protected override void OnLayout(LayoutEventArgs e)
+        {
+            base.OnLayout(e);
+            if (_devices.Width > 100 && _unsuitable.MaximumSize.Width != _devices.Width)
+            {
+                _unsuitable.MaximumSize = new System.Drawing.Size(_devices.Width, 0);
+            }
         }
 
         private bool IsGzip => _format.SelectedIndex != 1;
@@ -140,11 +176,11 @@ namespace HddBackup.App.Forms
         private void OnPathChanged()
         {
             var path = _path.Text.Trim();
-            if (path.EndsWith(GzipExtension, StringComparison.OrdinalIgnoreCase) && _format.SelectedIndex != 0)
+            if (path.EndsWith(ImageFileName.Gzip, StringComparison.OrdinalIgnoreCase) && _format.SelectedIndex != 0)
             {
                 _format.SelectedIndex = 0;
             }
-            else if (path.EndsWith(RawExtension, StringComparison.OrdinalIgnoreCase) && _format.SelectedIndex != 1)
+            else if (path.EndsWith(ImageFileName.Raw, StringComparison.OrdinalIgnoreCase) && _format.SelectedIndex != 1)
             {
                 _format.SelectedIndex = 1;
             }
@@ -157,9 +193,10 @@ namespace HddBackup.App.Forms
             var path = _path.Text.Trim();
             if (path.Length > 0)
             {
-                _path.Text = WithExtension(path, IsGzip);
+                _path.Text = ImageFileName.WithExtension(path, IsGzip);
             }
 
+            UpdateFormatTip();
             UpdateState();
         }
 
@@ -195,7 +232,7 @@ namespace HddBackup.App.Forms
                 {
                     bool gzip = dialog.FilterIndex == 1;
                     _format.SelectedIndex = gzip ? 0 : 1;
-                    _path.Text = WithExtension(dialog.FileName, gzip);
+                    _path.Text = ImageFileName.WithExtension(dialog.FileName, gzip);
                     _settings.LastImageFolder = Path.GetDirectoryName(dialog.FileName);
                 }
             }
@@ -209,7 +246,7 @@ namespace HddBackup.App.Forms
                 return;
             }
 
-            var path = WithExtension(_path.Text.Trim(), IsGzip);
+            var path = ImageFileName.WithExtension(_path.Text.Trim(), IsGzip);
             _path.Text = path;
             if (File.Exists(path) && !ConfirmOverwrite(path))
             {
@@ -247,27 +284,7 @@ namespace HddBackup.App.Forms
             var safe = new string(model.Select(c => Path.GetInvalidFileNameChars().Contains(c) || char.IsWhiteSpace(c) ? '_' : c).ToArray());
             var date = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             var incomplete = device != null && device.IsCapacityMisreported ? "_incomplete" : string.Empty;
-            return safe + "_" + date + incomplete + (IsGzip ? GzipExtension : RawExtension);
-        }
-
-        private static string WithExtension(string path, bool gzip)
-        {
-            if (path.Length == 0)
-            {
-                return path;
-            }
-
-            string stem = path;
-            if (stem.EndsWith(GzipExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                stem = stem.Substring(0, stem.Length - GzipExtension.Length);
-            }
-            else if (stem.EndsWith(RawExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                stem = stem.Substring(0, stem.Length - RawExtension.Length);
-            }
-
-            return stem + (gzip ? GzipExtension : RawExtension);
+            return safe + "_" + date + incomplete + (IsGzip ? ImageFileName.Gzip : ImageFileName.Raw);
         }
 
         protected override void OnEnabledChanged(EventArgs e)
