@@ -18,6 +18,9 @@ builds, while the authoritative checksums are the ones attached to each GitHub r
 - Explanations formerly in parentheses (whole device, formats, fast compression, back up anyway,
   offset) are now tooltips.
 - Default window width 980 px (was 820 px).
+- Progress of writing and verifying `.img.gz` images follows the uncompressed data, using an
+  estimate of the uncompressed size for whole-device images; before, it followed the compressed
+  file only and could stay near 0% for a long time on images with a mostly empty start.
 
 ## 1.1.0 — release candidate (2026-10-15)
 

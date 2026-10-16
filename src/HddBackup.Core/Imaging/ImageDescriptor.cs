@@ -34,6 +34,12 @@ namespace HddBackup.Core.Imaging
 
         public long FileSize { get; private set; }
 
+        /// <summary>
+        /// Uncompressed size for progress: <see cref="DataSize"/> when known, otherwise for a gzip image of
+        /// a whole device an estimate from its partition table and gzip trailer; null when unknown.
+        /// </summary>
+        public long? ProgressSize { get; private set; }
+
         /// <summary><c>disk.img.gz.sha256</c> for gzip images, <c>disk.img.sha256</c> for raw images.</summary>
         public ChecksumFile FileChecksum { get; private set; }
 
@@ -94,6 +100,7 @@ namespace HddBackup.Core.Imaging
             descriptor.DataSize = descriptor.Format == ImageFormat.Raw
                 ? descriptor.FileSize
                 : descriptor.PartitionMetadata?.Length;
+            descriptor.ProgressSize = descriptor.DataSize ?? EstimateGzipSize(path);
 
             string fileName = System.IO.Path.GetFileName(path);
             descriptor.FileChecksum = TryReadChecksum(FileSidecarPath(path), ChecksumKind.File, fileName, warnings);
@@ -121,6 +128,18 @@ namespace HddBackup.Core.Imaging
             string name = System.IO.Path.GetFileName(imagePath);
             string content = IsGzipPath(name) ? name.Substring(0, name.Length - GzipExtension.Length) : name + ".content";
             return directory.Length == 0 ? content : System.IO.Path.Combine(directory, content);
+        }
+
+        private static long? EstimateGzipSize(string path)
+        {
+            try
+            {
+                return ImageHead.EstimateGzipSize(path, ImageHead.RequiredDeviceBytes(path));
+            }
+            catch (Exception ex) when (ex is IOException || ex is InvalidDataException || ex is UnauthorizedAccessException || ex is ImagingException)
+            {
+                return null; // only used for progress
+            }
         }
 
         private static bool HasGzipMagic(string path)
