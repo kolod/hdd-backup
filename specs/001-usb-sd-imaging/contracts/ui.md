@@ -1,5 +1,9 @@
 # Contract: User Interface
 
+> The tab layout below is superseded by
+> [specs/004-two-column-layout/contracts/ui.md](../../004-two-column-layout/contracts/ui.md)
+> (two-column Backup and Restore tabs; Verify Image moved to the new Image tab).
+
 ## Main window (single window, two modes via tabs: Backup | Restore)
 
 | Area | Content |
