@@ -12,7 +12,10 @@ using HddBackup.Core.Shrinking;
 
 namespace HddBackup.App.Forms
 {
-    /// <summary>Work on an image file only: verify it or create a smaller copy (never touches a device).</summary>
+    /// <summary>
+    /// Work on an image file only (never touches a device): verify it or calculate its checksums,
+    /// convert it to the other format, or create a smaller copy.
+    /// </summary>
     internal sealed class ImageTab : UserControl, ILocalizable
     {
         private const long GiB = 1024L * 1024 * 1024;
@@ -28,7 +31,8 @@ namespace HddBackup.App.Forms
         private readonly Label _analysis = new Label { AutoSize = true, Margin = new Padding(3, 2, 3, 2), UseMnemonic = false };
         private readonly Label _blockers = new Label { AutoSize = true, ForeColor = Color.DarkRed, Visible = false, UseMnemonic = false };
         private readonly Label _targetCaption = Ui.GroupCaption();
-        private readonly RadioButton _minimum = new RadioButton { AutoSize = true, Checked = true };
+        private readonly RadioButton _same = new RadioButton { AutoSize = true, Checked = true };
+        private readonly RadioButton _minimum = new RadioButton { AutoSize = true };
         private readonly RadioButton _toDevice = new RadioButton { AutoSize = true };
         private readonly ComboBox _device = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Top, Margin = new Padding(20, 0, 3, 3) };
         private readonly RadioButton _toCard = new RadioButton { AutoSize = true };
@@ -36,9 +40,11 @@ namespace HddBackup.App.Forms
         private readonly ComboBox _cardUnit = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 60 };
         private readonly Label _formatCaption = Ui.GroupCaption();
         private readonly ComboBox _format = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Top };
+        private readonly CheckBox _fast = new CheckBox { AutoSize = true };
         private readonly Label _outputCaption = Ui.Caption();
         private readonly TextBox _output = new TextBox();
         private readonly Button _browseOutput = Ui.Button();
+        private readonly Label _reason = new Label { AutoSize = true, ForeColor = Color.DarkRed, Visible = false, Margin = new Padding(3, 2, 3, 2), UseMnemonic = false };
         private readonly Button _create = Ui.Button();
         private readonly Button _verify = Ui.Button();
         private readonly ToolTip _tips = new ToolTip();
@@ -51,6 +57,7 @@ namespace HddBackup.App.Forms
         private bool _settingOutput;
         private bool _outputEdited;
         private bool _cardSizeTouched;
+        private string _shownPath = string.Empty;
 
         public ImageTab(PortableSettings settings, SelectedImage selected)
         {
@@ -71,6 +78,7 @@ namespace HddBackup.App.Forms
 
             _targetCaption.Margin = new Padding(3, 0, 3, 2);
             Ui.AddRow(_right, _targetCaption);
+            Ui.AddRow(_right, _same);
             Ui.AddRow(_right, _minimum);
             Ui.AddRow(_right, _toDevice);
             Ui.AddRow(_right, _device);
@@ -81,10 +89,13 @@ namespace HddBackup.App.Forms
             Ui.AddRow(_right, card);
             Ui.AddRow(_right, _formatCaption);
             Ui.AddRow(_right, _format);
+            Ui.AddRow(_right, _fast);
             Ui.AddRow(_right, new Panel(), fill: true);
 
             Ui.AddRow(_bottom, _outputCaption);
             Ui.AddRow(_bottom, Ui.PathRow(_output, _browseOutput));
+            Ui.AddRow(_bottom, _reason);
+            _reason.Dock = DockStyle.None;
             var actions = Ui.Flow(rightToLeft: true);
             actions.WrapContents = false;
             actions.Controls.AddRange(new Control[] { _create, _verify });
@@ -110,6 +121,7 @@ namespace HddBackup.App.Forms
             _selected.Changed += (s, e) => OnImageChanged();
             _browse.Click += (s, e) => BrowseImage();
             _browseOutput.Click += (s, e) => BrowseOutput();
+            _same.CheckedChanged += (s, e) => OnTargetChanged();
             _minimum.CheckedChanged += (s, e) => OnTargetChanged();
             _toDevice.CheckedChanged += (s, e) => OnTargetChanged();
             _toCard.CheckedChanged += (s, e) => OnTargetChanged();
@@ -125,17 +137,24 @@ namespace HddBackup.App.Forms
                 UpdateFormatTip();
                 OnTargetChanged();
             };
+            _fast.Checked = settings.FastCompression;
+            _fast.CheckedChanged += (s, e) => _settings.FastCompression = _fast.Checked;
             _create.Click += (s, e) => Create();
             _verify.Click += (s, e) =>
             {
                 if (_selected.Descriptor != null)
                 {
-                    StartRequested?.Invoke(this, new OperationRequest { Kind = OperationKind.VerifyImage, ImagePath = _selected.Descriptor.Path, EjectAfter = false });
+                    StartRequested?.Invoke(this, new OperationRequest
+                    {
+                        Kind = OperationKind.VerifyImage,
+                        ImagePath = _selected.Descriptor.Path,
+                        SaveMissingChecksums = true,
+                        EjectAfter = false
+                    });
                 }
             };
 
             ApplyStrings();
-            _format.SelectedIndex = 1; // uncompressed, as the former Shrink dialog
             OnImageChanged();
         }
 
@@ -182,7 +201,8 @@ namespace HddBackup.App.Forms
             _imageCaption.Text = Strings.Get("Restore_ImageFile");
             _browse.Text = Strings.Get("Common_Browse");
             _analysisCaption.Text = Strings.Get("Image_AnalysisHeading");
-            _targetCaption.Text = Strings.Get("Group_ShrinkTo");
+            _targetCaption.Text = Strings.Get("Group_NewImageSize");
+            _same.Text = Strings.Get("Image_SameSize");
             _minimum.Text = Strings.Get("Shrink_TargetMinimum");
             _toDevice.Text = Strings.Get("Image_TargetDevice");
             _toCard.Text = Strings.Get("Image_TargetCard");
@@ -190,10 +210,12 @@ namespace HddBackup.App.Forms
             Ui.Embolden(Font, _analysisCaption, _targetCaption, _formatCaption);
             RelabelCombo(_cardUnit, Strings.Get("Unit_GiB"), Strings.Get("Unit_MiB"));
             RelabelCombo(_format, Strings.Get("Format_Gzip"), Strings.Get("Format_Raw"));
-            _outputCaption.Text = Strings.Get("Shrink_Output");
+            _fast.Text = Strings.Get("Option_FastCompression");
+            _tips.SetToolTip(_fast, Strings.Get("Tooltip_FastCompression"));
+            _outputCaption.Text = Strings.Get("Image_Output");
             _browseOutput.Text = Strings.Get("Common_Browse");
             _create.Text = Strings.Get("Image_Create");
-            _verify.Text = Strings.Get("Image_Verify");
+            UpdateVerifyLabel();
             for (int i = 0; i < _device.Items.Count; i++)
             {
                 _device.Items[i] = new DeviceItem(((DeviceItem)_device.Items[i]).Device); // sizes are formatted per language
@@ -217,7 +239,7 @@ namespace HddBackup.App.Forms
             int width = _left.ClientSize.Width - _left.Padding.Horizontal - _imageInfo.Margin.Horizontal;
             if (width > 100 && _imageInfo.MaximumSize.Width != width)
             {
-                _imageInfo.MaximumSize = _analysis.MaximumSize = _blockers.MaximumSize = new Size(width, 0);
+                _imageInfo.MaximumSize = _analysis.MaximumSize = _blockers.MaximumSize = _reason.MaximumSize = new Size(width, 0);
             }
         }
 
@@ -261,6 +283,22 @@ namespace HddBackup.App.Forms
                 _path.Text = _selected.Path;
                 _settingPath = false;
             }
+
+            if (!string.Equals(_shownPath, _selected.Path, StringComparison.OrdinalIgnoreCase) && _selected.Descriptor != null)
+            {
+                _shownPath = _selected.Path;
+                _outputEdited = false;
+                _format.SelectedIndex = _selected.Descriptor.Format == ImageFormat.Gzip ? 1 : 0;
+            }
+
+            // A shrink size cannot apply once the analysis says the image cannot be shrunk.
+            bool settled = _selected.AnalysisState != AnalysisState.Running;
+            if (settled && ShrinkablePlan == null && !_same.Checked)
+            {
+                _same.Checked = true;
+            }
+
+            UpdateVerifyLabel();
 
             var plan = _selected.AnalysisState == AnalysisState.Done ? _selected.Analysis : null;
             if (plan != null && plan.IsShrinkable && !_cardSizeTouched)
@@ -342,7 +380,19 @@ namespace HddBackup.App.Forms
             if (!_outputEdited)
             {
                 _settingOutput = true;
-                _output.Text = _selected.IsFullDevice ? ShrinkOutputName.Default(_selected.Path, Target, IsGzip) : string.Empty;
+                if (_selected.Descriptor == null)
+                {
+                    _output.Text = string.Empty;
+                }
+                else if (_same.Checked)
+                {
+                    _output.Text = ImageFileName.WithExtension(_selected.Path, IsGzip);
+                }
+                else
+                {
+                    _output.Text = _selected.IsFullDevice ? ShrinkOutputName.Default(_selected.Path, Target, IsGzip) : string.Empty;
+                }
+
                 _settingOutput = false;
             }
             else if (_output.Text.Trim().Length > 0)
@@ -359,23 +409,51 @@ namespace HddBackup.App.Forms
         private void UpdateState()
         {
             var plan = ShrinkablePlan;
+            bool loaded = _selected.Descriptor != null;
             bool shrinkable = plan != null;
-            _minimum.Enabled = _toCard.Enabled = _format.Enabled = shrinkable;
+            _same.Enabled = _format.Enabled = loaded;
+            _fast.Enabled = loaded && IsGzip;
+            _minimum.Enabled = _toCard.Enabled = shrinkable;
             _toDevice.Enabled = shrinkable && _device.Items.Count > 0;
             _device.Enabled = _toDevice.Enabled && _toDevice.Checked;
             _cardSize.Enabled = _cardUnit.Enabled = shrinkable && _toCard.Checked;
-            _output.Enabled = _browseOutput.Enabled = shrinkable;
-
-            bool fits = shrinkable && (!Target.HasValue || plan.Fits(Target.Value));
-            if (shrinkable)
-            {
-                _blockers.Text = fits ? string.Empty : Strings.Get("Blocker_NotEnoughSpaceEvenAtMinimum");
-                _blockers.Visible = !fits;
-            }
+            _output.Enabled = _browseOutput.Enabled = loaded && (_same.Checked || shrinkable);
 
             string output = _output.Text.Trim();
-            _create.Enabled = Enabled && fits && output.Length > 0 && !SamePath(output, _selected.Path);
-            _verify.Enabled = Enabled && _selected.Descriptor != null;
+            bool samePath = output.Length > 0 && SamePath(output, _selected.Path);
+            bool ok;
+            string reason = null;
+            if (_same.Checked)
+            {
+                // FR-008: same size and same format would only copy the source.
+                bool sameFormat = loaded && IsGzip == (_selected.Descriptor.Format == ImageFormat.Gzip);
+                ok = loaded && !sameFormat && !samePath && output.Length > 0;
+                if (loaded && (sameFormat || samePath))
+                {
+                    reason = Strings.Get("Image_SameAsSource");
+                }
+            }
+            else
+            {
+                bool fits = shrinkable && (!Target.HasValue || plan.Fits(Target.Value));
+                ok = fits && !samePath && output.Length > 0;
+                if (shrinkable && !fits)
+                {
+                    reason = Strings.Get("Blocker_NotEnoughSpaceEvenAtMinimum");
+                }
+            }
+
+            _reason.Text = reason ?? string.Empty;
+            _reason.Visible = reason != null;
+            _create.Enabled = Enabled && ok;
+            _verify.Enabled = Enabled && loaded;
+        }
+
+        /// <summary>FR-010: "Calculate checksums" for an image without checksum files, otherwise "Verify image".</summary>
+        private void UpdateVerifyLabel()
+        {
+            var image = _selected.Descriptor;
+            _verify.Text = Strings.Get(image != null && !image.HasAnyChecksum ? "Image_CalculateChecksums" : "Image_Verify");
         }
 
         private static bool SamePath(string a, string b)
@@ -451,14 +529,25 @@ namespace HddBackup.App.Forms
                 return;
             }
 
-            StartRequested?.Invoke(this, new OperationRequest
-            {
-                Kind = OperationKind.ShrinkImage,
-                ImagePath = _selected.Path,
-                ShrinkOutputPath = output,
-                ShrinkTargetBytes = Target,
-                EjectAfter = false
-            });
+            var compression = _fast.Checked ? CompressionChoice.Fastest : CompressionChoice.Optimal;
+            StartRequested?.Invoke(this, _same.Checked
+                ? new OperationRequest
+                {
+                    Kind = OperationKind.ConvertImage,
+                    ImagePath = _selected.Path,
+                    OutputPath = output,
+                    Compression = compression,
+                    EjectAfter = false
+                }
+                : new OperationRequest
+                {
+                    Kind = OperationKind.ShrinkImage,
+                    ImagePath = _selected.Path,
+                    ShrinkOutputPath = output,
+                    ShrinkTargetBytes = Target,
+                    Compression = compression,
+                    EjectAfter = false
+                });
         }
 
         private sealed class DeviceItem

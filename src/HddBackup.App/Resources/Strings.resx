@@ -327,12 +327,6 @@
   <data name="Check_NotAvailable" xml:space="preserve">
     <value>no checksum file</value>
   </data>
-  <data name="Verify_SaveChecksumsQuestion" xml:space="preserve">
-    <value>No checksum files were found for this image. Save the computed checksums next to the image?</value>
-  </data>
-  <data name="Verify_ChecksumsSaved" xml:space="preserve">
-    <value>The checksum files were saved.</value>
-  </data>
   <data name="Confirm_Title" xml:space="preserve">
     <value>Confirm writing</value>
   </data>
@@ -556,9 +550,6 @@ Source code: {0}</value>
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>Smallest possible</value>
   </data>
-  <data name="Shrink_Output" xml:space="preserve">
-    <value>Save the smaller image as:</value>
-  </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>Image is larger than the device</value>
   </data>
@@ -666,9 +657,6 @@ The original image is not changed. The smaller copy is saved as:
   <data name="Group_AfterWriting" xml:space="preserve">
     <value>After writing</value>
   </data>
-  <data name="Group_ShrinkTo" xml:space="preserve">
-    <value>Shrink to</value>
-  </data>
   <data name="Group_OutputFormat" xml:space="preserve">
     <value>Output format</value>
   </data>
@@ -690,7 +678,7 @@ Smallest possible image: {2}</value>
     <value>Card size:</value>
   </data>
   <data name="Image_Create" xml:space="preserve">
-    <value>Create smaller image</value>
+    <value>Create image</value>
   </data>
   <data name="Image_Verify" xml:space="preserve">
     <value>Verify image</value>
@@ -724,5 +712,29 @@ Smallest possible image: {2}</value>
   </data>
   <data name="Tooltip_ColumnOffset" xml:space="preserve">
     <value>In bytes</value>
+  </data>
+  <data name="Image_SameSize" xml:space="preserve">
+    <value>Same as the image</value>
+  </data>
+  <data name="Group_NewImageSize" xml:space="preserve">
+    <value>Size of the new image</value>
+  </data>
+  <data name="Image_Output" xml:space="preserve">
+    <value>Save the new image as:</value>
+  </data>
+  <data name="Image_SameAsSource" xml:space="preserve">
+    <value>The new image would be the same as the source. Choose another format or size.</value>
+  </data>
+  <data name="Image_CalculateChecksums" xml:space="preserve">
+    <value>Calculate checksums</value>
+  </data>
+  <data name="Phase_Convert_Transferring" xml:space="preserve">
+    <value>Converting the image…</value>
+  </data>
+  <data name="Result_Converted" xml:space="preserve">
+    <value>Converted image saved: {0}</value>
+  </data>
+  <data name="Result_ChecksumsSaved" xml:space="preserve">
+    <value>Checksum files saved: {0}</value>
   </data>
 </root>

@@ -327,12 +327,6 @@
   <data name="Check_NotAvailable" xml:space="preserve">
     <value>aucun fichier de somme de contrôle</value>
   </data>
-  <data name="Verify_SaveChecksumsQuestion" xml:space="preserve">
-    <value>Aucun fichier de somme de contrôle n&apos;a été trouvé pour cette image. Enregistrer les sommes calculées à côté de l&apos;image ?</value>
-  </data>
-  <data name="Verify_ChecksumsSaved" xml:space="preserve">
-    <value>Les fichiers de somme de contrôle ont été enregistrés.</value>
-  </data>
   <data name="Confirm_Title" xml:space="preserve">
     <value>Confirmer l&apos;écriture</value>
   </data>
@@ -556,9 +550,6 @@ Code source : {0}</value>
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>La plus petite possible</value>
   </data>
-  <data name="Shrink_Output" xml:space="preserve">
-    <value>Enregistrer l&apos;image réduite sous :</value>
-  </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>Image plus grande que le périphérique</value>
   </data>
@@ -666,9 +657,6 @@ L&apos;image d&apos;origine n&apos;est pas modifiée. La copie réduite sera enr
   <data name="Group_AfterWriting" xml:space="preserve">
     <value>Après l&apos;écriture</value>
   </data>
-  <data name="Group_ShrinkTo" xml:space="preserve">
-    <value>Réduire à</value>
-  </data>
   <data name="Group_OutputFormat" xml:space="preserve">
     <value>Format de sortie</value>
   </data>
@@ -690,7 +678,7 @@ Plus petite image possible : {2}</value>
     <value>Taille de carte :</value>
   </data>
   <data name="Image_Create" xml:space="preserve">
-    <value>Créer une image réduite</value>
+    <value>Créer l&apos;image</value>
   </data>
   <data name="Image_Verify" xml:space="preserve">
     <value>Vérifier l&apos;image</value>
@@ -724,5 +712,29 @@ Plus petite image possible : {2}</value>
   </data>
   <data name="Tooltip_ColumnOffset" xml:space="preserve">
     <value>En octets</value>
+  </data>
+  <data name="Image_SameSize" xml:space="preserve">
+    <value>Identique à l&apos;image</value>
+  </data>
+  <data name="Group_NewImageSize" xml:space="preserve">
+    <value>Taille de la nouvelle image</value>
+  </data>
+  <data name="Image_Output" xml:space="preserve">
+    <value>Enregistrer la nouvelle image sous :</value>
+  </data>
+  <data name="Image_SameAsSource" xml:space="preserve">
+    <value>La nouvelle image serait identique à la source. Choisissez un autre format ou une autre taille.</value>
+  </data>
+  <data name="Image_CalculateChecksums" xml:space="preserve">
+    <value>Calculer les sommes de contrôle</value>
+  </data>
+  <data name="Phase_Convert_Transferring" xml:space="preserve">
+    <value>Conversion de l&apos;image…</value>
+  </data>
+  <data name="Result_Converted" xml:space="preserve">
+    <value>Image convertie enregistrée : {0}</value>
+  </data>
+  <data name="Result_ChecksumsSaved" xml:space="preserve">
+    <value>Fichiers de somme de contrôle enregistrés : {0}</value>
   </data>
 </root>

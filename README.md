@@ -16,10 +16,12 @@ SD/microSD cards.
 - Shrinking Linux images (for example Raspberry Pi OS) so they fit a smaller card: the last
   ext4 partition is rebuilt at a smaller size in a new image file, natively on Windows. On the
   **Image** tab choose the smallest possible size, the size of a connected device, or a card
-  size, then **Create smaller image**. The Restore tab warns when an image is larger than the
+  size, then **Create image**. The Restore tab warns when an image is larger than the
   selected card and offers "Shrink and write". The original image is never changed.
-- The **Image** tab also verifies an image against its checksum files without touching a
-  device.
+- The **Image** tab also works on image files without touching a device: convert `.img.gz` to
+  `.img` or back (size "Same as the image", choose the other format, **Create image**; the result
+  gets its checksum files and is verified before it is kept), verify an image against its
+  checksum files, or **Calculate checksums** for an image that has none.
 - UI languages: English, Ukrainian, German, French, Spanish, Japanese.
 
 ## Disclaimer

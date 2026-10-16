@@ -219,6 +219,11 @@ namespace HddBackup.App.Forms
                 return Strings.Get("Phase_Shrink_" + phase);
             }
 
+            if (phase == OperationPhase.Transferring && _request?.Kind == OperationKind.ConvertImage)
+            {
+                return Strings.Get("Phase_Convert_Transferring");
+            }
+
             if (phase == OperationPhase.Transferring && _request != null)
             {
                 return Strings.Get(_request.IsBackup ? "Phase_Transferring_Backup" : "Phase_Transferring_Restore");
@@ -249,6 +254,10 @@ namespace HddBackup.App.Forms
                     {
                         lines.Add(Strings.Format("Shrink_ResultSaved", r.ImagePath, Formatters.Bytes(r.DataBytes)));
                     }
+                    else if (r.Kind == OperationKind.ConvertImage)
+                    {
+                        lines.Add(Strings.Format("Result_Converted", r.OutputPath));
+                    }
                     else
                     {
                         lines.Add(Strings.Get("Result_SafeToRemove"));
@@ -265,6 +274,11 @@ namespace HddBackup.App.Forms
                         {
                             lines.Add(Strings.Get("Result_RestoreDone"));
                         }
+                    }
+
+                    if (r.SavedChecksumFiles.Count > 0)
+                    {
+                        lines.Add(Strings.Format("Result_ChecksumsSaved", string.Join(", ", r.SavedChecksumFiles)));
                     }
 
                     if (r.EjectVetoedBy != null)
@@ -336,6 +350,12 @@ namespace HddBackup.App.Forms
             if (r.Kind == OperationKind.ShrinkImage)
             {
                 lines.Add(Strings.Get("Shrink_NothingSaved"));
+                return;
+            }
+
+            if (r.Kind == OperationKind.ConvertImage)
+            {
+                lines.Add(Strings.Get("Result_NoImageSaved"));
                 return;
             }
 

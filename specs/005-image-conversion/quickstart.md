@@ -41,4 +41,5 @@ gzip -dc disk.img.gz | cmp - disk.img # gzip output decompresses to the original
 
 | Date | Build / tests | Scenarios | Notes |
 |------|---------------|-----------|-------|
-| | | | |
+| 2026-10-16 | Baseline after rebase on PR #9: 275 passed, 2 skipped | — | — |
+| 2026-10-16 | 0 warnings; 296 passed, 2 skipped (21 new: `ConvertImageTests`, `ChecksumCalculationTests`) | 1–4, 6 (in-process UI check on `rpi-like-4k.img.gz`), 5, 7–10 (automated tests) | Conversion output checked independently: `sha256sum -c` OK for `.img.sha256` and `.img.gz.sha256`; `gzip -dc rpi-like-4k.img.gz \| cmp - rpi-like-4k.img` identical. Image tab screenshots in six languages at 980 × 680 and de/ja at 800 × 560: no clipped text |

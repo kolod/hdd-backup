@@ -12,7 +12,10 @@ namespace HddBackup.Core.Imaging
         VerifyImage,
 
         /// <summary>Create a smaller copy of an image by rebuilding its last (ext4) partition.</summary>
-        ShrinkImage
+        ShrinkImage,
+
+        /// <summary>Copy an image into the other format (.img ↔ .img.gz); the content is unchanged.</summary>
+        ConvertImage
     }
 
     public enum CompressionChoice
@@ -86,6 +89,15 @@ namespace HddBackup.Core.Imaging
 
         /// <summary>ShrinkImage: maximum size of the result; null ⇒ smallest possible.</summary>
         public long? ShrinkTargetBytes { get; set; }
+
+        /// <summary>ConvertImage: path of the new image; its format follows the extension (.gz = gzip).</summary>
+        public string OutputPath { get; set; }
+
+        /// <summary>
+        /// VerifyImage: after a verification without mismatch, write the checksum files that are
+        /// missing next to the image.
+        /// </summary>
+        public bool SaveMissingChecksums { get; set; }
 
         public bool IsBackup => Kind == OperationKind.BackupDevice || Kind == OperationKind.BackupPartition;
 

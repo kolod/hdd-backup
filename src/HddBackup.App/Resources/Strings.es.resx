@@ -327,12 +327,6 @@
   <data name="Check_NotAvailable" xml:space="preserve">
     <value>sin archivo de suma de comprobación</value>
   </data>
-  <data name="Verify_SaveChecksumsQuestion" xml:space="preserve">
-    <value>No se encontraron archivos de suma de comprobación para esta imagen. ¿Guardar las sumas calculadas junto a la imagen?</value>
-  </data>
-  <data name="Verify_ChecksumsSaved" xml:space="preserve">
-    <value>Se guardaron los archivos de suma de comprobación.</value>
-  </data>
   <data name="Confirm_Title" xml:space="preserve">
     <value>Confirmar escritura</value>
   </data>
@@ -556,9 +550,6 @@ Código fuente: {0}</value>
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>Lo más pequeña posible</value>
   </data>
-  <data name="Shrink_Output" xml:space="preserve">
-    <value>Guardar la imagen reducida como:</value>
-  </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>La imagen es más grande que el dispositivo</value>
   </data>
@@ -666,9 +657,6 @@ La imagen original no se modifica. La copia reducida se guardará como:
   <data name="Group_AfterWriting" xml:space="preserve">
     <value>Después de escribir</value>
   </data>
-  <data name="Group_ShrinkTo" xml:space="preserve">
-    <value>Reducir a</value>
-  </data>
   <data name="Group_OutputFormat" xml:space="preserve">
     <value>Formato de salida</value>
   </data>
@@ -690,7 +678,7 @@ Imagen más pequeña posible: {2}</value>
     <value>Tamaño de tarjeta:</value>
   </data>
   <data name="Image_Create" xml:space="preserve">
-    <value>Crear imagen reducida</value>
+    <value>Crear imagen</value>
   </data>
   <data name="Image_Verify" xml:space="preserve">
     <value>Verificar imagen</value>
@@ -724,5 +712,29 @@ Imagen más pequeña posible: {2}</value>
   </data>
   <data name="Tooltip_ColumnOffset" xml:space="preserve">
     <value>En bytes</value>
+  </data>
+  <data name="Image_SameSize" xml:space="preserve">
+    <value>Igual que la imagen</value>
+  </data>
+  <data name="Group_NewImageSize" xml:space="preserve">
+    <value>Tamaño de la nueva imagen</value>
+  </data>
+  <data name="Image_Output" xml:space="preserve">
+    <value>Guardar la nueva imagen como:</value>
+  </data>
+  <data name="Image_SameAsSource" xml:space="preserve">
+    <value>La nueva imagen sería igual que la original. Elija otro formato u otro tamaño.</value>
+  </data>
+  <data name="Image_CalculateChecksums" xml:space="preserve">
+    <value>Calcular sumas de comprobación</value>
+  </data>
+  <data name="Phase_Convert_Transferring" xml:space="preserve">
+    <value>Convirtiendo la imagen…</value>
+  </data>
+  <data name="Result_Converted" xml:space="preserve">
+    <value>Imagen convertida guardada: {0}</value>
+  </data>
+  <data name="Result_ChecksumsSaved" xml:space="preserve">
+    <value>Archivos de suma de comprobación guardados: {0}</value>
   </data>
 </root>

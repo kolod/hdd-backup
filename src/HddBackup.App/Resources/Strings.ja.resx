@@ -327,12 +327,6 @@
   <data name="Check_NotAvailable" xml:space="preserve">
     <value>チェックサム ファイルなし</value>
   </data>
-  <data name="Verify_SaveChecksumsQuestion" xml:space="preserve">
-    <value>このイメージのチェックサム ファイルが見つかりません。計算したチェックサムをイメージの横に保存しますか?</value>
-  </data>
-  <data name="Verify_ChecksumsSaved" xml:space="preserve">
-    <value>チェックサム ファイルを保存しました。</value>
-  </data>
   <data name="Confirm_Title" xml:space="preserve">
     <value>書き込みの確認</value>
   </data>
@@ -556,9 +550,6 @@ Windows 7 SP1 から Windows 11 で動作します。イメージは標準の .i
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>できるだけ小さく</value>
   </data>
-  <data name="Shrink_Output" xml:space="preserve">
-    <value>縮小したイメージの保存先:</value>
-  </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>イメージがデバイスより大きい</value>
   </data>
@@ -666,9 +657,6 @@ Windows 7 SP1 から Windows 11 で動作します。イメージは標準の .i
   <data name="Group_AfterWriting" xml:space="preserve">
     <value>書き込み後</value>
   </data>
-  <data name="Group_ShrinkTo" xml:space="preserve">
-    <value>縮小先のサイズ</value>
-  </data>
   <data name="Group_OutputFormat" xml:space="preserve">
     <value>出力形式</value>
   </data>
@@ -690,7 +678,7 @@ Linux (ext4) パーティションの使用量: {1}
     <value>カードのサイズ:</value>
   </data>
   <data name="Image_Create" xml:space="preserve">
-    <value>縮小イメージを作成</value>
+    <value>イメージを作成</value>
   </data>
   <data name="Image_Verify" xml:space="preserve">
     <value>イメージを検証</value>
@@ -724,5 +712,29 @@ Linux (ext4) パーティションの使用量: {1}
   </data>
   <data name="Tooltip_ColumnOffset" xml:space="preserve">
     <value>バイト単位</value>
+  </data>
+  <data name="Image_SameSize" xml:space="preserve">
+    <value>元のイメージと同じ</value>
+  </data>
+  <data name="Group_NewImageSize" xml:space="preserve">
+    <value>新しいイメージのサイズ</value>
+  </data>
+  <data name="Image_Output" xml:space="preserve">
+    <value>新しいイメージの保存先:</value>
+  </data>
+  <data name="Image_SameAsSource" xml:space="preserve">
+    <value>新しいイメージは元のイメージと同じになります。別の形式またはサイズを選んでください。</value>
+  </data>
+  <data name="Image_CalculateChecksums" xml:space="preserve">
+    <value>チェックサムを計算</value>
+  </data>
+  <data name="Phase_Convert_Transferring" xml:space="preserve">
+    <value>イメージを変換しています…</value>
+  </data>
+  <data name="Result_Converted" xml:space="preserve">
+    <value>変換したイメージを保存しました: {0}</value>
+  </data>
+  <data name="Result_ChecksumsSaved" xml:space="preserve">
+    <value>チェックサム ファイルを保存しました: {0}</value>
   </data>
 </root>

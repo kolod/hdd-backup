@@ -327,12 +327,6 @@
   <data name="Check_NotAvailable" xml:space="preserve">
     <value>keine Prüfsummendatei</value>
   </data>
-  <data name="Verify_SaveChecksumsQuestion" xml:space="preserve">
-    <value>Für dieses Abbild wurden keine Prüfsummendateien gefunden. Die berechneten Prüfsummen neben dem Abbild speichern?</value>
-  </data>
-  <data name="Verify_ChecksumsSaved" xml:space="preserve">
-    <value>Die Prüfsummendateien wurden gespeichert.</value>
-  </data>
   <data name="Confirm_Title" xml:space="preserve">
     <value>Schreiben bestätigen</value>
   </data>
@@ -556,9 +550,6 @@ Quellcode: {0}</value>
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>So klein wie möglich</value>
   </data>
-  <data name="Shrink_Output" xml:space="preserve">
-    <value>Kleineres Abbild speichern unter:</value>
-  </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>Abbild ist größer als das Gerät</value>
   </data>
@@ -666,9 +657,6 @@ Das ursprüngliche Abbild wird nicht verändert. Die kleinere Kopie wird gespeic
   <data name="Group_AfterWriting" xml:space="preserve">
     <value>Nach dem Schreiben</value>
   </data>
-  <data name="Group_ShrinkTo" xml:space="preserve">
-    <value>Verkleinern auf</value>
-  </data>
   <data name="Group_OutputFormat" xml:space="preserve">
     <value>Ausgabeformat</value>
   </data>
@@ -690,7 +678,7 @@ Kleinstmögliches Abbild: {2}</value>
     <value>Kartengröße:</value>
   </data>
   <data name="Image_Create" xml:space="preserve">
-    <value>Kleineres Abbild erstellen</value>
+    <value>Abbild erstellen</value>
   </data>
   <data name="Image_Verify" xml:space="preserve">
     <value>Abbild prüfen</value>
@@ -724,5 +712,29 @@ Kleinstmögliches Abbild: {2}</value>
   </data>
   <data name="Tooltip_ColumnOffset" xml:space="preserve">
     <value>In Bytes</value>
+  </data>
+  <data name="Image_SameSize" xml:space="preserve">
+    <value>Wie das Abbild</value>
+  </data>
+  <data name="Group_NewImageSize" xml:space="preserve">
+    <value>Größe des neuen Abbilds</value>
+  </data>
+  <data name="Image_Output" xml:space="preserve">
+    <value>Neues Abbild speichern unter:</value>
+  </data>
+  <data name="Image_SameAsSource" xml:space="preserve">
+    <value>Das neue Abbild wäre identisch mit der Quelle. Wählen Sie ein anderes Format oder eine andere Größe.</value>
+  </data>
+  <data name="Image_CalculateChecksums" xml:space="preserve">
+    <value>Prüfsummen berechnen</value>
+  </data>
+  <data name="Phase_Convert_Transferring" xml:space="preserve">
+    <value>Abbild wird konvertiert…</value>
+  </data>
+  <data name="Result_Converted" xml:space="preserve">
+    <value>Konvertiertes Abbild gespeichert: {0}</value>
+  </data>
+  <data name="Result_ChecksumsSaved" xml:space="preserve">
+    <value>Prüfsummendateien gespeichert: {0}</value>
   </data>
 </root>
