@@ -31,22 +31,19 @@
     <value>Back up</value>
   </data>
   <data name="Tab_Restore" xml:space="preserve">
-    <value>Restore / Verify</value>
+    <value>Restore</value>
   </data>
   <data name="Backup_SourceDevice" xml:space="preserve">
     <value>Source device:</value>
   </data>
   <data name="Backup_ScopeWhole" xml:space="preserve">
-    <value>Whole device (partition table, boot sectors and all partitions)</value>
+    <value>Whole device</value>
   </data>
   <data name="Backup_ScopePartition" xml:space="preserve">
     <value>Single partition</value>
   </data>
   <data name="Backup_ImageFile" xml:space="preserve">
     <value>Save image as:</value>
-  </data>
-  <data name="Backup_Format" xml:space="preserve">
-    <value>Format:</value>
   </data>
   <data name="Backup_Start" xml:space="preserve">
     <value>Start backup</value>
@@ -73,13 +70,13 @@
     <value>another program</value>
   </data>
   <data name="Format_Gzip" xml:space="preserve">
-    <value>Compressed (.img.gz)</value>
+    <value>Compressed</value>
   </data>
   <data name="Format_Raw" xml:space="preserve">
-    <value>Uncompressed (.img)</value>
+    <value>Uncompressed</value>
   </data>
   <data name="Option_FastCompression" xml:space="preserve">
-    <value>Fast compression (larger file)</value>
+    <value>Fast compression</value>
   </data>
   <data name="Option_VerifyAfterBackup" xml:space="preserve">
     <value>Verify the image file after backup</value>
@@ -101,9 +98,6 @@
   </data>
   <data name="Restore_Write" xml:space="preserve">
     <value>Write to device…</value>
-  </data>
-  <data name="Restore_VerifyImage" xml:space="preserve">
-    <value>Verify image</value>
   </data>
   <data name="Restore_NoImage" xml:space="preserve">
     <value>Select an image file.</value>
@@ -163,7 +157,7 @@
     <value>File system</value>
   </data>
   <data name="Column_Offset" xml:space="preserve">
-    <value>Offset (bytes)</value>
+    <value>Offset</value>
   </data>
   <data name="Bus_Usb" xml:space="preserve">
     <value>USB</value>
@@ -545,7 +539,7 @@ Source code: {0}</value>
     <value>The selected reader cannot be used with this card: it reports less capacity than the card&apos;s partitions use. Use another card reader, for example a USB one.</value>
   </data>
   <data name="Option_AllowIncomplete" xml:space="preserve">
-    <value>Back up anyway (incomplete image: the reader hides the end of the card)</value>
+    <value>Back up anyway</value>
   </data>
   <data name="Warning_IncompleteBackup" xml:space="preserve">
     <value>This reader hides the end of the card. The image will contain only what the reader shows and will be INCOMPLETE. Use it only for comparison, not as a real backup.</value>
@@ -556,32 +550,14 @@ Source code: {0}</value>
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>Average speed: {0}</value>
   </data>
-  <data name="Restore_Shrink" xml:space="preserve">
-    <value>Shrink image…</value>
-  </data>
-  <data name="Shrink_Title" xml:space="preserve">
-    <value>Shrink image</value>
-  </data>
   <data name="Shrink_Analyzing" xml:space="preserve">
     <value>Analyzing the image…</value>
-  </data>
-  <data name="Shrink_Summary" xml:space="preserve">
-    <value>Image: {0} ({1})
-Partitions: {2}
-Used in the Linux (ext4) partition: {3}
-Smallest possible image: {4}</value>
   </data>
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>Smallest possible</value>
   </data>
-  <data name="Shrink_TargetCard" xml:space="preserve">
-    <value>Fit a card of size:</value>
-  </data>
   <data name="Shrink_Output" xml:space="preserve">
     <value>Save the smaller image as:</value>
-  </data>
-  <data name="Shrink_Start" xml:space="preserve">
-    <value>Start</value>
   </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>Image is larger than the device</value>
@@ -677,5 +653,76 @@ The original image is not changed. The smaller copy is saved as:
   </data>
   <data name="Blocker_AlreadyFits" xml:space="preserve">
     <value>The image already fits; shrinking is not needed.</value>
+  </data>
+  <data name="Group_BackupScope" xml:space="preserve">
+    <value>Backup scope</value>
+  </data>
+  <data name="Group_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Group_AfterBackup" xml:space="preserve">
+    <value>After backup</value>
+  </data>
+  <data name="Group_AfterWriting" xml:space="preserve">
+    <value>After writing</value>
+  </data>
+  <data name="Group_ShrinkTo" xml:space="preserve">
+    <value>Shrink to</value>
+  </data>
+  <data name="Group_OutputFormat" xml:space="preserve">
+    <value>Output format</value>
+  </data>
+  <data name="Tab_Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="Image_AnalysisHeading" xml:space="preserve">
+    <value>Shrink analysis</value>
+  </data>
+  <data name="Image_Analysis" xml:space="preserve">
+    <value>Partitions: {0}
+Used in the Linux (ext4) partition: {1}
+Smallest possible image: {2}</value>
+  </data>
+  <data name="Image_TargetDevice" xml:space="preserve">
+    <value>Size of a device:</value>
+  </data>
+  <data name="Image_TargetCard" xml:space="preserve">
+    <value>Card size:</value>
+  </data>
+  <data name="Image_Create" xml:space="preserve">
+    <value>Create smaller image</value>
+  </data>
+  <data name="Image_Verify" xml:space="preserve">
+    <value>Verify image</value>
+  </data>
+  <data name="Image_NotFullDevice" xml:space="preserve">
+    <value>Only images of a whole device can be shrunk.</value>
+  </data>
+  <data name="Restore_TooLarge" xml:space="preserve">
+    <value>The image is larger than the device.</value>
+  </data>
+  <data name="Restore_TooLargeShrink" xml:space="preserve">
+    <value>The image is larger than the device. It will be shrunk to fit before writing.</value>
+  </data>
+  <data name="Restore_TooLargeCannot" xml:space="preserve">
+    <value>The image is larger than the device and cannot be shrunk to fit: {0}</value>
+  </data>
+  <data name="Tooltip_ScopeWhole" xml:space="preserve">
+    <value>Partition table, boot sectors and all partitions</value>
+  </data>
+  <data name="Tooltip_FormatGzip" xml:space="preserve">
+    <value>Gzip-compressed image, .img.gz</value>
+  </data>
+  <data name="Tooltip_FormatRaw" xml:space="preserve">
+    <value>Raw image, .img</value>
+  </data>
+  <data name="Tooltip_FastCompression" xml:space="preserve">
+    <value>Larger file</value>
+  </data>
+  <data name="Tooltip_AllowIncomplete" xml:space="preserve">
+    <value>Incomplete image: the reader hides the end of the card</value>
+  </data>
+  <data name="Tooltip_ColumnOffset" xml:space="preserve">
+    <value>In bytes</value>
   </data>
 </root>

@@ -31,22 +31,19 @@
     <value>Copia de seguridad</value>
   </data>
   <data name="Tab_Restore" xml:space="preserve">
-    <value>Restaurar / Verificar</value>
+    <value>Restaurar</value>
   </data>
   <data name="Backup_SourceDevice" xml:space="preserve">
     <value>Dispositivo de origen:</value>
   </data>
   <data name="Backup_ScopeWhole" xml:space="preserve">
-    <value>Dispositivo completo (tabla de particiones, sectores de arranque y todas las particiones)</value>
+    <value>Dispositivo completo</value>
   </data>
   <data name="Backup_ScopePartition" xml:space="preserve">
     <value>Una sola partición</value>
   </data>
   <data name="Backup_ImageFile" xml:space="preserve">
     <value>Guardar imagen como:</value>
-  </data>
-  <data name="Backup_Format" xml:space="preserve">
-    <value>Formato:</value>
   </data>
   <data name="Backup_Start" xml:space="preserve">
     <value>Iniciar copia</value>
@@ -73,13 +70,13 @@
     <value>otro programa</value>
   </data>
   <data name="Format_Gzip" xml:space="preserve">
-    <value>Comprimida (.img.gz)</value>
+    <value>Comprimida</value>
   </data>
   <data name="Format_Raw" xml:space="preserve">
-    <value>Sin comprimir (.img)</value>
+    <value>Sin comprimir</value>
   </data>
   <data name="Option_FastCompression" xml:space="preserve">
-    <value>Compresión rápida (archivo más grande)</value>
+    <value>Compresión rápida</value>
   </data>
   <data name="Option_VerifyAfterBackup" xml:space="preserve">
     <value>Verificar el archivo de imagen después de la copia</value>
@@ -101,9 +98,6 @@
   </data>
   <data name="Restore_Write" xml:space="preserve">
     <value>Escribir en el dispositivo…</value>
-  </data>
-  <data name="Restore_VerifyImage" xml:space="preserve">
-    <value>Verificar imagen</value>
   </data>
   <data name="Restore_NoImage" xml:space="preserve">
     <value>Seleccione un archivo de imagen.</value>
@@ -163,7 +157,7 @@
     <value>Sistema de archivos</value>
   </data>
   <data name="Column_Offset" xml:space="preserve">
-    <value>Desplazamiento (bytes)</value>
+    <value>Desplazamiento</value>
   </data>
   <data name="Bus_Usb" xml:space="preserve">
     <value>USB</value>
@@ -545,7 +539,7 @@ Código fuente: {0}</value>
     <value>El lector seleccionado no sirve para esta tarjeta: indica menos capacidad de la que ocupan las particiones de la tarjeta. Use otro lector de tarjetas, por ejemplo uno USB.</value>
   </data>
   <data name="Option_AllowIncomplete" xml:space="preserve">
-    <value>Copiar de todos modos (imagen incompleta: el lector oculta el final de la tarjeta)</value>
+    <value>Copiar de todos modos</value>
   </data>
   <data name="Warning_IncompleteBackup" xml:space="preserve">
     <value>Este lector oculta el final de la tarjeta. La imagen contendrá solo lo que muestra el lector y será INCOMPLETA. Úsela solo para comparar, no como una copia de seguridad real.</value>
@@ -556,32 +550,14 @@ Código fuente: {0}</value>
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>Velocidad media: {0}</value>
   </data>
-  <data name="Restore_Shrink" xml:space="preserve">
-    <value>Reducir imagen…</value>
-  </data>
-  <data name="Shrink_Title" xml:space="preserve">
-    <value>Reducir imagen</value>
-  </data>
   <data name="Shrink_Analyzing" xml:space="preserve">
     <value>Analizando la imagen…</value>
-  </data>
-  <data name="Shrink_Summary" xml:space="preserve">
-    <value>Imagen: {0} ({1})
-Particiones: {2}
-Ocupado en la partición Linux (ext4): {3}
-Imagen más pequeña posible: {4}</value>
   </data>
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>Lo más pequeña posible</value>
   </data>
-  <data name="Shrink_TargetCard" xml:space="preserve">
-    <value>Para una tarjeta de:</value>
-  </data>
   <data name="Shrink_Output" xml:space="preserve">
     <value>Guardar la imagen reducida como:</value>
-  </data>
-  <data name="Shrink_Start" xml:space="preserve">
-    <value>Iniciar</value>
   </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>La imagen es más grande que el dispositivo</value>
@@ -677,5 +653,76 @@ La imagen original no se modifica. La copia reducida se guardará como:
   </data>
   <data name="Blocker_AlreadyFits" xml:space="preserve">
     <value>La imagen ya cabe; no es necesario reducirla.</value>
+  </data>
+  <data name="Group_BackupScope" xml:space="preserve">
+    <value>Alcance de la copia</value>
+  </data>
+  <data name="Group_Format" xml:space="preserve">
+    <value>Formato</value>
+  </data>
+  <data name="Group_AfterBackup" xml:space="preserve">
+    <value>Después de la copia</value>
+  </data>
+  <data name="Group_AfterWriting" xml:space="preserve">
+    <value>Después de escribir</value>
+  </data>
+  <data name="Group_ShrinkTo" xml:space="preserve">
+    <value>Reducir a</value>
+  </data>
+  <data name="Group_OutputFormat" xml:space="preserve">
+    <value>Formato de salida</value>
+  </data>
+  <data name="Tab_Image" xml:space="preserve">
+    <value>Imagen</value>
+  </data>
+  <data name="Image_AnalysisHeading" xml:space="preserve">
+    <value>Análisis de reducción</value>
+  </data>
+  <data name="Image_Analysis" xml:space="preserve">
+    <value>Particiones: {0}
+Ocupado en la partición Linux (ext4): {1}
+Imagen más pequeña posible: {2}</value>
+  </data>
+  <data name="Image_TargetDevice" xml:space="preserve">
+    <value>Tamaño de un dispositivo:</value>
+  </data>
+  <data name="Image_TargetCard" xml:space="preserve">
+    <value>Tamaño de tarjeta:</value>
+  </data>
+  <data name="Image_Create" xml:space="preserve">
+    <value>Crear imagen reducida</value>
+  </data>
+  <data name="Image_Verify" xml:space="preserve">
+    <value>Verificar imagen</value>
+  </data>
+  <data name="Image_NotFullDevice" xml:space="preserve">
+    <value>Solo se pueden reducir imágenes de un dispositivo completo.</value>
+  </data>
+  <data name="Restore_TooLarge" xml:space="preserve">
+    <value>La imagen es más grande que el dispositivo.</value>
+  </data>
+  <data name="Restore_TooLargeShrink" xml:space="preserve">
+    <value>La imagen es más grande que el dispositivo. Se reducirá para que quepa antes de escribirla.</value>
+  </data>
+  <data name="Restore_TooLargeCannot" xml:space="preserve">
+    <value>La imagen es más grande que el dispositivo y no se puede reducir para que quepa: {0}</value>
+  </data>
+  <data name="Tooltip_ScopeWhole" xml:space="preserve">
+    <value>Tabla de particiones, sectores de arranque y todas las particiones</value>
+  </data>
+  <data name="Tooltip_FormatGzip" xml:space="preserve">
+    <value>Imagen comprimida con gzip, .img.gz</value>
+  </data>
+  <data name="Tooltip_FormatRaw" xml:space="preserve">
+    <value>Imagen sin procesar, .img</value>
+  </data>
+  <data name="Tooltip_FastCompression" xml:space="preserve">
+    <value>Archivo más grande</value>
+  </data>
+  <data name="Tooltip_AllowIncomplete" xml:space="preserve">
+    <value>Imagen incompleta: el lector oculta el final de la tarjeta</value>
+  </data>
+  <data name="Tooltip_ColumnOffset" xml:space="preserve">
+    <value>En bytes</value>
   </data>
 </root>

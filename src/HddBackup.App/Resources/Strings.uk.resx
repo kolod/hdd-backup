@@ -31,22 +31,19 @@
     <value>Резервна копія</value>
   </data>
   <data name="Tab_Restore" xml:space="preserve">
-    <value>Відновлення / перевірка</value>
+    <value>Відновлення</value>
   </data>
   <data name="Backup_SourceDevice" xml:space="preserve">
     <value>Пристрій-джерело:</value>
   </data>
   <data name="Backup_ScopeWhole" xml:space="preserve">
-    <value>Увесь пристрій (таблиця розділів, завантажувальні сектори та всі розділи)</value>
+    <value>Увесь пристрій</value>
   </data>
   <data name="Backup_ScopePartition" xml:space="preserve">
     <value>Окремий розділ</value>
   </data>
   <data name="Backup_ImageFile" xml:space="preserve">
     <value>Зберегти образ як:</value>
-  </data>
-  <data name="Backup_Format" xml:space="preserve">
-    <value>Формат:</value>
   </data>
   <data name="Backup_Start" xml:space="preserve">
     <value>Почати копіювання</value>
@@ -73,13 +70,13 @@
     <value>іншої програми</value>
   </data>
   <data name="Format_Gzip" xml:space="preserve">
-    <value>Стиснений (.img.gz)</value>
+    <value>Стиснений</value>
   </data>
   <data name="Format_Raw" xml:space="preserve">
-    <value>Нестиснений (.img)</value>
+    <value>Нестиснений</value>
   </data>
   <data name="Option_FastCompression" xml:space="preserve">
-    <value>Швидке стиснення (більший файл)</value>
+    <value>Швидке стиснення</value>
   </data>
   <data name="Option_VerifyAfterBackup" xml:space="preserve">
     <value>Перевірити файл образу після копіювання</value>
@@ -101,9 +98,6 @@
   </data>
   <data name="Restore_Write" xml:space="preserve">
     <value>Записати на пристрій…</value>
-  </data>
-  <data name="Restore_VerifyImage" xml:space="preserve">
-    <value>Перевірити образ</value>
   </data>
   <data name="Restore_NoImage" xml:space="preserve">
     <value>Виберіть файл образу.</value>
@@ -163,7 +157,7 @@
     <value>Файлова система</value>
   </data>
   <data name="Column_Offset" xml:space="preserve">
-    <value>Зміщення (байти)</value>
+    <value>Зміщення</value>
   </data>
   <data name="Bus_Usb" xml:space="preserve">
     <value>USB</value>
@@ -545,7 +539,7 @@
     <value>Вибраний кардридер не підходить для цієї карти: він повідомляє меншу ємність, ніж займають розділи карти. Скористайтеся іншим кардридером, наприклад USB.</value>
   </data>
   <data name="Option_AllowIncomplete" xml:space="preserve">
-    <value>Все одно створити копію (неповний образ: кардридер приховує кінець карти)</value>
+    <value>Все одно створити копію</value>
   </data>
   <data name="Warning_IncompleteBackup" xml:space="preserve">
     <value>Цей кардридер приховує кінець карти. Образ міститиме лише те, що показує кардридер, і буде НЕПОВНИМ. Використовуйте його лише для порівняння, а не як справжню резервну копію.</value>
@@ -556,32 +550,14 @@
   <data name="Progress_AverageSpeed" xml:space="preserve">
     <value>Середня швидкість: {0}</value>
   </data>
-  <data name="Restore_Shrink" xml:space="preserve">
-    <value>Зменшити образ…</value>
-  </data>
-  <data name="Shrink_Title" xml:space="preserve">
-    <value>Зменшення образу</value>
-  </data>
   <data name="Shrink_Analyzing" xml:space="preserve">
     <value>Аналіз образу…</value>
-  </data>
-  <data name="Shrink_Summary" xml:space="preserve">
-    <value>Образ: {0} ({1})
-Розділи: {2}
-Зайнято в розділі Linux (ext4): {3}
-Найменший можливий образ: {4}</value>
   </data>
   <data name="Shrink_TargetMinimum" xml:space="preserve">
     <value>Якомога менший</value>
   </data>
-  <data name="Shrink_TargetCard" xml:space="preserve">
-    <value>Під карту розміром:</value>
-  </data>
   <data name="Shrink_Output" xml:space="preserve">
     <value>Зберегти менший образ як:</value>
-  </data>
-  <data name="Shrink_Start" xml:space="preserve">
-    <value>Почати</value>
   </data>
   <data name="Shrink_OfferTitle" xml:space="preserve">
     <value>Образ більший за пристрій</value>
@@ -677,5 +653,76 @@
   </data>
   <data name="Blocker_AlreadyFits" xml:space="preserve">
     <value>Образ уже вміщується; зменшення не потрібне.</value>
+  </data>
+  <data name="Group_BackupScope" xml:space="preserve">
+    <value>Що копіювати</value>
+  </data>
+  <data name="Group_Format" xml:space="preserve">
+    <value>Формат</value>
+  </data>
+  <data name="Group_AfterBackup" xml:space="preserve">
+    <value>Після копіювання</value>
+  </data>
+  <data name="Group_AfterWriting" xml:space="preserve">
+    <value>Після запису</value>
+  </data>
+  <data name="Group_ShrinkTo" xml:space="preserve">
+    <value>Зменшити до</value>
+  </data>
+  <data name="Group_OutputFormat" xml:space="preserve">
+    <value>Формат результату</value>
+  </data>
+  <data name="Tab_Image" xml:space="preserve">
+    <value>Образ</value>
+  </data>
+  <data name="Image_AnalysisHeading" xml:space="preserve">
+    <value>Аналіз для зменшення</value>
+  </data>
+  <data name="Image_Analysis" xml:space="preserve">
+    <value>Розділи: {0}
+Зайнято в розділі Linux (ext4): {1}
+Найменший можливий образ: {2}</value>
+  </data>
+  <data name="Image_TargetDevice" xml:space="preserve">
+    <value>Розмір носія:</value>
+  </data>
+  <data name="Image_TargetCard" xml:space="preserve">
+    <value>Розмір карти:</value>
+  </data>
+  <data name="Image_Create" xml:space="preserve">
+    <value>Створити менший образ</value>
+  </data>
+  <data name="Image_Verify" xml:space="preserve">
+    <value>Перевірити образ</value>
+  </data>
+  <data name="Image_NotFullDevice" xml:space="preserve">
+    <value>Зменшити можна лише образ усього пристрою.</value>
+  </data>
+  <data name="Restore_TooLarge" xml:space="preserve">
+    <value>Образ більший за пристрій.</value>
+  </data>
+  <data name="Restore_TooLargeShrink" xml:space="preserve">
+    <value>Образ більший за пристрій. Перед записом його буде зменшено, щоб він уміщувався.</value>
+  </data>
+  <data name="Restore_TooLargeCannot" xml:space="preserve">
+    <value>Образ більший за пристрій, і його не можна зменшити так, щоб він уміщувався: {0}</value>
+  </data>
+  <data name="Tooltip_ScopeWhole" xml:space="preserve">
+    <value>Таблиця розділів, завантажувальні сектори та всі розділи</value>
+  </data>
+  <data name="Tooltip_FormatGzip" xml:space="preserve">
+    <value>Образ, стиснений gzip, .img.gz</value>
+  </data>
+  <data name="Tooltip_FormatRaw" xml:space="preserve">
+    <value>Нестиснений образ, .img</value>
+  </data>
+  <data name="Tooltip_FastCompression" xml:space="preserve">
+    <value>Більший файл</value>
+  </data>
+  <data name="Tooltip_AllowIncomplete" xml:space="preserve">
+    <value>Неповний образ: кардридер приховує кінець карти</value>
+  </data>
+  <data name="Tooltip_ColumnOffset" xml:space="preserve">
+    <value>У байтах</value>
   </data>
 </root>

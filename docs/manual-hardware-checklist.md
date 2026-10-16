@@ -44,11 +44,12 @@ properly) and an 8 GB card F. Back up E to `pi.img.gz` first (step 4).
 
 | # | Step | Expected result | Win7 | Win11 |
 |---|------|-----------------|------|-------|
-| 19 | Restore tab → `pi.img.gz` → select F → **Write to device…** | Offer dialog: image size, card size, used data, result size, output path; the original is named as unchanged | ☐ | ☐ |
+| 19 | Restore tab → `pi.img.gz` → select F (the warning "will be shrunk to fit before writing" appears under the image description) → **Write to device…** | Offer dialog: image size, card size, used data, result size, output path; the original is named as unchanged | ☐ | ☐ |
 | 20 | **Shrink and write** → confirm the write dialog | "Step 1 of 2" shrink phases, then "Step 2 of 2" write; final banner names the saved smaller image and "safe to remove". Time the shrink step: ≤ 15 min on an SSD (SC-004) | ☐ | ☐ |
 | 21 | Boot the Pi from F | Boots to the desktop/login; `sudo apt update` works; `df -h /` shows the smaller root; `sudo touch /forcefsck` + reboot shows no fsck errors | ☐ | ☐ |
 | 22 | Check `pi_shrunk_*.img` from step 20 | `certutil -hashfile` equals its `.sha256`; `pi.img.gz` and its sidecars are unchanged (hash before/after) | ☐ | ☐ |
-| 23 | Pull card E out of the Pi without shutting down, back it up again, then try **Shrink image…** on that backup | Refused before any file is created: "journal needs recovery" (or "not cleanly unmounted") with advice | ☐ | ☐ |
-| 24 | **Shrink image…** → Smallest possible, `.img.gz` output | Result ≤ used data + 10 % (or + 256 MB) (SC-005); writing it to F and booting works as in step 21 | ☐ | ☐ |
+| 23 | Pull card E out of the Pi without shutting down, back it up again, then open that backup on the **Image** tab | Shrink analysis shows "journal needs recovery" (or "not cleanly unmounted") with advice; **Create smaller image** is unavailable | ☐ | ☐ |
+| 24 | **Image** tab → Smallest possible, output format Compressed → **Create smaller image** | Result ≤ used data + 10 % (or + 256 MB) (SC-005); writing it to F and booting works as in step 21 | ☐ | ☐ |
 | 25 | Cancel a shrink halfway | Amber banner "no image file was created"; no `.partial` or `.work` file left next to the output | ☐ | ☐ |
 | 26 | Shrink with too little free space on the output drive | Refused at the start with "not enough free space"; nothing left behind | ☐ | ☐ |
+| 27 | **Image** tab → `pi.img.gz` → Size of a device → card F → **Create smaller image** | `pi_shrunk_<size>G.img` fits F; nothing is written to F (its volumes stay mounted, contents unchanged) | ☐ | ☐ |

@@ -14,9 +14,12 @@ SD/microSD cards.
 - Progress, current and average speed, elapsed and remaining time. Progress reaches 100% only
   when the device can be removed safely.
 - Shrinking Linux images (for example Raspberry Pi OS) so they fit a smaller card: the last
-  ext4 partition is rebuilt at a smaller size in a new image file, natively on Windows. Use
-  **Shrink image…** on the Restore tab, or accept the offer that appears when an image is too
-  large for the selected card ("Shrink and write"). The original image is never changed.
+  ext4 partition is rebuilt at a smaller size in a new image file, natively on Windows. On the
+  **Image** tab choose the smallest possible size, the size of a connected device, or a card
+  size, then **Create smaller image**. The Restore tab warns when an image is larger than the
+  selected card and offers "Shrink and write". The original image is never changed.
+- The **Image** tab also verifies an image against its checksum files without touching a
+  device.
 - UI languages: English, Ukrainian, German, French, Spanish, Japanese.
 
 ## Disclaimer
