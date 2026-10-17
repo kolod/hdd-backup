@@ -58,6 +58,9 @@ namespace HddBackup.Core.Imaging
         /// <summary>ShrinkImage with a repair: the file system was repaired.</summary>
         public bool Repaired { get; set; }
 
+        /// <summary>The repair kept the original size (a repaired copy, not shrunk).</summary>
+        public bool RepairedSameSize { get; set; }
+
         /// <summary>Journal transactions applied by the repair.</summary>
         public int RepairJournalTransactions { get; set; }
 

@@ -27,6 +27,11 @@ builds, while the authoritative checksums are the ones attached to each GitHub r
   checksums** saves missing checksum files in one pass (replaces the question after verifying an
   image without checksums); fast compression for compressed output; **Create smaller image** is
   now **Create image**.
+- Repair after an unclean shutdown (feature `006-ext4-repair`): the Image tab shows the state of
+  each ext4 partition and offers **Repair the file system** — journal replay, orphan inodes and
+  free space accounting, as Linux recovery does — as a repaired copy or together with shrinking;
+  "Shrink and write" repairs automatically. Other damage is reported and refused. Constitution
+  1.2.0.
 
 ## 1.1.0 — release candidate (2026-10-15)
 

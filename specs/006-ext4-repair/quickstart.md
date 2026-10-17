@@ -47,4 +47,6 @@ Expected: `e2fsck -fn` exits 0 with no messages; trees identical apart from inod
 
 | Date | Build / tests | Scenarios | Notes |
 |------|---------------|-----------|-------|
-| | | | |
+| 2026-10-17 | 0 warnings; 348 passed, 2 skipped (42 new: journal, overlay/orphans, finding kinds, repair end to end) | 1–7 (in-process UI check: File system line, Repair option, names, requests, same-size repair run → clean, damaged image refused, Restore warning) | Same-size repair of all four power-loss fixtures equals the `e2fsck -fy` reference tree (own comparer); independent check in Docker with the CI script: `e2fsck -fn` clean and 1563–1564 objects identical for `repaired-dirty-journal`, `-dirty-journal-torn`, `-orphans`, `-not-clean`. Image tab screenshots (needs repair: six languages; damaged: en/de/ja; de/ja at 800 × 560) without clipped text |
+| — | — | 8 | Hardware: checklist steps 30–31 not run yet |
+| — | — | SC-004 | Performance against shrinking on a 16 GiB image not measured yet (T033) |

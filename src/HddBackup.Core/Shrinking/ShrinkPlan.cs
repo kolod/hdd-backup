@@ -151,6 +151,19 @@ namespace HddBackup.Core.Shrinking
                 sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Block size {0}, used data {1} bytes, used inodes {2}", BlockSize, UsedDataBytes, UsedInodes));
             }
 
+            foreach (var fs in FileSystems)
+            {
+                sb.AppendLine(string.Format(
+                    CultureInfo.InvariantCulture,
+                    "  File system #{0}{1}: {2}{3}{4}{5}",
+                    fs.PartitionNumber,
+                    fs.IsRoot ? " [root]" : string.Empty,
+                    fs.Condition,
+                    fs.Reasons == RepairReasons.None ? string.Empty : " (" + fs.Reasons + ")",
+                    fs.OrphanCount.HasValue ? ", orphans " + fs.OrphanCount.Value : string.Empty,
+                    fs.Problems.Count > 0 ? " — " + string.Join("; ", fs.Problems) : string.Empty));
+            }
+
             sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Image {0} bytes, minimum {1} bytes", SourceImageBytes, MinimumImageBytes));
             sb.AppendLine("  Blockers: " + (IsShrinkable ? "none" : string.Join("; ", Blockers)));
             return sb.ToString();

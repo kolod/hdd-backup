@@ -101,8 +101,36 @@ namespace HddBackup.App.Localization
             return string.Join(Environment.NewLine, lines);
         }
 
+        /// <summary>Localized reasons of an unclean shutdown ("the journal needs recovery, 3 orphan inodes").</summary>
+        public static string RepairReasons(HddBackup.Core.Shrinking.RepairReasons reasons, int? orphanCount)
+        {
+            var parts = new System.Collections.Generic.List<string>();
+            if ((reasons & HddBackup.Core.Shrinking.RepairReasons.JournalNeedsRecovery) != 0)
+            {
+                parts.Add(Strings.Get("Reason_Journal"));
+            }
+
+            if ((reasons & HddBackup.Core.Shrinking.RepairReasons.OrphanInodes) != 0)
+            {
+                parts.Add(orphanCount.HasValue && orphanCount.Value > 0 ? Strings.Format("Reason_Orphans", orphanCount.Value) : Strings.Get("Reason_OrphansUnknown"));
+            }
+
+            if ((reasons & HddBackup.Core.Shrinking.RepairReasons.NotClean) != 0)
+            {
+                parts.Add(Strings.Get("Reason_NotClean"));
+            }
+
+            return string.Join(", ", parts);
+        }
+
         private static string BlockerLine(string name, string detail)
         {
+            if (name == nameof(HddBackup.Core.Shrinking.ShrinkBlocker.NeedsRepair)
+                && Enum.TryParse(detail, out HddBackup.Core.Shrinking.RepairReasons reasons))
+            {
+                return "• " + Strings.Format("Blocker_NeedsRepair", RepairReasons(reasons, null));
+            }
+
             string text = Strings.Get("Blocker_" + name);
             return "• " + (string.IsNullOrEmpty(detail) ? text : text + " (" + detail + ")");
         }

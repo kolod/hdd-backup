@@ -112,6 +112,14 @@ namespace HddBackup.Core.Tests.Shrinking
             Assert.Equal(size, new FileInfo(output).Length);
             AssertRepaired(fixture, output);
             Assert.Equal(before, EngineHarness.ShaOfFile(source));
+
+            // CI checks every repaired image again with e2fsck against the e2fsck -fy reference.
+            var export = Environment.GetEnvironmentVariable("HDDBACKUP_EXPORT_DIR");
+            if (!string.IsNullOrEmpty(export))
+            {
+                Directory.CreateDirectory(export);
+                File.Copy(output, Path.Combine(export, "repaired-" + fixture + ".img"), true);
+            }
         }
 
         [Fact]

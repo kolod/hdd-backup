@@ -53,6 +53,9 @@ namespace HddBackup.Core.Shrinking
 
         public bool Repaired { get; set; }
 
+        /// <summary>Repaired at the original size (no shrinking).</summary>
+        public bool SameSize { get; set; }
+
         public int JournalTransactions { get; set; }
 
         public int OrphansRemoved { get; set; }
@@ -271,6 +274,7 @@ namespace HddBackup.Core.Shrinking
                         IsGzip = ImageDescriptor.IsGzipPath(request.OutputPath),
                         ComparedBytes = plan.TotalBytesToCopy,
                         Repaired = request.Repair,
+                        SameSize = sameSize,
                         JournalTransactions = replayed,
                         OrphansRemoved = orphans.Count
                     };

@@ -126,10 +126,19 @@
   - Each fixture ships a manifest of the expected tree after `e2fsck -fy`.
 - **Verification**: `check-output.sh` (`e2fsck -fn` on the repaired output, tree comparison with
   the e2fsck-recovered reference) is run by the existing `ext4-check` CI job.
-- **Open item (T001)**: confirm the `debugfs` journal commands in e2fsprogs 1.47.0 inside Docker;
-  fallback: build the journal transactions with a small script that writes jbd2 descriptor,
-  data and commit blocks into the journal inode's blocks (format per R-2), which also exercises
-  the parser independently.
+- **Confirmed (T001, 2026-10-17)**: e2fsprogs 1.47.0 `debugfs` has `journal_open` (`jo -c`
+  enables checksums v3), `journal_write`, `journal_close`. The fixtures write the block
+  differences between the original and the changed file system as journal transactions; after
+  `e2fsck -fy` the recovered tree equals the changed one.
+- **Change from the plan**: the references are stored as images (`<name>.reference.img.gz`,
+  the fixture after `e2fsck -fy`) instead of manifests; tests and the CI check compare trees with
+  them directly, so no hand-written mirror of the changes is needed. The damaged fixture is also
+  marked not clean, as such cards are in practice, so the analysis reads it fully.
+- `check-output.sh` installed its tools only when `e2fsck` was missing; `debian:bookworm` ships
+  `e2fsck` but not `sfdisk`, so whole images were checked instead of the root partition. It now
+  checks for every tool it uses.
+- Synthetic journals in `Jbd2JournalTests` cover revoke, escape, damaged data, a missing commit
+  and the 8/12/16-byte tag formats.
 
 ## R-8. Constitution amendment
 

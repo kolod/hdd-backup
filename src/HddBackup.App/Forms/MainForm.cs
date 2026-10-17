@@ -367,7 +367,7 @@ namespace HddBackup.App.Forms
             long imageBytes = isRaw ? fileSize : required;
             if (fit != ImageFitResult.ShrinkToFit)
             {
-                var reasons = plan.IsShrinkable
+                var reasons = plan.CanShrink(true)
                     ? Strings.Get("Blocker_NotEnoughSpaceEvenAtMinimum")
                     : Formatters.Blockers(plan.Blockers);
                 MessageBox.Show(
@@ -380,7 +380,10 @@ namespace HddBackup.App.Forms
             }
 
             // Never replace an earlier result (or anything else) silently: pick a free name.
-            string output = ImageFileName.FirstFree(ShrinkOutputName.Default(request.ImagePath, request.Device.Size, false));
+            bool repair = ImageFit.RequiresRepair(plan);
+            string output = ImageFileName.FirstFree(repair
+                ? ShrinkOutputName.Repaired(request.ImagePath, request.Device.Size, false, shrunk: true)
+                : ShrinkOutputName.Default(request.ImagePath, request.Device.Size, false));
             using (var offer = new ShrinkOfferDialog(plan, imageBytes, request.Device.Size, output))
             {
                 if (offer.ShowDialog(this) != DialogResult.OK)
@@ -414,6 +417,7 @@ namespace HddBackup.App.Forms
                 ImagePath = request.ImagePath,
                 ShrinkOutputPath = output,
                 ShrinkTargetBytes = request.Device.Size,
+                RepairFileSystem = repair, // an unclean shutdown is repaired as part of the shrink
                 EjectAfter = false
             };
             var shrinkResult = await RunEngineAsync(new ImagingEngine(_access), shrinkRequest, () => Strings.Format("Shrink_Step", 1, 2), null);

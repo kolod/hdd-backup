@@ -7,6 +7,7 @@
 # Exported names and their source fixture (contracts/scripts.md):
 #   <fixture>-<factor>.ext4   bare rebuilt partition (Ext4WriterTests)
 #   shrunk-<fixture>.img      full shrunk image (ImageShrinkerTests)
+#   repaired-<fixture>.img    repaired image (RepairTests), compared with <fixture>.reference.img.gz
 # Exit 1 when no image is found or any image fails. Images are checked in parallel.
 set -uo pipefail
 
@@ -19,6 +20,7 @@ SUMMARY=${GITHUB_STEP_SUMMARY:-/dev/stdout}
 source_of() { # exported file name -> fixture name, or empty
     local name=$1
     if [[ $name =~ ^shrunk-(.+)\.img$ ]]; then echo "${BASH_REMATCH[1]}"; return; fi
+    if [[ $name =~ ^repaired-(.+)\.img$ ]]; then echo "${BASH_REMATCH[1]}.reference"; return; fi
     if [[ $name =~ ^(.+)-[0-9]+\.[0-9]{2}\.ext4$ ]]; then echo "${BASH_REMATCH[1]}"; return; fi
 }
 

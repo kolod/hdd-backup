@@ -30,10 +30,21 @@ namespace HddBackup.App.Forms
                     "Shrink_OfferText",
                     Formatters.Bytes(imageBytes),
                     Formatters.Bytes(deviceBytes),
-                    Formatters.Bytes(plan.UsedDataBytes),
+                    plan.UsedDataBytes > 0 ? Formatters.Bytes(plan.UsedDataBytes) : "—", // measured during the shrink for compressed images
                     Formatters.Bytes(deviceBytes),
                     outputPath)
             });
+
+            if (plan.IsRepairable)
+            {
+                root.Controls.Add(new Label
+                {
+                    AutoSize = true,
+                    MaximumSize = new Size(560, 0),
+                    Margin = new Padding(3, 8, 3, 3),
+                    Text = Strings.Get("Shrink_OfferRepair")
+                });
+            }
 
             var go = Ui.Button();
             go.Text = Strings.Get("Shrink_AndWrite");

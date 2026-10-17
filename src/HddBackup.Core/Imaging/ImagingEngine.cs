@@ -798,6 +798,7 @@ namespace HddBackup.Core.Imaging
                 result.FileSha256 = outcome.FileSha256;
                 result.DataBytes = outcome.ImageBytes;
                 result.Repaired = outcome.Repaired;
+                result.RepairedSameSize = outcome.SameSize;
                 result.RepairJournalTransactions = outcome.JournalTransactions;
                 result.RepairOrphansRemoved = outcome.OrphansRemoved;
                 result.ContentComplete = true;

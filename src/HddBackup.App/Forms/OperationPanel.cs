@@ -216,6 +216,12 @@ namespace HddBackup.App.Forms
 
             if (_request?.Kind == OperationKind.ShrinkImage)
             {
+                // Uncompressed sources start with reading the file system through its journal.
+                if (_request.RepairFileSystem && phase == OperationPhase.Preparing && !ImageDescriptor.IsGzipPath(_request.ImagePath))
+                {
+                    return Strings.Get("Phase_Repair_Journal");
+                }
+
                 return Strings.Get("Phase_Shrink_" + phase);
             }
 
@@ -252,7 +258,13 @@ namespace HddBackup.App.Forms
                     }
                     else if (r.Kind == OperationKind.ShrinkImage)
                     {
-                        lines.Add(Strings.Format("Shrink_ResultSaved", r.ImagePath, Formatters.Bytes(r.DataBytes)));
+                        lines.Add(r.RepairedSameSize
+                            ? Strings.Format("Result_Repaired", r.ImagePath)
+                            : Strings.Format("Shrink_ResultSaved", r.ImagePath, Formatters.Bytes(r.DataBytes)));
+                        if (r.Repaired)
+                        {
+                            lines.Add(Strings.Format("Result_RepairDone", r.RepairJournalTransactions, r.RepairOrphansRemoved));
+                        }
                     }
                     else if (r.Kind == OperationKind.ConvertImage)
                     {

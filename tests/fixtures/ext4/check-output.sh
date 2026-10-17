@@ -10,7 +10,8 @@
 set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
-command -v e2fsck >/dev/null || { apt-get update -qq >/dev/null; apt-get install -y -qq e2fsprogs fdisk attr >/dev/null; }
+# debian:bookworm ships e2fsck but not sfdisk/getfattr: check for every tool used below.
+{ command -v e2fsck && command -v sfdisk && command -v getfattr; } >/dev/null || { apt-get update -qq >/dev/null; apt-get install -y -qq e2fsprogs fdisk attr >/dev/null; }
 
 OUTPUT=$1
 SOURCE=$2

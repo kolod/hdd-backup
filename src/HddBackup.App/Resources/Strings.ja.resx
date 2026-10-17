@@ -737,4 +737,64 @@ Linux (ext4) パーティションの使用量: {1}
   <data name="Result_ChecksumsSaved" xml:space="preserve">
     <value>チェックサム ファイルを保存しました: {0}</value>
   </data>
+  <data name="Image_FileSystemHeading" xml:space="preserve">
+    <value>ファイル システム</value>
+  </data>
+  <data name="Image_FsClean" xml:space="preserve">
+    <value>{0}: 正常</value>
+  </data>
+  <data name="Image_FsNeedsRepair" xml:space="preserve">
+    <value>{0}: 修復が必要 — {1}</value>
+  </data>
+  <data name="Image_FsNotRepaired" xml:space="preserve">
+    <value>{0}: 修復が必要 — {1}。修復されるのは最後のパーティションだけです。このパーティションはそのままコピーされます。</value>
+  </data>
+  <data name="Image_FsDamaged" xml:space="preserve">
+    <value>{0}: このプログラムでは修復できません — {1}。Linux のファイル システム チェックで修復してから、もう一度バックアップしてください。</value>
+  </data>
+  <data name="Reason_Journal" xml:space="preserve">
+    <value>ジャーナルの回復が必要</value>
+  </data>
+  <data name="Reason_Orphans" xml:space="preserve">
+    <value>孤立 inode {0} 個</value>
+  </data>
+  <data name="Reason_OrphansUnknown" xml:space="preserve">
+    <value>孤立 inode</value>
+  </data>
+  <data name="Reason_NotClean" xml:space="preserve">
+    <value>正しくアンマウントされていない</value>
+  </data>
+  <data name="Group_FileSystem" xml:space="preserve">
+    <value>ファイル システム</value>
+  </data>
+  <data name="Image_Repair" xml:space="preserve">
+    <value>ファイル システムを修復</value>
+  </data>
+  <data name="Tooltip_Repair" xml:space="preserve">
+    <value>ジャーナルを適用し、孤立 inode を解放し、空き容量のカウンターを修正して、ファイル システムを正常としてマークします</value>
+  </data>
+  <data name="Image_RepairRequired" xml:space="preserve">
+    <value>縮小する前にファイル システムを修復する必要があります。</value>
+  </data>
+  <data name="Phase_Repair_Journal" xml:space="preserve">
+    <value>ファイル システムを読み取り、ジャーナルを適用しています…</value>
+  </data>
+  <data name="Result_Repaired" xml:space="preserve">
+    <value>修復したイメージを保存しました: {0}</value>
+  </data>
+  <data name="Result_RepairDone" xml:space="preserve">
+    <value>ファイル システムを修復しました: ジャーナル トランザクション {0} 件を適用し、孤立 inode {1} 個を削除しました。</value>
+  </data>
+  <data name="Blocker_NeedsRepair" xml:space="preserve">
+    <value>不正なシャットダウンのため、ファイル システムの修復が必要です: {0}。</value>
+  </data>
+  <data name="Blocker_StructuralDamage" xml:space="preserve">
+    <value>ファイル システムに、不正なシャットダウン以外の原因による損傷があります。Linux のファイル システム チェックで修復してから、もう一度バックアップしてください。</value>
+  </data>
+  <data name="Restore_TooLargeRepair" xml:space="preserve">
+    <value>イメージがデバイスより大きいです。書き込み前にファイル システムを修復し、収まるサイズへイメージを縮小します。</value>
+  </data>
+  <data name="Shrink_OfferRepair" xml:space="preserve">
+    <value>縮小の過程でファイル システムを修復します (不正なシャットダウン)。</value>
+  </data>
 </root>
