@@ -737,4 +737,64 @@
   <data name="Result_ChecksumsSaved" xml:space="preserve">
     <value>Збережено файли контрольних сум: {0}</value>
   </data>
+  <data name="Image_FileSystemHeading" xml:space="preserve">
+    <value>Файлова система</value>
+  </data>
+  <data name="Image_FsClean" xml:space="preserve">
+    <value>{0}: справна</value>
+  </data>
+  <data name="Image_FsNeedsRepair" xml:space="preserve">
+    <value>{0}: потребує виправлення — {1}</value>
+  </data>
+  <data name="Image_FsNotRepaired" xml:space="preserve">
+    <value>{0}: потребує виправлення — {1}. Виправляється лише останній розділ; цей копіюється як є.</value>
+  </data>
+  <data name="Image_FsDamaged" xml:space="preserve">
+    <value>{0}: ця програма не може виправити — {1}. Виправте її перевіркою файлової системи в Linux і зробіть копію знову.</value>
+  </data>
+  <data name="Reason_Journal" xml:space="preserve">
+    <value>журнал потребує відновлення</value>
+  </data>
+  <data name="Reason_Orphans" xml:space="preserve">
+    <value>осиротілих inode: {0}</value>
+  </data>
+  <data name="Reason_OrphansUnknown" xml:space="preserve">
+    <value>осиротілі inode</value>
+  </data>
+  <data name="Reason_NotClean" xml:space="preserve">
+    <value>не розмонтовано коректно</value>
+  </data>
+  <data name="Group_FileSystem" xml:space="preserve">
+    <value>Файлова система</value>
+  </data>
+  <data name="Image_Repair" xml:space="preserve">
+    <value>Виправити файлову систему</value>
+  </data>
+  <data name="Tooltip_Repair" xml:space="preserve">
+    <value>Застосовує журнал, звільняє осиротілі inode, виправляє лічильники вільного місця й позначає файлову систему справною</value>
+  </data>
+  <data name="Image_RepairRequired" xml:space="preserve">
+    <value>Перед зменшенням файлову систему потрібно виправити.</value>
+  </data>
+  <data name="Phase_Repair_Journal" xml:space="preserve">
+    <value>Читання файлової системи й застосування журналу…</value>
+  </data>
+  <data name="Result_Repaired" xml:space="preserve">
+    <value>Виправлений образ збережено: {0}</value>
+  </data>
+  <data name="Result_RepairDone" xml:space="preserve">
+    <value>Файлову систему виправлено: застосовано транзакцій журналу — {0}, вилучено осиротілих inode — {1}.</value>
+  </data>
+  <data name="Blocker_NeedsRepair" xml:space="preserve">
+    <value>Файлова система потребує виправлення після некоректного вимкнення: {0}.</value>
+  </data>
+  <data name="Blocker_StructuralDamage" xml:space="preserve">
+    <value>Файлова система має пошкодження, не спричинені некоректним вимкненням. Виправте її перевіркою файлової системи в Linux і зробіть копію знову.</value>
+  </data>
+  <data name="Restore_TooLargeRepair" xml:space="preserve">
+    <value>Образ більший за пристрій. Перед записом його файлову систему буде виправлено, а образ зменшено, щоб він уміщувався.</value>
+  </data>
+  <data name="Shrink_OfferRepair" xml:space="preserve">
+    <value>Під час зменшення файлову систему буде виправлено (некоректне вимкнення).</value>
+  </data>
 </root>

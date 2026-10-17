@@ -28,6 +28,13 @@ namespace HddBackup.Core.Shrinking
 
         /// <summary>Free space at the output folder, when known.</summary>
         public long? FreeBytes { get; set; }
+
+        /// <summary>
+        /// Repair after an unclean shutdown (feature 006): read the source through its replayed
+        /// journal, leave orphans out, refuse structural damage; a target equal to the source size
+        /// gives a repaired copy of the same size.
+        /// </summary>
+        public bool Repair { get; set; }
     }
 
     public sealed class ShrinkOutcome
@@ -43,6 +50,15 @@ namespace HddBackup.Core.Shrinking
         public string FileSha256 { get; set; }
 
         public long ComparedBytes { get; set; }
+
+        public bool Repaired { get; set; }
+
+        /// <summary>Repaired at the original size (no shrinking).</summary>
+        public bool SameSize { get; set; }
+
+        public int JournalTransactions { get; set; }
+
+        public int OrphansRemoved { get; set; }
     }
 
     /// <summary>
@@ -63,7 +79,7 @@ namespace HddBackup.Core.Shrinking
             }
 
             var analysis = ShrinkPlanner.Analyze(request.SourcePath, cancel);
-            if (!analysis.IsShrinkable)
+            if (!analysis.CanShrink(request.Repair))
             {
                 throw Blocked(analysis.Blockers);
             }
@@ -143,19 +159,32 @@ namespace HddBackup.Core.Shrinking
             using (var source = FileBlockDevice.OpenRead(sourceRaw))
             {
                 var root = analysis.RootPartition;
+                int replayed = 0;
                 using (var sourceRoot = new PartitionView(source, root.Offset, root.Length))
-                using (var reader = new Ext4Reader(sourceRoot))
+                using (var reader = new Ext4Reader(request.Repair ? Recovered(sourceRoot, out replayed) : sourceRoot))
                 {
                     var problems = reader.Validate();
+                    if (request.Repair)
+                    {
+                        // What the repair removes; anything else still blocks.
+                        problems.RemoveAll(p => p == "needs_recovery" || p == "not_clean" || p == "orphans");
+                    }
+
                     if (problems.Count > 0)
                     {
                         throw Blocked(ShrinkPlanner.FromReaderProblems(problems));
                     }
 
                     Ext4CopyPlan plan;
+                    OrphanList orphans = OrphanList.None;
                     try
                     {
-                        plan = Ext4CopyPlan.Build(reader, cancel);
+                        if (request.Repair)
+                        {
+                            orphans = OrphanList.Read(reader);
+                        }
+
+                        plan = Ext4CopyPlan.Build(reader, orphans, cancel);
                     }
                     catch (Ext4FormatException ex)
                     {
@@ -166,7 +195,9 @@ namespace HddBackup.Core.Shrinking
                     int bs = sb.BlockSize;
                     long exactData = plan.DataBlocks + plan.DirectoryBlocks + plan.ExtentTreeBlocks + plan.XattrBlockRefs.Count + 1;
                     long minInodes = plan.HighestInode + 16;
-                    long minFs = ShrinkPlanner.MinimumFsBlocks(exactData, minInodes, plan.SourceJournalBlocks, sb);
+                    // A repaired copy of the same size needs no extra free space, only room for the data.
+                    bool sameSize = request.Repair && request.TargetImageBytes.HasValue && request.TargetImageBytes.Value >= analysis.SourceImageBytes;
+                    long minFs = ShrinkPlanner.MinimumFsBlocks(exactData, minInodes, plan.SourceJournalBlocks, sb, includeMargin: !sameSize);
 
                     long fsBlocks;
                     long gptTail = analysis.TableStyle == TableStyle.Gpt ? ShrinkPlanner.GptTailSectors * 512L : 0;
@@ -185,10 +216,12 @@ namespace HddBackup.Core.Shrinking
                         fsBlocks = (imageBytes - gptTail - root.Offset) / bs;
                     }
 
-                    if (fsBlocks >= sb.BlocksCount)
+                    if (fsBlocks >= sb.BlocksCount && !request.Repair)
                     {
                         throw Blocked(new[] { new ShrinkBlockerInfo(ShrinkBlocker.AlreadyFits) });
                     }
+
+                    fsBlocks = Math.Min(fsBlocks, sb.BlocksCount);
 
                     var layout = ShrinkPlanner.CreateLayout(fsBlocks, minInodes, sb);
                     long fsBytes = layout.BlocksCount * bs;
@@ -239,9 +272,46 @@ namespace HddBackup.Core.Shrinking
                         OutputPath = request.OutputPath,
                         ImageBytes = outputBytes,
                         IsGzip = ImageDescriptor.IsGzipPath(request.OutputPath),
-                        ComparedBytes = plan.TotalBytesToCopy
+                        ComparedBytes = plan.TotalBytesToCopy,
+                        Repaired = request.Repair,
+                        SameSize = sameSize,
+                        JournalTransactions = replayed,
+                        OrphansRemoved = orphans.Count
                     };
                 }
+            }
+        }
+
+        /// <summary>
+        /// The root file system as recovery would leave it (journal replayed), after refusing
+        /// structural damage (FR-006). Read-only; the source is never written.
+        /// </summary>
+        private static IBlockDevice Recovered(IBlockDevice root, out int replayedTransactions)
+        {
+            try
+            {
+                JournalOverlay overlay;
+                int blockSize;
+                using (var raw = new Ext4Reader(root))
+                {
+                    blockSize = raw.BlockSize;
+                    var journal = Jbd2Journal.Open(raw);
+                    overlay = journal == null ? JournalOverlay.Empty : journal.Replay();
+                }
+
+                var recovered = new OverlayBlockDevice(root, overlay, blockSize);
+                var structural = Ext4Checker.CheckDetailed(recovered).Where(f => f.Kind == Ext4FindingKind.Structural).Select(f => f.Message).ToList();
+                if (structural.Count > 0)
+                {
+                    throw Blocked(new[] { new ShrinkBlockerInfo(ShrinkBlocker.StructuralDamage, string.Join("; ", structural.Take(3))) });
+                }
+
+                replayedTransactions = overlay.Replayed;
+                return recovered;
+            }
+            catch (Ext4FormatException ex)
+            {
+                throw Blocked(new[] { new ShrinkBlockerInfo(ShrinkBlocker.StructuralDamage, ex.Message) });
             }
         }
 

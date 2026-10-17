@@ -20,7 +20,50 @@ namespace HddBackup.Core.Shrinking
         ChecksumMismatch,
         UnsupportedBlockSize,
         UnsupportedInodeSize,
-        AlreadyFits
+        AlreadyFits,
+
+        /// <summary>Unclean shutdown (journal, orphans, not clean); removed by a repair (feature 006).</summary>
+        NeedsRepair,
+
+        /// <summary>Damage not caused by an unclean shutdown; never repaired.</summary>
+        StructuralDamage
+    }
+
+    public enum FileSystemCondition
+    {
+        Clean,
+        NeedsRepair,
+        Damaged
+    }
+
+    [Flags]
+    public enum RepairReasons
+    {
+        None = 0,
+        JournalNeedsRecovery = 1,
+        OrphanInodes = 2,
+        NotClean = 4
+    }
+
+    /// <summary>State of one ext4 partition of an image (data-model.md "FileSystemState").</summary>
+    public sealed class FileSystemState
+    {
+        public int PartitionNumber { get; set; }
+
+        public string Name { get; set; } = string.Empty;
+
+        public FileSystemCondition Condition { get; set; }
+
+        public RepairReasons Reasons { get; set; }
+
+        /// <summary>Orphan inodes found; null when not counted (compressed image before the operation).</summary>
+        public int? OrphanCount { get; set; }
+
+        /// <summary>Damage found (English technical text), for <see cref="FileSystemCondition.Damaged"/>.</summary>
+        public IReadOnlyList<string> Problems { get; set; } = Array.Empty<string>();
+
+        /// <summary>The root (last) partition: the only one that is repaired or shrunk.</summary>
+        public bool IsRoot { get; set; }
     }
 
     public sealed class ShrinkBlockerInfo
@@ -68,10 +111,24 @@ namespace HddBackup.Core.Shrinking
 
         public bool IsShrinkable => Blockers.Count == 0;
 
+        /// <summary>The only obstacle is an unclean shutdown, which a repair removes.</summary>
+        public bool IsRepairable => Blockers.Count > 0 && Blockers.TrueForAll(b => b.Blocker == ShrinkBlocker.NeedsRepair);
+
+        /// <summary>The root file system can be rebuilt, with a repair when <paramref name="repair"/>.</summary>
+        public bool CanShrink(bool repair) => IsShrinkable || (repair && IsRepairable);
+
+        /// <summary>The ext4 partitions of the image and their state.</summary>
+        public List<FileSystemState> FileSystems { get; } = new List<FileSystemState>();
+
+        public FileSystemState RootFileSystem => FileSystems.Find(f => f.IsRoot);
+
         /// <summary>Root file system feature names (empty when the root is not ext4).</summary>
         public IReadOnlyList<string> Features { get; set; } = Array.Empty<string>();
 
         public bool Fits(long targetBytes) => IsShrinkable && MinimumImageBytes <= targetBytes;
+
+        /// <summary>Fits when rebuilt with a repair (a minimum of 0 is measured during the operation).</summary>
+        public bool Fits(long targetBytes, bool repair) => CanShrink(repair) && MinimumImageBytes <= targetBytes;
 
         /// <summary>Technical English summary for the diagnostics report.</summary>
         public string Describe()
@@ -92,6 +149,19 @@ namespace HddBackup.Core.Shrinking
             if (BlockSize > 0)
             {
                 sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Block size {0}, used data {1} bytes, used inodes {2}", BlockSize, UsedDataBytes, UsedInodes));
+            }
+
+            foreach (var fs in FileSystems)
+            {
+                sb.AppendLine(string.Format(
+                    CultureInfo.InvariantCulture,
+                    "  File system #{0}{1}: {2}{3}{4}{5}",
+                    fs.PartitionNumber,
+                    fs.IsRoot ? " [root]" : string.Empty,
+                    fs.Condition,
+                    fs.Reasons == RepairReasons.None ? string.Empty : " (" + fs.Reasons + ")",
+                    fs.OrphanCount.HasValue ? ", orphans " + fs.OrphanCount.Value : string.Empty,
+                    fs.Problems.Count > 0 ? " — " + string.Join("; ", fs.Problems) : string.Empty));
             }
 
             sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Image {0} bytes, minimum {1} bytes", SourceImageBytes, MinimumImageBytes));

@@ -737,4 +737,64 @@ Smallest possible image: {2}</value>
   <data name="Result_ChecksumsSaved" xml:space="preserve">
     <value>Checksum files saved: {0}</value>
   </data>
+  <data name="Image_FileSystemHeading" xml:space="preserve">
+    <value>File system</value>
+  </data>
+  <data name="Image_FsClean" xml:space="preserve">
+    <value>{0}: clean</value>
+  </data>
+  <data name="Image_FsNeedsRepair" xml:space="preserve">
+    <value>{0}: needs repair — {1}</value>
+  </data>
+  <data name="Image_FsNotRepaired" xml:space="preserve">
+    <value>{0}: needs repair — {1}. Only the last partition is repaired; this one is copied as it is.</value>
+  </data>
+  <data name="Image_FsDamaged" xml:space="preserve">
+    <value>{0}: cannot be repaired by this program — {1}. Repair it with a Linux file system check and back up again.</value>
+  </data>
+  <data name="Reason_Journal" xml:space="preserve">
+    <value>the journal needs recovery</value>
+  </data>
+  <data name="Reason_Orphans" xml:space="preserve">
+    <value>{0} orphan inodes</value>
+  </data>
+  <data name="Reason_OrphansUnknown" xml:space="preserve">
+    <value>orphan inodes</value>
+  </data>
+  <data name="Reason_NotClean" xml:space="preserve">
+    <value>not cleanly unmounted</value>
+  </data>
+  <data name="Group_FileSystem" xml:space="preserve">
+    <value>File system</value>
+  </data>
+  <data name="Image_Repair" xml:space="preserve">
+    <value>Repair the file system</value>
+  </data>
+  <data name="Tooltip_Repair" xml:space="preserve">
+    <value>Applies the journal, frees orphan inodes, corrects free space counts and marks the file system clean</value>
+  </data>
+  <data name="Image_RepairRequired" xml:space="preserve">
+    <value>The file system needs repair before it can be shrunk.</value>
+  </data>
+  <data name="Phase_Repair_Journal" xml:space="preserve">
+    <value>Reading the file system and replaying the journal…</value>
+  </data>
+  <data name="Result_Repaired" xml:space="preserve">
+    <value>Repaired image saved: {0}</value>
+  </data>
+  <data name="Result_RepairDone" xml:space="preserve">
+    <value>The file system was repaired: {0} journal transactions applied, {1} orphan inodes removed.</value>
+  </data>
+  <data name="Blocker_NeedsRepair" xml:space="preserve">
+    <value>The file system needs repair after an unclean shutdown: {0}.</value>
+  </data>
+  <data name="Blocker_StructuralDamage" xml:space="preserve">
+    <value>The file system has damage that was not caused by an unclean shutdown. Repair it with a Linux file system check and back up again.</value>
+  </data>
+  <data name="Restore_TooLargeRepair" xml:space="preserve">
+    <value>The image is larger than the device. Its file system will be repaired and the image shrunk to fit before writing.</value>
+  </data>
+  <data name="Shrink_OfferRepair" xml:space="preserve">
+    <value>The file system will be repaired (unclean shutdown) as part of the shrink.</value>
+  </data>
 </root>

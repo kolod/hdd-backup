@@ -118,6 +118,7 @@ namespace HddBackup.Core.Ext4
             _sb.ReservedGdtBlocks = (ushort)_layout.ReservedGdtBlocks;
             _sb.LastOrphan = 0;
             _sb.State = Ext4Superblock.StateValid;
+            _sb.FeatureIncompat &= ~Ext4Features.IncompatRecover; // the new journal is empty
             _sb.FirstMetaBg = 0;
 
             // Error history, overhead hint, snapshot and backup-group fields do not carry over.
@@ -295,7 +296,7 @@ namespace HddBackup.Core.Ext4
             {
                 var newExtents = new List<Ext4Extent>();
                 long dataBlocks = 0;
-                foreach (var e in _source.MapFile(node.Inode))
+                foreach (var e in _plan.MapForCopy(_source, node))
                 {
                     foreach (var ne in AllocateExtents(e.Logical, e.Count, e.Uninitialized))
                     {

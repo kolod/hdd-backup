@@ -1,6 +1,18 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.1.0 → 1.2.0 (2026-10-17)
+Bump rationale: MINOR — scope of Principle VII materially expanded (feature 006).
+Modified principles:
+- VII. Simplicity — scope now also covers repairing the ext4 file system of an image after an
+  unclean shutdown (journal replay, orphan inodes, free space accounting), by rebuilding it into
+  a new image; the original image is never modified and any other damage is refused.
+Modified sections:
+- Technology & Platform Constraints — ext4 is read, repaired and written by own managed code.
+Templates requiring updates: none (plan Constitution Check is derived at plan time).
+Deferred TODOs: none.
+
+Previous report (1.1.0):
 Version change: 1.0.0 → 1.1.0 (2026-10-15)
 Bump rationale: MINOR — scope of Principle VII materially expanded (feature 002).
 Modified principles:
@@ -149,11 +161,14 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
 
 ### VII. Simplicity
 
-- Scope is limited to backing up and restoring USB/SD media as raw or gzip images, and to
-  shrinking the last ext4 partition of an image so it fits a smaller medium (by rebuilding the
-  file system into a new image; the original image is never modified). Features outside that
-  scope (file-level backup, cloud upload, scheduling, other compression formats, growing or
-  shrinking other file systems) require a constitution amendment.
+- Scope is limited to backing up and restoring USB/SD media as raw or gzip images, to
+  shrinking the last ext4 partition of an image so it fits a smaller medium, and to repairing
+  that ext4 file system after an unclean shutdown (replaying its journal, removing orphan inodes
+  and correcting free space accounting). Shrinking and repair rebuild the file system into a new
+  image; the original image is never modified, and damage beyond an unclean shutdown is refused,
+  not repaired. Features outside that scope (file-level backup, cloud upload, scheduling, other
+  compression formats, growing or shrinking other file systems, general file system repair)
+  require a constitution amendment.
 - Prefer the simplest design that satisfies the principles above (YAGNI); abstractions MUST be
   justified by a concrete current need.
 
@@ -174,8 +189,8 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
 - **Build**: SDK-style project targeting `net48`, `AnyCPU` (prefer 32-bit off), producing one
   executable; reproducible build via `dotnet build` / MSBuild.
 - **Testing**: an xUnit- or NUnit-based test project that targets `net48`.
-- **File systems**: ext4 is read and written by own managed code (no GPL code, no native
-  libraries). Linux tools (e.g. `mke2fs`, `e2fsck` in Docker) MAY be used on developer machines
+- **File systems**: ext4 is read, repaired and written by own managed code (no GPL code, no
+  native libraries). Linux tools (e.g. `mke2fs`, `e2fsck` in Docker) MAY be used on developer machines
   to create test fixtures and to check outputs independently; the product MUST NOT depend on
   them.
 
@@ -203,4 +218,4 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
 - Compliance is reviewed at every plan's Constitution Check and in every code review; any
   justified deviation MUST be recorded in the plan's Complexity Tracking table.
 
-**Version**: 1.1.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-10-15
+**Version**: 1.2.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-10-17

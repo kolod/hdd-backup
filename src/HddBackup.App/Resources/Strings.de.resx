@@ -737,4 +737,64 @@ Kleinstmögliches Abbild: {2}</value>
   <data name="Result_ChecksumsSaved" xml:space="preserve">
     <value>Prüfsummendateien gespeichert: {0}</value>
   </data>
+  <data name="Image_FileSystemHeading" xml:space="preserve">
+    <value>Dateisystem</value>
+  </data>
+  <data name="Image_FsClean" xml:space="preserve">
+    <value>{0}: sauber</value>
+  </data>
+  <data name="Image_FsNeedsRepair" xml:space="preserve">
+    <value>{0}: muss repariert werden — {1}</value>
+  </data>
+  <data name="Image_FsNotRepaired" xml:space="preserve">
+    <value>{0}: muss repariert werden — {1}. Nur die letzte Partition wird repariert; diese wird unverändert kopiert.</value>
+  </data>
+  <data name="Image_FsDamaged" xml:space="preserve">
+    <value>{0}: kann von diesem Programm nicht repariert werden — {1}. Reparieren Sie es mit einer Dateisystemprüfung unter Linux und sichern Sie erneut.</value>
+  </data>
+  <data name="Reason_Journal" xml:space="preserve">
+    <value>das Journal muss wiederhergestellt werden</value>
+  </data>
+  <data name="Reason_Orphans" xml:space="preserve">
+    <value>{0} verwaiste Inodes</value>
+  </data>
+  <data name="Reason_OrphansUnknown" xml:space="preserve">
+    <value>verwaiste Inodes</value>
+  </data>
+  <data name="Reason_NotClean" xml:space="preserve">
+    <value>nicht sauber ausgehängt</value>
+  </data>
+  <data name="Group_FileSystem" xml:space="preserve">
+    <value>Dateisystem</value>
+  </data>
+  <data name="Image_Repair" xml:space="preserve">
+    <value>Dateisystem reparieren</value>
+  </data>
+  <data name="Tooltip_Repair" xml:space="preserve">
+    <value>Wendet das Journal an, gibt verwaiste Inodes frei, korrigiert die Zähler für freien Speicher und markiert das Dateisystem als sauber</value>
+  </data>
+  <data name="Image_RepairRequired" xml:space="preserve">
+    <value>Das Dateisystem muss repariert werden, bevor es verkleinert werden kann.</value>
+  </data>
+  <data name="Phase_Repair_Journal" xml:space="preserve">
+    <value>Dateisystem wird gelesen und das Journal angewendet…</value>
+  </data>
+  <data name="Result_Repaired" xml:space="preserve">
+    <value>Repariertes Abbild gespeichert: {0}</value>
+  </data>
+  <data name="Result_RepairDone" xml:space="preserve">
+    <value>Das Dateisystem wurde repariert: {0} Journal-Transaktionen angewendet, {1} verwaiste Inodes entfernt.</value>
+  </data>
+  <data name="Blocker_NeedsRepair" xml:space="preserve">
+    <value>Das Dateisystem muss nach einem unsauberen Herunterfahren repariert werden: {0}.</value>
+  </data>
+  <data name="Blocker_StructuralDamage" xml:space="preserve">
+    <value>Das Dateisystem hat Schäden, die nicht durch ein unsauberes Herunterfahren entstanden sind. Reparieren Sie es mit einer Dateisystemprüfung unter Linux und sichern Sie erneut.</value>
+  </data>
+  <data name="Restore_TooLargeRepair" xml:space="preserve">
+    <value>Das Abbild ist größer als das Gerät. Sein Dateisystem wird vor dem Schreiben repariert und das Abbild passend verkleinert.</value>
+  </data>
+  <data name="Shrink_OfferRepair" xml:space="preserve">
+    <value>Das Dateisystem wird beim Verkleinern repariert (unsauberes Herunterfahren).</value>
+  </data>
 </root>

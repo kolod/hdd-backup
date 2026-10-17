@@ -737,4 +737,64 @@ Imagen más pequeña posible: {2}</value>
   <data name="Result_ChecksumsSaved" xml:space="preserve">
     <value>Archivos de suma de comprobación guardados: {0}</value>
   </data>
+  <data name="Image_FileSystemHeading" xml:space="preserve">
+    <value>Sistema de archivos</value>
+  </data>
+  <data name="Image_FsClean" xml:space="preserve">
+    <value>{0}: correcto</value>
+  </data>
+  <data name="Image_FsNeedsRepair" xml:space="preserve">
+    <value>{0}: necesita reparación — {1}</value>
+  </data>
+  <data name="Image_FsNotRepaired" xml:space="preserve">
+    <value>{0}: necesita reparación — {1}. Solo se repara la última partición; esta se copia tal cual.</value>
+  </data>
+  <data name="Image_FsDamaged" xml:space="preserve">
+    <value>{0}: este programa no puede repararlo — {1}. Repárelo con una comprobación del sistema de archivos en Linux y vuelva a hacer la copia.</value>
+  </data>
+  <data name="Reason_Journal" xml:space="preserve">
+    <value>el registro (journal) debe recuperarse</value>
+  </data>
+  <data name="Reason_Orphans" xml:space="preserve">
+    <value>{0} inodos huérfanos</value>
+  </data>
+  <data name="Reason_OrphansUnknown" xml:space="preserve">
+    <value>inodos huérfanos</value>
+  </data>
+  <data name="Reason_NotClean" xml:space="preserve">
+    <value>no se desmontó correctamente</value>
+  </data>
+  <data name="Group_FileSystem" xml:space="preserve">
+    <value>Sistema de archivos</value>
+  </data>
+  <data name="Image_Repair" xml:space="preserve">
+    <value>Reparar el sistema de archivos</value>
+  </data>
+  <data name="Tooltip_Repair" xml:space="preserve">
+    <value>Aplica el registro, libera los inodos huérfanos, corrige los contadores de espacio libre y marca el sistema de archivos como correcto</value>
+  </data>
+  <data name="Image_RepairRequired" xml:space="preserve">
+    <value>El sistema de archivos debe repararse antes de poder reducirse.</value>
+  </data>
+  <data name="Phase_Repair_Journal" xml:space="preserve">
+    <value>Leyendo el sistema de archivos y aplicando el registro…</value>
+  </data>
+  <data name="Result_Repaired" xml:space="preserve">
+    <value>Imagen reparada guardada: {0}</value>
+  </data>
+  <data name="Result_RepairDone" xml:space="preserve">
+    <value>El sistema de archivos se reparó: {0} transacciones del registro aplicadas, {1} inodos huérfanos eliminados.</value>
+  </data>
+  <data name="Blocker_NeedsRepair" xml:space="preserve">
+    <value>El sistema de archivos necesita reparación tras un apagado incorrecto: {0}.</value>
+  </data>
+  <data name="Blocker_StructuralDamage" xml:space="preserve">
+    <value>El sistema de archivos tiene daños que no se deben a un apagado incorrecto. Repárelo con una comprobación del sistema de archivos en Linux y vuelva a hacer la copia.</value>
+  </data>
+  <data name="Restore_TooLargeRepair" xml:space="preserve">
+    <value>La imagen es más grande que el dispositivo. Su sistema de archivos se reparará y la imagen se reducirá para que quepa antes de escribirla.</value>
+  </data>
+  <data name="Shrink_OfferRepair" xml:space="preserve">
+    <value>El sistema de archivos se reparará (apagado incorrecto) durante la reducción.</value>
+  </data>
 </root>

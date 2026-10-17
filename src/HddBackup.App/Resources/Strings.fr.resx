@@ -737,4 +737,64 @@ Plus petite image possible : {2}</value>
   <data name="Result_ChecksumsSaved" xml:space="preserve">
     <value>Fichiers de somme de contrôle enregistrés : {0}</value>
   </data>
+  <data name="Image_FileSystemHeading" xml:space="preserve">
+    <value>Système de fichiers</value>
+  </data>
+  <data name="Image_FsClean" xml:space="preserve">
+    <value>{0} : propre</value>
+  </data>
+  <data name="Image_FsNeedsRepair" xml:space="preserve">
+    <value>{0} : doit être réparé — {1}</value>
+  </data>
+  <data name="Image_FsNotRepaired" xml:space="preserve">
+    <value>{0} : doit être réparé — {1}. Seule la dernière partition est réparée ; celle-ci est copiée telle quelle.</value>
+  </data>
+  <data name="Image_FsDamaged" xml:space="preserve">
+    <value>{0} : ne peut pas être réparé par ce programme — {1}. Réparez-le avec une vérification du système de fichiers sous Linux, puis sauvegardez à nouveau.</value>
+  </data>
+  <data name="Reason_Journal" xml:space="preserve">
+    <value>le journal doit être récupéré</value>
+  </data>
+  <data name="Reason_Orphans" xml:space="preserve">
+    <value>{0} inodes orphelins</value>
+  </data>
+  <data name="Reason_OrphansUnknown" xml:space="preserve">
+    <value>inodes orphelins</value>
+  </data>
+  <data name="Reason_NotClean" xml:space="preserve">
+    <value>pas démonté proprement</value>
+  </data>
+  <data name="Group_FileSystem" xml:space="preserve">
+    <value>Système de fichiers</value>
+  </data>
+  <data name="Image_Repair" xml:space="preserve">
+    <value>Réparer le système de fichiers</value>
+  </data>
+  <data name="Tooltip_Repair" xml:space="preserve">
+    <value>Applique le journal, libère les inodes orphelins, corrige les compteurs d&apos;espace libre et marque le système de fichiers comme propre</value>
+  </data>
+  <data name="Image_RepairRequired" xml:space="preserve">
+    <value>Le système de fichiers doit être réparé avant de pouvoir être réduit.</value>
+  </data>
+  <data name="Phase_Repair_Journal" xml:space="preserve">
+    <value>Lecture du système de fichiers et application du journal…</value>
+  </data>
+  <data name="Result_Repaired" xml:space="preserve">
+    <value>Image réparée enregistrée : {0}</value>
+  </data>
+  <data name="Result_RepairDone" xml:space="preserve">
+    <value>Le système de fichiers a été réparé : {0} transactions du journal appliquées, {1} inodes orphelins supprimés.</value>
+  </data>
+  <data name="Blocker_NeedsRepair" xml:space="preserve">
+    <value>Le système de fichiers doit être réparé après un arrêt incorrect : {0}.</value>
+  </data>
+  <data name="Blocker_StructuralDamage" xml:space="preserve">
+    <value>Le système de fichiers présente des dommages qui ne proviennent pas d&apos;un arrêt incorrect. Réparez-le avec une vérification du système de fichiers sous Linux, puis sauvegardez à nouveau.</value>
+  </data>
+  <data name="Restore_TooLargeRepair" xml:space="preserve">
+    <value>L&apos;image est plus grande que le périphérique. Son système de fichiers sera réparé et l&apos;image réduite pour tenir avant l&apos;écriture.</value>
+  </data>
+  <data name="Shrink_OfferRepair" xml:space="preserve">
+    <value>Le système de fichiers sera réparé (arrêt incorrect) lors de la réduction.</value>
+  </data>
 </root>

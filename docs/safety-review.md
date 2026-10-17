@@ -38,6 +38,19 @@ Scope: `ShrinkPlanner`, `ImageShrinker`, `Ext4Writer`, `PartitionTableEditor`, t
 The product never calls Linux tools; Docker is used only on the developer machine to create
 fixtures and to run the independent checks.
 
+## Repairing ext4 after an unclean shutdown (feature 006)
+
+Scope: `Jbd2Journal`, `OverlayBlockDevice`, `OrphanList`, `Ext4Checker` finding kinds,
+`ShrinkPlanner` / `ImageShrinker` repair mode, Image and Restore tab options.
+
+| Rule | Implementation | Automated evidence |
+|------|----------------|--------------------|
+| Only images are repaired; no device is written | Repair is a mode of `ShrinkImage`, which takes an image path and never opens a device | `RepairTests.*` (source SHA-256 unchanged) |
+| The source is never written | The journal is replayed into an in-memory overlay (`OverlayBlockDevice`, `CanWrite = false`, `Write` throws) over the read-only source | `OverlayAndOrphanTests.Overlay_IsReadOnly` |
+| Only complete, intact transactions are applied | Commit block required; journal checksums (v2/v3) and data block checksums verified; revoke records honored; the first incomplete or damaged transaction ends the log | `Jbd2JournalTests.*` (torn, damaged data, missing commit, revoke, escape, tag formats) |
+| Damage beyond an unclean shutdown is refused, not "fixed" | `Ext4Checker.CheckDetailed` on the recovered view; any `Structural` finding or recorded kernel error blocks the repair before the output is written | `RepairTests.StructuralDamage_*`, `CheckerKindTests.*` |
+| The result equals what Linux recovery produces | Same verification as a shrink (own full check, tree comparison with the recovered source, prefix bytes); fixtures compared with `e2fsck -fy` references | `RepairTests.SameSizeRepair_EqualsLinuxRecovery`; CI `ext4-check` runs `e2fsck -fn` and a tree comparison against the references |
+
 ## Release integrity (feature 003)
 
 Scope: `.github/workflows/release.yml`, `.github/actions/build-test`, `.github/rulesets/`,

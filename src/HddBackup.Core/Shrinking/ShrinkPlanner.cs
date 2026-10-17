@@ -67,6 +67,19 @@ namespace HddBackup.Core.Shrinking
 
                 plan.Features = Ext4Features.All(sb);
                 AddSuperblockBlockers(plan, sb);
+                AddFileSystemStates(plan, device, table, root, sb);
+                if (plan.IsRepairable)
+                {
+                    // Unclean shutdown: the counters cannot be trusted. Uncompressed images are read
+                    // through the replayed journal now; compressed ones are measured by the operation.
+                    if (!gzip)
+                    {
+                        AnalyzeRecovered(plan, device, root, cancel);
+                    }
+
+                    return plan;
+                }
+
                 if (!plan.IsShrinkable)
                 {
                     return plan;
@@ -149,24 +162,15 @@ namespace HddBackup.Core.Shrinking
                 plan.Blockers.Add(new ShrinkBlockerInfo(ShrinkBlocker.UnsupportedFeature, string.Join(", ", unsupported)));
             }
 
-            if (sb.NeedsRecovery)
+            var reasons = RepairReasonsOf(sb);
+            if (reasons != RepairReasons.None)
             {
-                plan.Blockers.Add(new ShrinkBlockerInfo(ShrinkBlocker.JournalNeedsRecovery));
-            }
-
-            if ((sb.State & Ext4Superblock.StateValid) == 0)
-            {
-                plan.Blockers.Add(new ShrinkBlockerInfo(ShrinkBlocker.FsNotClean));
+                plan.Blockers.Add(new ShrinkBlockerInfo(ShrinkBlocker.NeedsRepair, reasons.ToString()));
             }
 
             if ((sb.State & Ext4Superblock.StateErrors) != 0 || sb.ErrorCount != 0)
             {
                 plan.Blockers.Add(new ShrinkBlockerInfo(ShrinkBlocker.FsHasErrors));
-            }
-
-            if (sb.LastOrphan != 0 || (sb.State & Ext4Superblock.StateOrphans) != 0)
-            {
-                plan.Blockers.Add(new ShrinkBlockerInfo(ShrinkBlocker.OrphanInodes));
             }
 
             if (sb.LogBlockSize > 2)
@@ -185,14 +189,132 @@ namespace HddBackup.Core.Shrinking
             }
         }
 
+        /// <summary>What an unclean shutdown left in this file system (feature 006).</summary>
+        internal static RepairReasons RepairReasonsOf(Ext4Superblock sb)
+        {
+            var reasons = RepairReasons.None;
+            if (sb.NeedsRecovery)
+            {
+                reasons |= RepairReasons.JournalNeedsRecovery;
+            }
+
+            if (sb.LastOrphan != 0 || (sb.State & Ext4Superblock.StateOrphans) != 0)
+            {
+                reasons |= RepairReasons.OrphanInodes;
+            }
+
+            if ((sb.State & Ext4Superblock.StateValid) == 0)
+            {
+                reasons |= RepairReasons.NotClean;
+            }
+
+            return reasons;
+        }
+
+        /// <summary>State of every ext4 partition, from its superblock (research R-5).</summary>
+        private static void AddFileSystemStates(ShrinkPlan plan, IBlockDevice device, PartitionTable table, PartitionInfo root, Ext4Superblock rootSb)
+        {
+            foreach (var p in table.Partitions.OrderBy(x => x.Offset))
+            {
+                Ext4Superblock sb = rootSb;
+                if (!ReferenceEquals(p, root))
+                {
+                    if (p.FileSystem != "ext4")
+                    {
+                        continue;
+                    }
+
+                    var raw = new byte[Ext4Superblock.Size];
+                    device.Read(p.Offset + Ext4Superblock.ByteOffset, raw, 0, raw.Length);
+                    sb = new Ext4Superblock(raw);
+                    if (sb.Magic != Ext4Superblock.MagicValue)
+                    {
+                        continue;
+                    }
+                }
+
+                var state = new FileSystemState { PartitionNumber = p.Number, Name = p.Name ?? string.Empty, IsRoot = ReferenceEquals(p, root) };
+                state.Reasons = RepairReasonsOf(sb);
+                if ((sb.State & Ext4Superblock.StateErrors) != 0 || sb.ErrorCount != 0)
+                {
+                    state.Condition = FileSystemCondition.Damaged;
+                    state.Problems = new[] { "The kernel recorded file system errors." };
+                }
+                else
+                {
+                    state.Condition = state.Reasons == RepairReasons.None ? FileSystemCondition.Clean : FileSystemCondition.NeedsRepair;
+                }
+
+                plan.FileSystems.Add(state);
+            }
+        }
+
+        /// <summary>
+        /// Reads the root file system through its replayed journal (uncompressed images): exact sizes,
+        /// orphan count, and structural damage, which turns the plan into a refusal (FR-006).
+        /// </summary>
+        private static void AnalyzeRecovered(ShrinkPlan plan, IBlockDevice device, PartitionInfo root, CancellationToken cancel)
+        {
+            var state = plan.RootFileSystem;
+            using (var view = new PartitionView(device, root.Offset, root.Length))
+            {
+                try
+                {
+                    JournalOverlay overlay;
+                    int blockSize;
+                    using (var raw = new Ext4Reader(view))
+                    {
+                        blockSize = raw.BlockSize;
+                        var journal = Jbd2Journal.Open(raw);
+                        overlay = journal == null ? JournalOverlay.Empty : journal.Replay();
+                    }
+
+                    var recovered = new OverlayBlockDevice(view, overlay, blockSize);
+                    var structural = Ext4Checker.CheckDetailed(recovered)
+                        .Where(f => f.Kind == Ext4FindingKind.Structural).Select(f => f.Message).ToList();
+                    if (structural.Count > 0)
+                    {
+                        MarkDamaged(plan, state, structural);
+                        return;
+                    }
+
+                    using (var reader = new Ext4Reader(recovered))
+                    {
+                        var orphans = OrphanList.Read(reader);
+                        state.OrphanCount = orphans.Count;
+                        var copy = Ext4CopyPlan.Build(reader, orphans, cancel);
+                        var sb = reader.Superblock;
+                        long exactData = copy.DataBlocks + copy.DirectoryBlocks + copy.ExtentTreeBlocks + copy.XattrBlockRefs.Count + 1;
+                        long minFs = MinimumFsBlocks(exactData, copy.HighestInode + 16, copy.SourceJournalBlocks, sb);
+                        plan.BlockSize = sb.BlockSize;
+                        plan.UsedDataBytes = exactData * sb.BlockSize;
+                        plan.UsedInodes = copy.Nodes.Count;
+                        plan.MinimumImageBytes = ImageBytesFor(root.Offset, minFs * sb.BlockSize, plan.TableStyle);
+                    }
+                }
+                catch (Ext4FormatException ex)
+                {
+                    MarkDamaged(plan, state, new List<string> { ex.Message });
+                }
+            }
+        }
+
+        private static void MarkDamaged(ShrinkPlan plan, FileSystemState state, List<string> problems)
+        {
+            state.Condition = FileSystemCondition.Damaged;
+            state.Problems = problems;
+            plan.Blockers.RemoveAll(b => b.Blocker == ShrinkBlocker.NeedsRepair);
+            plan.Blockers.Add(new ShrinkBlockerInfo(ShrinkBlocker.StructuralDamage, string.Join("; ", problems.Take(3))));
+        }
+
         /// <summary>
         /// Smallest file system (in blocks) holding <paramref name="dataBlocks"/> plus journal,
         /// metadata for that size and the safety margin (research R-4, FR-011).
         /// </summary>
-        internal static long MinimumFsBlocks(long dataBlocks, long usedInodes, long sourceJournalBlocks, Ext4Superblock sb)
+        internal static long MinimumFsBlocks(long dataBlocks, long usedInodes, long sourceJournalBlocks, Ext4Superblock sb, bool includeMargin = true)
         {
             int bs = sb.BlockSize;
-            long margin = MarginBlocks(dataBlocks, bs);
+            long margin = includeMargin ? MarginBlocks(dataBlocks, bs) : 0;
             long minInodes = usedInodes + (usedInodes / 10) + 16;
             long blocks = dataBlocks + margin + sourceJournalBlocks;
             for (int i = 0; i < 20; i++)

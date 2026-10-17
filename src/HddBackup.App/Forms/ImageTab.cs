@@ -27,6 +27,9 @@ namespace HddBackup.App.Forms
         private readonly TextBox _path = new TextBox();
         private readonly Button _browse = Ui.Button();
         private readonly Label _imageInfo = new Label { AutoSize = true, Margin = new Padding(3, 2, 3, 2) };
+        private readonly Label _fsCaption = Ui.GroupCaption();
+        private readonly Label _fsInfo = new Label { AutoSize = true, Margin = new Padding(3, 2, 3, 2), UseMnemonic = false };
+        private readonly Label _fsDamage = new Label { AutoSize = true, ForeColor = Color.DarkRed, Visible = false, Margin = new Padding(3, 2, 3, 2), UseMnemonic = false };
         private readonly Label _analysisCaption = Ui.GroupCaption();
         private readonly Label _analysis = new Label { AutoSize = true, Margin = new Padding(3, 2, 3, 2), UseMnemonic = false };
         private readonly Label _blockers = new Label { AutoSize = true, ForeColor = Color.DarkRed, Visible = false, UseMnemonic = false };
@@ -41,6 +44,8 @@ namespace HddBackup.App.Forms
         private readonly Label _formatCaption = Ui.GroupCaption();
         private readonly ComboBox _format = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Top };
         private readonly CheckBox _fast = new CheckBox { AutoSize = true };
+        private readonly Label _repairCaption = Ui.GroupCaption();
+        private readonly CheckBox _repair = new CheckBox { AutoSize = true, Checked = true };
         private readonly Label _outputCaption = Ui.Caption();
         private readonly TextBox _output = new TextBox();
         private readonly Button _browseOutput = Ui.Button();
@@ -69,12 +74,15 @@ namespace HddBackup.App.Forms
             Ui.AddRow(_left, _imageCaption);
             Ui.AddRow(_left, Ui.PathRow(_path, _browse));
             Ui.AddRow(_left, _imageInfo);
+            Ui.AddRow(_left, _fsCaption);
+            Ui.AddRow(_left, _fsInfo);
+            Ui.AddRow(_left, _fsDamage);
             Ui.AddRow(_left, _analysisCaption);
             Ui.AddRow(_left, _analysis);
             Ui.AddRow(_left, _blockers);
             Ui.AddRow(_left, new Panel(), fill: true);
             // Auto-size labels docked to the top are measured too narrow and wrap; size them explicitly.
-            _imageInfo.Dock = _analysis.Dock = _blockers.Dock = DockStyle.None;
+            _imageInfo.Dock = _analysis.Dock = _blockers.Dock = _fsInfo.Dock = _fsDamage.Dock = DockStyle.None;
 
             _targetCaption.Margin = new Padding(3, 0, 3, 2);
             Ui.AddRow(_right, _targetCaption);
@@ -90,6 +98,8 @@ namespace HddBackup.App.Forms
             Ui.AddRow(_right, _formatCaption);
             Ui.AddRow(_right, _format);
             Ui.AddRow(_right, _fast);
+            Ui.AddRow(_right, _repairCaption);
+            Ui.AddRow(_right, _repair);
             Ui.AddRow(_right, new Panel(), fill: true);
 
             Ui.AddRow(_bottom, _outputCaption);
@@ -137,6 +147,7 @@ namespace HddBackup.App.Forms
                 UpdateFormatTip();
                 OnTargetChanged();
             };
+            _repair.CheckedChanged += (s, e) => OnTargetChanged();
             _fast.Checked = settings.FastCompression;
             _fast.CheckedChanged += (s, e) => _settings.FastCompression = _fast.Checked;
             _create.Click += (s, e) => Create();
@@ -207,7 +218,11 @@ namespace HddBackup.App.Forms
             _toDevice.Text = Strings.Get("Image_TargetDevice");
             _toCard.Text = Strings.Get("Image_TargetCard");
             _formatCaption.Text = Strings.Get("Group_OutputFormat");
-            Ui.Embolden(Font, _analysisCaption, _targetCaption, _formatCaption);
+            _fsCaption.Text = Strings.Get("Image_FileSystemHeading");
+            _repairCaption.Text = Strings.Get("Group_FileSystem");
+            _repair.Text = Strings.Get("Image_Repair");
+            _tips.SetToolTip(_repair, Strings.Get("Tooltip_Repair"));
+            Ui.Embolden(Font, _analysisCaption, _targetCaption, _formatCaption, _fsCaption, _repairCaption);
             RelabelCombo(_cardUnit, Strings.Get("Unit_GiB"), Strings.Get("Unit_MiB"));
             RelabelCombo(_format, Strings.Get("Format_Gzip"), Strings.Get("Format_Raw"));
             _fast.Text = Strings.Get("Option_FastCompression");
@@ -239,7 +254,7 @@ namespace HddBackup.App.Forms
             int width = _left.ClientSize.Width - _left.Padding.Horizontal - _imageInfo.Margin.Horizontal;
             if (width > 100 && _imageInfo.MaximumSize.Width != width)
             {
-                _imageInfo.MaximumSize = _analysis.MaximumSize = _blockers.MaximumSize = _reason.MaximumSize = new Size(width, 0);
+                _imageInfo.MaximumSize = _analysis.MaximumSize = _blockers.MaximumSize = _reason.MaximumSize = _fsInfo.MaximumSize = _fsDamage.MaximumSize = new Size(width, 0);
             }
         }
 
@@ -289,6 +304,7 @@ namespace HddBackup.App.Forms
                 _shownPath = _selected.Path;
                 _outputEdited = false;
                 _format.SelectedIndex = _selected.Descriptor.Format == ImageFormat.Gzip ? 1 : 0;
+                _repair.Checked = true;
             }
 
             // A shrink size cannot apply once the analysis says the image cannot be shrunk.
@@ -301,7 +317,7 @@ namespace HddBackup.App.Forms
             UpdateVerifyLabel();
 
             var plan = _selected.AnalysisState == AnalysisState.Done ? _selected.Analysis : null;
-            if (plan != null && plan.IsShrinkable && !_cardSizeTouched)
+            if (plan != null && plan.CanShrink(true) && plan.MinimumImageBytes > 0 && !_cardSizeTouched)
             {
                 decimal gib = Math.Ceiling((decimal)plan.MinimumImageBytes / GiB);
                 _cardSize.Value = Math.Max(_cardSize.Minimum, Math.Min(_cardSize.Maximum, gib));
@@ -343,15 +359,56 @@ namespace HddBackup.App.Forms
                     parts,
                     measured ? Formatters.Bytes(plan.UsedDataBytes) : "—",
                     measured ? Formatters.Bytes(plan.MinimumImageBytes) : "—");
-                if (!plan.IsShrinkable)
+                var other = plan.Blockers.Where(b => b.Blocker != ShrinkBlocker.NeedsRepair && b.Blocker != ShrinkBlocker.StructuralDamage).ToList();
+                if (other.Count > 0)
                 {
-                    _blockers.Text = Formatters.Blockers(plan.Blockers);
+                    _blockers.Text = Formatters.Blockers(other);
                     _blockers.Visible = true;
                 }
             }
 
             _analysisCaption.Visible = _selected.Descriptor != null;
+            UpdateFileSystemTexts();
         }
+
+        /// <summary>FR-001: one line per ext4 partition (clean / needs repair / damaged).</summary>
+        private void UpdateFileSystemTexts()
+        {
+            var plan = _selected.AnalysisState == AnalysisState.Done ? _selected.Analysis : null;
+            var lines = new List<string>();
+            var damage = new List<string>();
+            if (plan != null)
+            {
+                foreach (var fs in plan.FileSystems)
+                {
+                    string label = Strings.Format("Partition_Summary", fs.PartitionNumber, "ext4", fs.Name).Trim();
+                    switch (fs.Condition)
+                    {
+                        case FileSystemCondition.Clean:
+                            lines.Add(Strings.Format("Image_FsClean", label));
+                            break;
+                        case FileSystemCondition.NeedsRepair:
+                            string reasons = Formatters.RepairReasons(fs.Reasons, fs.OrphanCount);
+                            lines.Add(Strings.Format(fs.IsRoot ? "Image_FsNeedsRepair" : "Image_FsNotRepaired", label, reasons));
+                            break;
+                        default:
+                            damage.Add(Strings.Format("Image_FsDamaged", label, string.Join("; ", fs.Problems.Take(3).Select(p => p.TrimEnd('.')))));
+                            break;
+                    }
+                }
+            }
+
+            _fsInfo.Text = string.Join(Environment.NewLine, lines);
+            _fsInfo.Visible = lines.Count > 0;
+            _fsDamage.Text = string.Join(Environment.NewLine, damage);
+            _fsDamage.Visible = damage.Count > 0;
+            _fsCaption.Visible = lines.Count + damage.Count > 0;
+            bool offer = plan != null && plan.IsRepairable;
+            _repairCaption.Visible = _repair.Visible = offer;
+        }
+
+        /// <summary>The repair applies: offered for this image and checked.</summary>
+        private bool Repairing => _repair.Visible && _repair.Checked && _selected.AnalysisState == AnalysisState.Done && _selected.Analysis.IsRepairable;
 
         /// <summary>Target size in bytes; null for the smallest possible image.</summary>
         private long? Target
@@ -372,8 +429,9 @@ namespace HddBackup.App.Forms
             }
         }
 
+        /// <summary>The analysis when the root file system can be rebuilt (with the repair when it is checked).</summary>
         private ShrinkPlan ShrinkablePlan =>
-            _selected.AnalysisState == AnalysisState.Done && _selected.Analysis.IsShrinkable ? _selected.Analysis : null;
+            _selected.AnalysisState == AnalysisState.Done && _selected.Analysis.CanShrink(Repairing) ? _selected.Analysis : null;
 
         private void OnTargetChanged()
         {
@@ -383,6 +441,10 @@ namespace HddBackup.App.Forms
                 if (_selected.Descriptor == null)
                 {
                     _output.Text = string.Empty;
+                }
+                else if (Repairing)
+                {
+                    _output.Text = ShrinkOutputName.Repaired(_selected.Path, Target, IsGzip, shrunk: !_same.Checked);
                 }
                 else if (_same.Checked)
                 {
@@ -423,7 +485,16 @@ namespace HddBackup.App.Forms
             bool samePath = output.Length > 0 && SamePath(output, _selected.Path);
             bool ok;
             string reason = null;
-            if (_same.Checked)
+            if (_same.Checked && Repairing)
+            {
+                // A repaired copy: any format, the source format included.
+                ok = !samePath && output.Length > 0;
+                if (samePath)
+                {
+                    reason = Strings.Get("Image_SameAsSource");
+                }
+            }
+            else if (_same.Checked)
             {
                 // FR-008: same size and same format would only copy the source.
                 bool sameFormat = loaded && IsGzip == (_selected.Descriptor.Format == ImageFormat.Gzip);
@@ -435,9 +506,14 @@ namespace HddBackup.App.Forms
             }
             else
             {
-                bool fits = shrinkable && (!Target.HasValue || plan.Fits(Target.Value));
+                bool fits = shrinkable && (!Target.HasValue || plan.Fits(Target.Value, Repairing));
                 ok = fits && !samePath && output.Length > 0;
-                if (shrinkable && !fits)
+                var analysis = _selected.AnalysisState == AnalysisState.Done ? _selected.Analysis : null;
+                if (analysis != null && analysis.IsRepairable && !_repair.Checked)
+                {
+                    reason = Strings.Get("Image_RepairRequired");
+                }
+                else if (shrinkable && !fits)
                 {
                     reason = Strings.Get("Blocker_NotEnoughSpaceEvenAtMinimum");
                 }
@@ -520,6 +596,22 @@ namespace HddBackup.App.Forms
             }
 
             var compression = _fast.Checked ? CompressionChoice.Fastest : CompressionChoice.Optimal;
+            if (Repairing)
+            {
+                // Same size: a repaired copy (target = the image size); otherwise repaired and shrunk.
+                StartRequested?.Invoke(this, new OperationRequest
+                {
+                    Kind = OperationKind.ShrinkImage,
+                    ImagePath = _selected.Path,
+                    ShrinkOutputPath = output,
+                    ShrinkTargetBytes = _same.Checked ? _selected.Analysis.SourceImageBytes : Target,
+                    RepairFileSystem = true,
+                    Compression = compression,
+                    EjectAfter = false
+                });
+                return;
+            }
+
             StartRequested?.Invoke(this, _same.Checked
                 ? new OperationRequest
                 {

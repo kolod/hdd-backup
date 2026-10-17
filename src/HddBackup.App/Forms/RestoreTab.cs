@@ -214,13 +214,13 @@ namespace HddBackup.App.Forms
                     _sizeWarning.Text = Strings.Get("Restore_TooLarge");
                     break;
                 case ImageFitResult.ShrinkToFit:
-                    _sizeWarning.Text = Strings.Get("Restore_TooLargeShrink");
+                    _sizeWarning.Text = Strings.Get(ImageFit.RequiresRepair(_selected.Analysis) ? "Restore_TooLargeRepair" : "Restore_TooLargeShrink");
                     break;
                 case ImageFitResult.CannotFit:
                     var plan = _selected.Analysis;
                     string reasons = plan == null
                         ? _selected.AnalysisError
-                        : plan.IsShrinkable ? Strings.Get("Blocker_NotEnoughSpaceEvenAtMinimum") : Formatters.Blockers(plan.Blockers);
+                        : plan.CanShrink(true) ? Strings.Get("Blocker_NotEnoughSpaceEvenAtMinimum") : Formatters.Blockers(plan.Blockers);
                     _sizeWarning.Text = Strings.Format("Restore_TooLargeCannot", reasons);
                     break;
             }

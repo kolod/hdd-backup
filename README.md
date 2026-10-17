@@ -110,10 +110,26 @@ Supported ext4 features: `has_journal`, `ext_attr`, `resize_inode`, `dir_index`,
 `large_file`, `huge_file`, `uninit_bg`, `dir_nlink`, `extra_isize`; 1, 2 or 4 KiB blocks;
 128- or 256-byte inodes.
 
+### Repairing after an unclean shutdown
+
+Single-board computers are often switched off by pulling the power, leaving the ext4 root
+file system with an unreplayed journal, orphan inodes (files deleted while still open) and stale
+free space counts. The **Image** tab shows this under **File system** and offers **Repair the
+file system**: with **Same as the image** it creates a repaired copy, with a shrink size a
+repaired and shrunk image, and "Shrink and write" on the Restore tab repairs automatically. The
+repair replays the complete journal transactions (an incomplete last one is discarded, as Linux
+does), leaves orphan inodes out and rebuilds the file system clean; the result is checked like a
+shrunk image. The original image is never changed and nothing is repaired on a card directly:
+back the card up, repair the image and write it back.
+
+Only this kind of damage is repaired. Anything else (for example directory entries pointing to
+invalid inodes, blocks used twice, wrong link counts, or errors recorded by the kernel) is
+reported with the problems found; repair such a card with a Linux file system check (`e2fsck`)
+and back it up again. Only the last (root) ext4 partition is repaired.
+
 Images are refused, with the reason shown, when:
-- the file system was not shut down cleanly or its journal needs recovery (start the device
-  once, shut it down properly, and make a new backup);
-- the file system has recorded errors or unfinished deletions (orphan inodes);
+- the file system needs repair and **Repair the file system** is not selected;
+- the file system has recorded errors or damage beyond an unclean shutdown;
 - it uses other features, such as `inline_data`, `bigalloc`, `encrypt`, `casefold` or
   `quota`;
 - ext4 is not the last partition, or there are extended (logical) partitions;

@@ -55,6 +55,18 @@ namespace HddBackup.Core.Imaging
 
         public TimeSpan Duration { get; set; }
 
+        /// <summary>ShrinkImage with a repair: the file system was repaired.</summary>
+        public bool Repaired { get; set; }
+
+        /// <summary>The repair kept the original size (a repaired copy, not shrunk).</summary>
+        public bool RepairedSameSize { get; set; }
+
+        /// <summary>Journal transactions applied by the repair.</summary>
+        public int RepairJournalTransactions { get; set; }
+
+        /// <summary>Orphan inodes removed (or truncations finished) by the repair.</summary>
+        public int RepairOrphansRemoved { get; set; }
+
         /// <summary>ConvertImage: the committed new image.</summary>
         public string OutputPath { get; set; }
 

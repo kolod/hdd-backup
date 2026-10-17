@@ -10,7 +10,13 @@
 set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
-command -v e2fsck >/dev/null || { apt-get update -qq >/dev/null; apt-get install -y -qq e2fsprogs fdisk attr >/dev/null; }
+# debian:bookworm ships e2fsck but not sfdisk: check for every tool used below (e2fsck, debugfs,
+# sfdisk). CI installs them beforehand; a missing one is installed only when running as root.
+if ! { command -v e2fsck && command -v debugfs && command -v sfdisk; } >/dev/null; then
+    [ "$(id -u)" -eq 0 ] || { echo "e2fsprogs and fdisk (sfdisk) are required" >&2; exit 2; }
+    apt-get update -qq >/dev/null
+    apt-get install -y -qq e2fsprogs fdisk >/dev/null
+fi
 
 OUTPUT=$1
 SOURCE=$2
