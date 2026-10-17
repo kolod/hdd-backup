@@ -797,4 +797,7 @@
   <data name="Shrink_OfferRepair" xml:space="preserve">
     <value>Під час зменшення файлову систему буде виправлено (некоректне вимкнення).</value>
   </data>
+  <data name="About_IconCredit" xml:space="preserve">
+    <value>Іконка: тема іконок Papirus (GPL-3.0), колір карти змінено.</value>
+  </data>
 </root>

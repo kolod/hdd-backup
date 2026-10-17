@@ -797,4 +797,7 @@ Smallest possible image: {2}</value>
   <data name="Shrink_OfferRepair" xml:space="preserve">
     <value>The file system will be repaired (unclean shutdown) as part of the shrink.</value>
   </data>
+  <data name="About_IconCredit" xml:space="preserve">
+    <value>Icon: Papirus icon theme (GPL-3.0), card color changed.</value>
+  </data>
 </root>

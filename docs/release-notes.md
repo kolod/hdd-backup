@@ -32,6 +32,8 @@ builds, while the authoritative checksums are the ones attached to each GitHub r
   free space accounting, as Linux recovery does — as a repaired copy or together with shrinking;
   "Shrink and write" repairs automatically. Other damage is reported and refused. Constitution
   1.2.0.
+- Program icon (feature `007-app-icon`): a blue SD card based on the Papirus icon theme (GPL-3.0),
+  in the executable, the main window, all dialogs and, large, in the About window.
 
 ## 1.1.0 — release candidate (2026-10-15)
 

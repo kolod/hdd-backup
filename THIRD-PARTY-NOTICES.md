@@ -1,7 +1,19 @@
 # Third-party notices
 
 HddBackup itself is licensed under the GNU General Public License v3.0 or later (see
-[LICENSE](LICENSE)). The executable contains no third-party code.
+[LICENSE](LICENSE)). The executable contains no third-party code; its icon is third-party artwork
+(below).
+
+## Application icon: Papirus icon theme
+
+The program icon (`src/HddBackup.App/app.ico`, built from `assets/icon/`) is the SD card
+`media-flash` of the [Papirus icon theme](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
+by the Papirus Development Team, licensed under the GNU General Public License v3.0
+(`Papirus/<N>x<N>/devices/media-flash.svg`, commit `bf539287ef5dc18529424a02cccee76175920a6f`).
+
+**Modified for HddBackup**: the card body color was changed from dark grey to blue (`#2f6db5`).
+The unchanged upstream files are kept in `assets/icon/papirus/`, the modified ones in
+`assets/icon/`; `assets/icon/README.md` explains how the icon is rebuilt.
 
 ## Development tooling in this repository
 

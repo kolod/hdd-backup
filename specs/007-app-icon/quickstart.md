@@ -32,4 +32,5 @@ most 200 KB compared with main (SC-003).
 
 | Date | Build / tests | Scenarios | Notes |
 |------|---------------|-----------|-------|
-| | | | |
+| 2026-10-17 | 0 warnings; 349 passed, 2 skipped (1 new: `AppIconFileTests`) | 2, 5 (screenshots: main window title bar, About in en/ja), icon resource of the exe extracted at 16–256 px | `app.ico` 45 250 bytes (8 entries); executable 441 856 → 533 504 bytes (+90 KB, SC-003) |
+| — | — | 1, 3, 4 | Explorer views, 150/200% scaling and dark taskbar not checked on screen yet |

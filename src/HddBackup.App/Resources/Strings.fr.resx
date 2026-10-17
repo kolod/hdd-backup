@@ -797,4 +797,7 @@ Plus petite image possible : {2}</value>
   <data name="Shrink_OfferRepair" xml:space="preserve">
     <value>Le système de fichiers sera réparé (arrêt incorrect) lors de la réduction.</value>
   </data>
+  <data name="About_IconCredit" xml:space="preserve">
+    <value>Icône : thème d&apos;icônes Papirus (GPL-3.0), couleur de la carte modifiée.</value>
+  </data>
 </root>
