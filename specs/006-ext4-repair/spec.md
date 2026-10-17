@@ -170,7 +170,9 @@ and passes the independent check; the original is unchanged.
 - **Unsupported ext4 features** (as listed for shrinking): refused with the feature name.
 - **Partition images** of an ext4 partition: repairable like the ext4 partition of a whole-device
   image.
-- **Images with several ext4 partitions**: each damaged ext4 partition is repaired. [assumption]
+- **Images with several ext4 partitions**: the root (last) ext4 partition is repaired, as for
+  shrinking; other ext4 partitions are copied unchanged and the analysis says they were not
+  repaired (decided in planning, research R-5).
 - **Compressed source**: a temporary uncompressed copy may be needed, as for shrinking; free space
   is checked first.
 - **Repairing directly on the card** (no image): not supported (Q1); the user backs the card up,
