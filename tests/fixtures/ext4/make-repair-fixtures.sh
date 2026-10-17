@@ -12,7 +12,7 @@
 #   dirty-journal-torn.img.gz   same idea, the last of 2 transactions has no commit block
 #   orphans.img.gz              2 deleted-while-open inodes + 1 truncate in progress on the orphan list
 #   not-clean.img.gz            clean flag cleared, wrong free counts, a used block marked free
-#   damaged-dirent.img.gz       a directory entry points to a cleared inode (structural; no reference)
+#   damaged-dirent.img.gz       not clean + a directory entry points to a cleared inode (structural; no reference)
 #   <name>.reference.img.gz     the image after `e2fsck -fy` (for the first four)
 set -euo pipefail
 
@@ -191,9 +191,13 @@ CMDS
 echo "not-clean: freed used block $blk"
 finish not-clean "$WORK/notclean.ext4"
 
-# 5. Structural damage: a directory entry points to a cleared inode.
+# 5. Structural damage on a card that was also not shut down cleanly: a directory entry points
+#    to a cleared inode, and the clean flag is not set.
 base_root "$WORK/damaged.ext4"
-debugfs -w -R "clri /etc/fstab" "$WORK/damaged.ext4" >/dev/null 2>&1
+debugfs -w -f - "$WORK/damaged.ext4" >/dev/null 2>&1 <<CMDS
+clri /etc/fstab
+ssv state 0
+CMDS
 finish damaged-dirent "$WORK/damaged.ext4" noref
 
 ls -l "$OUT"/dirty-journal* "$OUT"/orphans* "$OUT"/not-clean* "$OUT"/damaged-dirent*

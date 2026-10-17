@@ -749,7 +749,7 @@ namespace HddBackup.Core.Imaging
             }
 
             var plan = Shrinking.ShrinkPlanner.Analyze(request.ImagePath, CancellationToken.None);
-            if (!plan.IsShrinkable)
+            if (!plan.CanShrink(request.RepairFileSystem))
             {
                 throw Shrinking.ImageShrinker.Blocked(plan.Blockers);
             }
@@ -786,7 +786,8 @@ namespace HddBackup.Core.Imaging
                         OutputPath = request.ShrinkOutputPath,
                         TargetImageBytes = request.ShrinkTargetBytes,
                         Compression = request.Compression == CompressionChoice.Fastest ? CompressionLevel.Fastest : CompressionLevel.Optimal,
-                        FreeBytes = _access.GetPathInfo(request.ShrinkOutputPath).FreeBytes
+                        FreeBytes = _access.GetPathInfo(request.ShrinkOutputPath).FreeBytes,
+                        Repair = request.RepairFileSystem
                     },
                     model,
                     ct);
@@ -796,6 +797,9 @@ namespace HddBackup.Core.Imaging
                 result.ContentSha256 = outcome.ContentSha256;
                 result.FileSha256 = outcome.FileSha256;
                 result.DataBytes = outcome.ImageBytes;
+                result.Repaired = outcome.Repaired;
+                result.RepairJournalTransactions = outcome.JournalTransactions;
+                result.RepairOrphansRemoved = outcome.OrphansRemoved;
                 result.ContentComplete = true;
                 result.SafeToRemove = true;
                 result.State = OperationState.Completed;

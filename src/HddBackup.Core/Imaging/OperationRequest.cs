@@ -90,6 +90,12 @@ namespace HddBackup.Core.Imaging
         /// <summary>ShrinkImage: maximum size of the result; null ⇒ smallest possible.</summary>
         public long? ShrinkTargetBytes { get; set; }
 
+        /// <summary>
+        /// ShrinkImage: repair the root ext4 file system after an unclean shutdown while rebuilding it
+        /// (feature 006); with a target equal to the image size this gives a repaired copy.
+        /// </summary>
+        public bool RepairFileSystem { get; set; }
+
         /// <summary>ConvertImage: path of the new image; its format follows the extension (.gz = gzip).</summary>
         public string OutputPath { get; set; }
 

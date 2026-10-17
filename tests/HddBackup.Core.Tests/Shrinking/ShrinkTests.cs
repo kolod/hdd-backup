@@ -264,7 +264,7 @@ namespace HddBackup.Core.Tests.Shrinking
         public void Dispose() => _temp.Dispose();
 
         [Theory]
-        [InlineData("dirty", ShrinkBlocker.JournalNeedsRecovery, null)]
+        [InlineData("dirty", ShrinkBlocker.NeedsRepair, "JournalNeedsRecovery")]
         [InlineData("inline", ShrinkBlocker.UnsupportedFeature, "inline_data")]
         [InlineData("root-not-last", ShrinkBlocker.RootNotLastPartition, null)]
         public void NegativeFixtures_AreRefused(string fixture, ShrinkBlocker expected, string detail)
@@ -275,8 +275,8 @@ namespace HddBackup.Core.Tests.Shrinking
         [Theory]
         [InlineData("errors", ShrinkBlocker.FsHasErrors, null)]
         [InlineData("error-count", ShrinkBlocker.FsHasErrors, null)]
-        [InlineData("not-clean", ShrinkBlocker.FsNotClean, null)]
-        [InlineData("orphans", ShrinkBlocker.OrphanInodes, null)]
+        [InlineData("not-clean", ShrinkBlocker.NeedsRepair, "NotClean")]
+        [InlineData("orphans", ShrinkBlocker.NeedsRepair, "OrphanInodes")]
         [InlineData("block-8k", ShrinkBlocker.UnsupportedBlockSize, "8192")]
         [InlineData("inode-512", ShrinkBlocker.UnsupportedInodeSize, "512")]
         [InlineData("bad-checksum", ShrinkBlocker.ChecksumMismatch, "superblock")]

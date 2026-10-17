@@ -52,7 +52,11 @@ namespace HddBackup.Core.Shrinking
                 return ImageFitResult.Pending;
             }
 
-            return plan.Fits(deviceBytes) ? ImageFitResult.ShrinkToFit : ImageFitResult.CannotFit;
+            // A file system left by an unclean shutdown is repaired as part of the shrink (feature 006).
+            return plan.Fits(deviceBytes, repair: true) ? ImageFitResult.ShrinkToFit : ImageFitResult.CannotFit;
         }
+
+        /// <summary>Shrinking this plan includes a repair of the file system.</summary>
+        public static bool RequiresRepair(ShrinkPlan plan) => plan != null && plan.IsRepairable;
     }
 }
