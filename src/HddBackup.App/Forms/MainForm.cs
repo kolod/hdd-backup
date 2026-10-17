@@ -379,7 +379,8 @@ namespace HddBackup.App.Forms
                 return true;
             }
 
-            string output = ShrinkOutputName.Default(request.ImagePath, request.Device.Size, false);
+            // Never replace an earlier result (or anything else) silently: pick a free name.
+            string output = ImageFileName.FirstFree(ShrinkOutputName.Default(request.ImagePath, request.Device.Size, false));
             using (var offer = new ShrinkOfferDialog(plan, imageBytes, request.Device.Size, output))
             {
                 if (offer.ShowDialog(this) != DialogResult.OK)

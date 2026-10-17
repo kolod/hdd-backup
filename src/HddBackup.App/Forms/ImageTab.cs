@@ -456,17 +456,7 @@ namespace HddBackup.App.Forms
             _verify.Text = Strings.Get(image != null && !image.HasAnyChecksum ? "Image_CalculateChecksums" : "Image_Verify");
         }
 
-        private static bool SamePath(string a, string b)
-        {
-            try
-            {
-                return string.Equals(Path.GetFullPath(a), Path.GetFullPath(b), StringComparison.OrdinalIgnoreCase);
-            }
-            catch (Exception ex) when (ex is ArgumentException || ex is NotSupportedException || ex is PathTooLongException)
-            {
-                return false;
-            }
-        }
+        private static bool SamePath(string a, string b) => FileIdentity.IsSameFile(a, b);
 
         private void BrowseImage()
         {

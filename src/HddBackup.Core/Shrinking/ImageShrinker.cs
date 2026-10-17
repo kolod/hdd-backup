@@ -57,7 +57,7 @@ namespace HddBackup.Core.Shrinking
 
         public static ShrinkOutcome Run(ShrinkRequest request, PhaseModel model, CancellationToken cancel)
         {
-            if (string.Equals(Path.GetFullPath(request.SourcePath), Path.GetFullPath(request.OutputPath), StringComparison.OrdinalIgnoreCase))
+            if (FileIdentity.IsSameFile(request.SourcePath, request.OutputPath))
             {
                 throw new ImagingException(ErrorCode.InvalidRequest, "The output must not be the source image.");
             }
