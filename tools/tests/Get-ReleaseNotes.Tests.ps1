@@ -50,7 +50,7 @@ Describe 'Get-ReleaseNotes' {
         $r.Text | Should -Match 'empty'
     }
 
-    It 'finds the existing sections in docs/release-notes.md' -ForEach @('1.1.0', '1.0.0') {
+    It 'finds the existing sections in docs/release-notes.md' -ForEach @('1.0.0-rc.1') {
         (Invoke-Notes $_ $script:RealNotes).Exit | Should -Be 0
     }
 }
