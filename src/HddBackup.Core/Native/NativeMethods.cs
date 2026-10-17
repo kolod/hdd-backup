@@ -154,6 +154,26 @@ namespace HddBackup.Core.Native
         public static extern int CM_Request_Device_Eject(
             uint devInst, out int vetoType, StringBuilder vetoName, int nameLength, uint flags);
 
+        /// <summary>Volume serial number and file index identify a file regardless of the path used to reach it.</summary>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetFileInformationByHandle(SafeFileHandle file, out ByHandleFileInformation information);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ByHandleFileInformation
+        {
+            public uint FileAttributes;
+            public System.Runtime.InteropServices.ComTypes.FILETIME CreationTime;
+            public System.Runtime.InteropServices.ComTypes.FILETIME LastAccessTime;
+            public System.Runtime.InteropServices.ComTypes.FILETIME LastWriteTime;
+            public uint VolumeSerialNumber;
+            public uint FileSizeHigh;
+            public uint FileSizeLow;
+            public uint NumberOfLinks;
+            public uint FileIndexHigh;
+            public uint FileIndexLow;
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         public struct SpDeviceInterfaceData
         {

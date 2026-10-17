@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.IO;
 
 namespace HddBackup.Core.Imaging
 {
@@ -31,6 +33,32 @@ namespace HddBackup.Core.Imaging
                 }
             }
         }
+
+        /// <summary>
+        /// <paramref name="path"/> when neither it nor its checksum file exists, otherwise the first
+        /// free <c>name (2).img[.gz]</c>, <c>name (3).img[.gz]</c>, … so an earlier result is never replaced.
+        /// </summary>
+        public static string FirstFree(string path)
+        {
+            if (!Taken(path))
+            {
+                return path;
+            }
+
+            bool gzip = path.EndsWith(".gz", StringComparison.OrdinalIgnoreCase);
+            string stem = Stem(path);
+            for (int n = 2; ; n++)
+            {
+                string candidate = stem + " (" + n.ToString(CultureInfo.InvariantCulture) + ")" + (gzip ? Gzip : Raw);
+                if (!Taken(candidate))
+                {
+                    return candidate;
+                }
+            }
+        }
+
+        private static bool Taken(string path) =>
+            File.Exists(path) || File.Exists(path + ".sha256") || File.Exists(path + ".partial");
 
         /// <summary>The path with exactly one <c>.img.gz</c> or <c>.img</c> extension.</summary>
         public static string WithExtension(string path, bool gzip)

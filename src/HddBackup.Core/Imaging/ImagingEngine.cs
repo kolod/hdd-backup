@@ -570,7 +570,7 @@ namespace HddBackup.Core.Imaging
                 throw new ImagingException(ErrorCode.InvalidRequest, "No output file selected.");
             }
 
-            if (string.Equals(Path.GetFullPath(request.OutputPath), Path.GetFullPath(request.ImagePath), StringComparison.OrdinalIgnoreCase))
+            if (FileIdentity.IsSameFile(request.OutputPath, request.ImagePath))
             {
                 throw new ImagingException(ErrorCode.InvalidRequest, "The output is the source image.");
             }
