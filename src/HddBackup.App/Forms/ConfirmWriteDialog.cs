@@ -28,6 +28,7 @@ namespace HddBackup.App.Forms
         public ConfirmWriteDialog(OperationRequest request, IReadOnlyCollection<ValidationWarning> warnings, long? imageBytes = null, string imageName = null)
         {
             Text = Strings.Get("Confirm_Title");
+            Icon = AppIcon.Icon;
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MinimizeBox = false;
             MaximizeBox = false;

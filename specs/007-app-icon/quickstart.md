@@ -1,0 +1,36 @@
+# Quickstart: Validating the Application Icon
+
+## Rebuild the icon (only when the artwork changes)
+
+```bash
+docker run --rm -v "$PWD:/w" -w /w debian:bookworm bash assets/icon/make-icon.sh
+```
+
+Expected: `src/HddBackup.App/app.ico` with 8 entries (16, 20, 24, 32, 40, 48, 64, 256).
+
+## Automated checks
+
+```powershell
+dotnet build HddBackup.sln -c Release
+dotnet test  tests/HddBackup.Core.Tests -c Release
+```
+
+Expected: 0 warnings; all tests pass, including the icon entry test. Executable size grows by at
+most 200 KB compared with main (SC-003).
+
+## Manual scenarios
+
+| # | Scenario | Expected | Spec |
+|---|----------|----------|------|
+| 1 | Explorer: small, medium, large, extra large icons on `HddBackup.exe` | Blue SD card at every size, sharp | US1 |
+| 2 | Start the program | Same icon in the title bar, taskbar and Alt+Tab | US1 |
+| 3 | 150% and 200% display scaling | Title bar and taskbar icons sharp | US1 |
+| 4 | Dark taskbar (Windows 11 dark mode) and light | Clearly visible on both | Edge case |
+| 5 | Open About, the write confirmation, the shrink offer, diagnostics | Program icon in each title bar; About shows the large icon and the credit line | US2 |
+
+## Results
+
+| Date | Build / tests | Scenarios | Notes |
+|------|---------------|-----------|-------|
+| 2026-10-17 | 0 warnings; 349 passed, 2 skipped (1 new: `AppIconFileTests`) | 2, 5 (screenshots: main window title bar, About in en/ja), icon resource of the exe extracted at 16–256 px | `app.ico` 45 250 bytes (8 entries); executable 441 856 → 533 504 bytes (+90 KB, SC-003) |
+| — | — | 1, 3, 4 | Explorer views, 150/200% scaling and dark taskbar not checked on screen yet |

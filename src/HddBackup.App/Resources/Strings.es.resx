@@ -797,4 +797,7 @@ Imagen más pequeña posible: {2}</value>
   <data name="Shrink_OfferRepair" xml:space="preserve">
     <value>El sistema de archivos se reparará (apagado incorrecto) durante la reducción.</value>
   </data>
+  <data name="About_IconCredit" xml:space="preserve">
+    <value>Icono: tema de iconos Papirus (GPL-3.0), color de la tarjeta cambiado.</value>
+  </data>
 </root>

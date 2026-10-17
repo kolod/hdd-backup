@@ -52,7 +52,7 @@ namespace HddBackup.App.Forms
             ClientSize = new Size(980, 680);
             MinimumSize = new Size(800, 560);
             StartPosition = FormStartPosition.CenterScreen;
-            Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            Icon = AppIcon.Icon;
 
             _image = new SelectedImage(); // after the base constructor installed the UI synchronization context
             _backup = new BackupTab(settings) { Dock = DockStyle.Fill };

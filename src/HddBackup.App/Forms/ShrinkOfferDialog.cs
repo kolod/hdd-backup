@@ -11,6 +11,7 @@ namespace HddBackup.App.Forms
         public ShrinkOfferDialog(ShrinkPlan plan, long imageBytes, long deviceBytes, string outputPath)
         {
             Text = Strings.Get("Shrink_OfferTitle");
+            Icon = AppIcon.Icon;
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MinimizeBox = false;
             MaximizeBox = false;

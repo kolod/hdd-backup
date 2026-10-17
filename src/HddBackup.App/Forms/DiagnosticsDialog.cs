@@ -37,6 +37,7 @@ namespace HddBackup.App.Forms
         {
             _imagePath = imagePath;
             Text = Strings.Get("Diagnostics_Title");
+            Icon = AppIcon.Icon;
             StartPosition = FormStartPosition.CenterParent;
             ShowInTaskbar = false;
             MinimizeBox = false;

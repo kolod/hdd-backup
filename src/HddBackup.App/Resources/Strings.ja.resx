@@ -797,4 +797,7 @@ Linux (ext4) パーティションの使用量: {1}
   <data name="Shrink_OfferRepair" xml:space="preserve">
     <value>縮小の過程でファイル システムを修復します (不正なシャットダウン)。</value>
   </data>
+  <data name="About_IconCredit" xml:space="preserve">
+    <value>アイコン: Papirus アイコン テーマ (GPL-3.0)、カードの色を変更。</value>
+  </data>
 </root>
