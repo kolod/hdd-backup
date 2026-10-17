@@ -62,9 +62,23 @@ namespace HddBackup.Core.Ext4
 
         public long TotalBytesToCopy { get; private set; }
 
-        public static Ext4CopyPlan Build(Ext4Reader source, CancellationToken cancel)
+        /// <summary>Source inode → bytes to keep, for files whose truncation was interrupted (orphans).</summary>
+        public Dictionary<uint, long> SizeLimits { get; } = new Dictionary<uint, long>();
+
+        public static Ext4CopyPlan Build(Ext4Reader source, CancellationToken cancel) => Build(source, OrphanList.None, cancel);
+
+        /// <summary>
+        /// Plan of the copy. Orphans deleted while open are not in the tree and so are not copied;
+        /// a reachable one is structural damage. Truncate orphans keep only the blocks up to their size.
+        /// </summary>
+        public static Ext4CopyPlan Build(Ext4Reader source, OrphanList orphans, CancellationToken cancel)
         {
             var plan = new Ext4CopyPlan();
+            foreach (var kv in orphans.Truncated)
+            {
+                plan.SizeLimits[kv.Key] = kv.Value;
+            }
+
             var sb = source.Superblock;
             int blockSize = source.BlockSize;
             bool csum = sb.HasMetadataCsum;
@@ -86,6 +100,11 @@ namespace HddBackup.Core.Ext4
                     if (entry.IsDot || entry.IsDotDot)
                     {
                         continue;
+                    }
+
+                    if (orphans.IsDeleted(entry.Inode))
+                    {
+                        throw new Ext4FormatException("Orphan inode " + entry.Inode + " is still linked from directory " + dir.SourceInode + ".");
                     }
 
                     if (!plan.BySource.TryGetValue(entry.Inode, out var child))
@@ -181,6 +200,31 @@ namespace HddBackup.Core.Ext4
             return blocks;
         }
 
+        /// <summary>The extents of a file to copy: all of them, or only those within its size for a truncate orphan.</summary>
+        public List<Ext4Extent> MapForCopy(Ext4Reader source, Node node)
+        {
+            var map = source.MapFile(node.Inode);
+            if (!SizeLimits.TryGetValue(node.SourceInode, out long size))
+            {
+                return map;
+            }
+
+            long keep = (size + source.BlockSize - 1) / source.BlockSize;
+            var trimmed = new List<Ext4Extent>();
+            foreach (var e in map)
+            {
+                if (e.Logical >= keep)
+                {
+                    continue;
+                }
+
+                int count = (int)Math.Min(e.Count, keep - e.Logical);
+                trimmed.Add(new Ext4Extent(e.Logical, e.Physical, count, e.Uninitialized));
+            }
+
+            return trimmed;
+        }
+
         private Node AddNode(Ext4Reader source, uint sourceInode, uint newInode)
         {
             var inode = source.ReadInode(sourceInode);
@@ -198,7 +242,7 @@ namespace HddBackup.Core.Ext4
             node.IsFastOrSpecial = source.IsFastSymlinkOrSpecial(inode);
             if (!inode.IsDirectory && !node.IsFastOrSpecial)
             {
-                var map = source.MapFile(inode);
+                var map = MapForCopy(source, node);
                 node.SourceExtentCount = map.Count;
                 foreach (var e in map)
                 {

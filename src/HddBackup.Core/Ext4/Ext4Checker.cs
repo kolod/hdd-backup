@@ -15,9 +15,12 @@ namespace HddBackup.Core.Ext4
     {
         private const int MaxFindings = 50;
 
-        public static List<string> Check(IBlockDevice partition)
+        public static List<string> Check(IBlockDevice partition) => CheckDetailed(partition).ConvertAll(f => f.Message);
+
+        /// <summary>The findings with their kind (research R-4); at most 50 of each kind.</summary>
+        public static List<Ext4Finding> CheckDetailed(IBlockDevice partition)
         {
-            var findings = new List<string>();
+            var findings = new List<Ext4Finding>();
             try
             {
                 using (var reader = new Ext4Reader(partition))
@@ -27,7 +30,7 @@ namespace HddBackup.Core.Ext4
             }
             catch (Ext4FormatException ex)
             {
-                findings.Add(ex.Message);
+                findings.Add(new Ext4Finding(Ext4FindingKind.Structural, ex.Message));
             }
 
             return findings;
@@ -37,7 +40,8 @@ namespace HddBackup.Core.Ext4
         {
             private readonly Ext4Reader _r;
             private readonly Ext4Superblock _sb;
-            private readonly List<string> _findings;
+            private readonly List<Ext4Finding> _findings;
+            private readonly int[] _perKind = new int[2];
             private readonly int _bs;
             private readonly ulong[] _claimed;
             private readonly Dictionary<uint, int> _linkRefs = new Dictionary<uint, int>();
@@ -46,7 +50,7 @@ namespace HddBackup.Core.Ext4
             private readonly HashSet<uint> _reachable = new HashSet<uint>();
             private readonly int[] _dirsPerGroup;
 
-            public Run(Ext4Reader reader, List<string> findings)
+            public Run(Ext4Reader reader, List<Ext4Finding> findings)
             {
                 _r = reader;
                 _sb = reader.Superblock;
@@ -73,9 +77,11 @@ namespace HddBackup.Core.Ext4
 
             private void Add(string finding)
             {
-                if (_findings.Count < MaxFindings)
+                var classified = Ext4Finding.Classify(finding);
+                if (_perKind[(int)classified.Kind] < MaxFindings)
                 {
-                    _findings.Add(finding);
+                    _perKind[(int)classified.Kind]++;
+                    _findings.Add(classified);
                 }
             }
 
