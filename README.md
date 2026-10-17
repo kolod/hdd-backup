@@ -24,6 +24,23 @@ SD/microSD cards.
   checksum files, or **Calculate checksums** for an image that has none.
 - UI languages: English, Ukrainian, German, French, Spanish, Japanese.
 
+## Screenshots
+
+**Back up** — choose the device on the left, the options on the right, the image file at the
+bottom:
+
+![Back up tab](docs/screenshots/backup.png)
+
+**Restore** — the target device, the read-back verification, and the image with its checksum
+files:
+
+![Restore tab](docs/screenshots/restore.png)
+
+**Image** — work on an image file without touching a device: convert, shrink, verify or
+calculate checksums, and repair the file system of a card that lost power:
+
+![Image tab with an image that needs repair](docs/screenshots/image-repair.png)
+
 ## Disclaimer
 
 HddBackup writes directly to disks. Restoring an image overwrites **all** data on the target
