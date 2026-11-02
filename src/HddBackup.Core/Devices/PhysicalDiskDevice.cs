@@ -136,9 +136,23 @@ namespace HddBackup.Core.Devices
             {
                 if (!NativeMethods.FlushFileBuffers(_handle))
                 {
-                    throw MapError(Marshal.GetLastWin32Error(), null, true, "flush");
+                    int error = Marshal.GetLastWin32Error();
+                    if (!IsFlushUnsupported(error))
+                    {
+                        throw MapError(error, null, true, "flush");
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// True when the device rejects the cache flush itself (SYNCHRONIZE CACHE) rather than
+        /// failing to store data: some USB card readers do this on Windows 7. Writes go through a
+        /// write-through, unbuffered handle, so every completed write is already on the medium.
+        /// </summary>
+        internal static bool IsFlushUnsupported(int error)
+        {
+            return error == NativeMethods.ErrorInvalidFunction || error == NativeMethods.ErrorNotSupported;
         }
 
         public void Dispose()

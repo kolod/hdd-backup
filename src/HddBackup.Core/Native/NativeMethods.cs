@@ -31,10 +31,12 @@ namespace HddBackup.Core.Native
         public const uint FsctlUnlockVolume = 0x9001C;
         public const uint FsctlDismountVolume = 0x90020;
 
+        public const int ErrorInvalidFunction = 1;
         public const int ErrorFileNotFound = 2;
         public const int ErrorWriteProtect = 19;
         public const int ErrorNotReady = 21;
         public const int ErrorHandleDiskFull = 39;
+        public const int ErrorNotSupported = 50;
         public const int ErrorInsufficientBuffer = 122;
         public const int ErrorDiskFull = 112;
         public const int ErrorMoreData = 234;
