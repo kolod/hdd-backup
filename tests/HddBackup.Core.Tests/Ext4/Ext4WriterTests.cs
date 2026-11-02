@@ -12,6 +12,8 @@ namespace HddBackup.Core.Tests.Ext4
 {
     public sealed class Ext4WriterTests : IDisposable
     {
+        private static readonly object ExportLock = new object();
+
         private readonly TempDirs _temp = new TempDirs();
 
         public void Dispose() => _temp.Dispose();
@@ -45,8 +47,12 @@ namespace HddBackup.Core.Tests.Ext4
             var export = Environment.GetEnvironmentVariable("HDDBACKUP_EXPORT_DIR");
             if (!string.IsNullOrEmpty(export))
             {
-                Directory.CreateDirectory(export);
-                File.Copy(output, Path.Combine(export, Path.GetFileName(output)), true);
+                // Test classes run in parallel and rebuild the same cases into the same export name.
+                lock (ExportLock)
+                {
+                    Directory.CreateDirectory(export);
+                    File.Copy(output, Path.Combine(export, Path.GetFileName(output)), true);
+                }
             }
 
             return output;
