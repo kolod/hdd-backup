@@ -8,6 +8,35 @@ release.
 The earlier local release candidates "1.0.0" and "1.1.0" of 2026-10-15 were never published.
 Their contents are part of 1.0.0-rc.1, the first public build.
 
+## 1.0.0-rc.2 — second release candidate (2026-11-02)
+
+Bug-fix pre-release. The features are the same as in
+[1.0.0-rc.1](https://github.com/kolod/hdd-backup/releases/tag/v1.0.0-rc.1).
+
+### Fixed
+
+- **Restore failed on Windows 7 with some USB card readers.** The whole image was written, but
+  then the restore failed with "A write error occurred … flush failed, Win32 error 1". The device
+  was also reported as not released cleanly. These readers reject the cache-flush command. The
+  program writes to the device with write-through, unbuffered I/O, so the data is already on the
+  card when each write completes. HddBackup no longer treats this rejection as an error. Any
+  other flush error still stops the operation.
+
+  If an earlier restore stopped this way, write the image again with **Read back and verify
+  after writing** on.
+
+### Verification status
+
+| Check | Result |
+|-------|--------|
+| Automated tests | 355 passed, 2 skipped |
+| Independent e2fsprogs check (CI job `ext4-check`) | Clean and identical |
+| Restore with verification on Windows 7 SP1 through the card reader that failed in rc.1 | **Pending** |
+| Manual hardware checklist on Windows 7 SP1 and Windows 11 | **Pending** |
+
+**Use only with media whose contents you can afford to lose until the hardware checklist has
+passed.** The program comes with no warranty (GPL-3.0).
+
 ## 1.0.0-rc.1 — first release candidate (2026-10-17)
 
 First public build of HddBackup: a portable Windows utility for backing up and restoring USB
