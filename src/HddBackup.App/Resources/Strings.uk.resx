@@ -986,4 +986,454 @@
   <data name="Files_SourceDevice" xml:space="preserve">
     <value>Пристрій</value>
   </data>
+  <data name="Tools_Button" xml:space="preserve">
+    <value>Інструменти</value>
+  </data>
+  <data name="Tools_Ssh" xml:space="preserve">
+    <value>Перевірка SSH…</value>
+  </data>
+  <data name="Tools_Startup" xml:space="preserve">
+    <value>Автозапуск і заплановані завдання…</value>
+  </data>
+  <data name="Tooltip_Tools" xml:space="preserve">
+    <value>Інструменти, що читають відкриту систему Linux і повідомляють, що знайшли. Нічого не змінюється.</value>
+  </data>
+  <data name="Tools_Analysing" xml:space="preserve">
+    <value>Аналіз…</value>
+  </data>
+  <data name="Tools_NoFileSystem" xml:space="preserve">
+    <value>Спершу відкрийте файлову систему.</value>
+  </data>
+  <data name="Tools_Busy" xml:space="preserve">
+    <value>Виконується витягування або інший інструмент.</value>
+  </data>
+  <data name="Ssh_Title" xml:space="preserve">
+    <value>Перевірка SSH — {0}</value>
+  </data>
+  <data name="Ssh_Step1" xml:space="preserve">
+    <value>Сервер</value>
+  </data>
+  <data name="Ssh_Step2" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="Ssh_Step3" xml:space="preserve">
+    <value>Облікові записи</value>
+  </data>
+  <data name="Ssh_Step4" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="Ssh_Back" xml:space="preserve">
+    <value>◂ Назад</value>
+  </data>
+  <data name="Ssh_Next" xml:space="preserve">
+    <value>Далі ▸</value>
+  </data>
+  <data name="Ssh_NotLinux" xml:space="preserve">
+    <value>На цьому розділі не знайдено конфігурації системи. Імовірно, це не корінь системи Linux.</value>
+  </data>
+  <data name="Ssh_ShowSystemAccounts" xml:space="preserve">
+    <value>Показати системні облікові записи</value>
+  </data>
+  <data name="Ssh_Why" xml:space="preserve">
+    <value>Чому</value>
+  </data>
+  <data name="Ssh_CouldNotCheck" xml:space="preserve">
+    <value>Не вдалося перевірити</value>
+  </data>
+  <data name="Ssh_SettingFrom" xml:space="preserve">
+    <value>{0}, рядок {1}</value>
+  </data>
+  <data name="Ssh_FromDefault" xml:space="preserve">
+    <value>типове значення</value>
+  </data>
+  <data name="Ssh_ColAccount" xml:space="preserve">
+    <value>Обліковий запис</value>
+  </data>
+  <data name="Ssh_ColShell" xml:space="preserve">
+    <value>Оболонка</value>
+  </data>
+  <data name="Ssh_ColPassword" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="Ssh_ColKeys" xml:space="preserve">
+    <value>Ключі</value>
+  </data>
+  <data name="Ssh_ColCanLogIn" xml:space="preserve">
+    <value>Може увійти</value>
+  </data>
+  <data name="Ssh_Pw_Set" xml:space="preserve">
+    <value>задано</value>
+  </data>
+  <data name="Ssh_Pw_Locked" xml:space="preserve">
+    <value>заблоковано</value>
+  </data>
+  <data name="Ssh_Pw_NoPassword" xml:space="preserve">
+    <value>немає</value>
+  </data>
+  <data name="Ssh_Pw_Empty" xml:space="preserve">
+    <value>порожній</value>
+  </data>
+  <data name="Ssh_Pw_Unknown" xml:space="preserve">
+    <value>невідомо</value>
+  </data>
+  <data name="Ssh_With_Password" xml:space="preserve">
+    <value>паролем</value>
+  </data>
+  <data name="Ssh_With_Key" xml:space="preserve">
+    <value>ключем</value>
+  </data>
+  <data name="Ssh_With_Both" xml:space="preserve">
+    <value>паролем і ключем</value>
+  </data>
+  <data name="Ssh_CanYes" xml:space="preserve">
+    <value>так: {0}</value>
+  </data>
+  <data name="Ssh_CanNo" xml:space="preserve">
+    <value>ні: {0}</value>
+  </data>
+  <data name="Ssh_CanUnknown" xml:space="preserve">
+    <value>невідомо</value>
+  </data>
+  <data name="Ssh_KeysUnknown" xml:space="preserve">
+    <value>невідомо</value>
+  </data>
+  <data name="Ssh_Root_Yes" xml:space="preserve">
+    <value>може входити з паролем або ключем</value>
+  </data>
+  <data name="Ssh_Root_ProhibitPassword" xml:space="preserve">
+    <value>може входити лише з ключем</value>
+  </data>
+  <data name="Ssh_Root_ForcedCommandsOnly" xml:space="preserve">
+    <value>може виконувати лише заздалегідь задані команди</value>
+  </data>
+  <data name="Ssh_Root_No" xml:space="preserve">
+    <value>не може входити</value>
+  </data>
+  <data name="Ssh_Empty_allowed" xml:space="preserve">
+    <value>дозволені</value>
+  </data>
+  <data name="Ssh_Empty_refused" xml:space="preserve">
+    <value>відхиляються</value>
+  </data>
+  <data name="Ssh_R_NoShell" xml:space="preserve">
+    <value>у нього немає оболонки входу</value>
+  </data>
+  <data name="Ssh_R_PasswordLocked" xml:space="preserve">
+    <value>його пароль заблоковано</value>
+  </data>
+  <data name="Ssh_R_NoPasswordNoKey" xml:space="preserve">
+    <value>у нього немає ні пароля, ні дозволеного ключа</value>
+  </data>
+  <data name="Ssh_R_RootNotAllowed" xml:space="preserve">
+    <value>сервер не дозволяє вхід адміністратора</value>
+  </data>
+  <data name="Ssh_R_NotInAllowUsers" xml:space="preserve">
+    <value>його немає у списку дозволених користувачів</value>
+  </data>
+  <data name="Ssh_R_Denied" xml:space="preserve">
+    <value>його заборонено налаштуваннями сервера</value>
+  </data>
+  <data name="Ssh_R_PasswordAuthOffNoKey" xml:space="preserve">
+    <value>вхід за паролем вимкнено, а дозволеного ключа немає</value>
+  </data>
+  <data name="Ssh_R_KeyAuthOffNoPassword" xml:space="preserve">
+    <value>вхід за ключем вимкнено, а придатного пароля немає</value>
+  </data>
+  <data name="Ssh_R_EmptyPasswordRefused" xml:space="preserve">
+    <value>його пароль порожній, а сервер відхиляє порожні паролі</value>
+  </data>
+  <data name="Ssh_R_LockedRefused" xml:space="preserve">
+    <value>сервер відхиляє заблоковані облікові записи</value>
+  </data>
+  <data name="Ssh_R_MethodsNeedBoth" xml:space="preserve">
+    <value>сервер вимагає пароль і ключ разом</value>
+  </data>
+  <data name="Ssh_V_Works" xml:space="preserve">
+    <value>SSH має працювати: {0}.</value>
+  </data>
+  <data name="Ssh_V_NotEnabled" xml:space="preserve">
+    <value>SSH не запуститься сам: сервер не налаштовано на запуск під час завантаження.</value>
+  </data>
+  <data name="Ssh_V_NotEnabledBootFlagPossible" xml:space="preserve">
+    <value>У системі Linux SSH не ввімкнено. Його все ще може ввімкнути під час першого завантаження файл на розділі завантаження, який не перевірявся.</value>
+  </data>
+  <data name="Ssh_V_NoServer" xml:space="preserve">
+    <value>SSH-сервер не встановлено.</value>
+  </data>
+  <data name="Ssh_V_NobodyCanLogIn" xml:space="preserve">
+    <value>Сервер налаштовано, але ніхто не може увійти.</value>
+  </data>
+  <data name="Ssh_V_Undetermined" xml:space="preserve">
+    <value>Лише за файлами не можна визначити, чи працює SSH. Нижче — те, що не вдалося перевірити.</value>
+  </data>
+  <data name="Ssh_F_ServerInstalled" xml:space="preserve">
+    <value>SSH-сервер встановлено ({0}).</value>
+  </data>
+  <data name="Ssh_F_ServerMissing" xml:space="preserve">
+    <value>SSH-сервер не встановлено.</value>
+  </data>
+  <data name="Ssh_F_ServerEnabled" xml:space="preserve">
+    <value>Сервер налаштовано на запуск під час завантаження (увімкнено {0}).</value>
+  </data>
+  <data name="Ssh_F_ServerOnDemand" xml:space="preserve">
+    <value>Сервер запускається, коли хтось підключається ({0}).</value>
+  </data>
+  <data name="Ssh_F_ServerNotEnabled" xml:space="preserve">
+    <value>Сервер встановлено, але не налаштовано на запуск під час завантаження.</value>
+  </data>
+  <data name="Ssh_F_ServerMasked" xml:space="preserve">
+    <value>Сервер замасковано: він не може запуститися.</value>
+  </data>
+  <data name="Ssh_F_ServerLegacy" xml:space="preserve">
+    <value>Запускається старими скриптами init цієї системи ({0}).</value>
+  </data>
+  <data name="Ssh_F_BootFlagNotRead" xml:space="preserve">
+    <value>Raspberry Pi OS може ввімкнути SSH під час першого завантаження за допомогою файлу на розділі завантаження FAT. Цей інструмент читає лише файлову систему Linux і цього не перевіряв.</value>
+  </data>
+  <data name="Ssh_F_Port" xml:space="preserve">
+    <value>Сервер слухає порт {0}.</value>
+  </data>
+  <data name="Ssh_F_RootLogin" xml:space="preserve">
+    <value>Обліковий запис адміністратора {0}.</value>
+  </data>
+  <data name="Ssh_F_PasswordAuthOn" xml:space="preserve">
+    <value>Вхід за паролем дозволено.</value>
+  </data>
+  <data name="Ssh_F_PasswordAuthOff" xml:space="preserve">
+    <value>Вхід за паролем не дозволено.</value>
+  </data>
+  <data name="Ssh_F_KeyAuthOn" xml:space="preserve">
+    <value>Вхід за ключем дозволено.</value>
+  </data>
+  <data name="Ssh_F_KeyAuthOff" xml:space="preserve">
+    <value>Вхід за ключем не дозволено.</value>
+  </data>
+  <data name="Ssh_F_EmptyPasswords" xml:space="preserve">
+    <value>Облікові записи з порожнім паролем {0}.</value>
+  </data>
+  <data name="Ssh_F_UserRestriction" xml:space="preserve">
+    <value>{0} обмежує, хто може входити: {1}.</value>
+  </data>
+  <data name="Ssh_F_SettingDefault" xml:space="preserve">
+    <value>{0} не задано; використовується типове значення.</value>
+  </data>
+  <data name="Ssh_F_ConditionalSettings" xml:space="preserve">
+    <value>{0} також є в блоках Match; результат може відрізнятися для деяких користувачів або адрес.</value>
+  </data>
+  <data name="Ssh_F_KeysFromCommand" xml:space="preserve">
+    <value>Ключі можуть надходити від команди; їх неможливо перевірити.</value>
+  </data>
+  <data name="Ssh_F_AccountCanLogIn" xml:space="preserve">
+    <value>{0} може входити з {1}.</value>
+  </data>
+  <data name="Ssh_F_AccountCannot" xml:space="preserve">
+    <value>{0} не може увійти: {1}.</value>
+  </data>
+  <data name="Ssh_F_NoRegularAccount" xml:space="preserve">
+    <value>Крім адміністратора, облікових записів немає; Raspberry Pi OS створює його під час першого завантаження.</value>
+  </data>
+  <data name="Ssh_F_ShadowUnreadable" xml:space="preserve">
+    <value>Інформацію про паролі не вдалося прочитати.</value>
+  </data>
+  <data name="Ssh_F_ConfigMissing" xml:space="preserve">
+    <value>Файлу /etc/ssh/sshd_config немає; припускаються типові значення сервера.</value>
+  </data>
+  <data name="Diag_N_Truncated" xml:space="preserve">
+    <value>{0} більший за 1 МіБ і прочитаний лише частково.</value>
+  </data>
+  <data name="Diag_N_Unreadable" xml:space="preserve">
+    <value>{0} не вдалося прочитати.</value>
+  </data>
+  <data name="Diag_N_ListCut" xml:space="preserve">
+    <value>Список {0} обрізано на {1} записах.</value>
+  </data>
+  <data name="Startup_Title" xml:space="preserve">
+    <value>Автозапуск і заплановані завдання — {0}</value>
+  </data>
+  <data name="Startup_Filter" xml:space="preserve">
+    <value>Показати</value>
+  </data>
+  <data name="Startup_All" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="Startup_KindService" xml:space="preserve">
+    <value>Сервіси</value>
+  </data>
+  <data name="Startup_KindTimer" xml:space="preserve">
+    <value>Таймери</value>
+  </data>
+  <data name="Startup_KindBoot" xml:space="preserve">
+    <value>Скрипти завантаження</value>
+  </data>
+  <data name="Startup_KindDesktop" xml:space="preserve">
+    <value>Сеанс стільниці</value>
+  </data>
+  <data name="Startup_KindCron" xml:space="preserve">
+    <value>Cron</value>
+  </data>
+  <data name="Startup_Search" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="Startup_OnlyActive" xml:space="preserve">
+    <value>Лише активне</value>
+  </data>
+  <data name="Startup_Counts" xml:space="preserve">
+    <value>Записів: {0} (неактивних: {1})</value>
+  </data>
+  <data name="Startup_CountsFiltered" xml:space="preserve">
+    <value>{0} із {1} записів</value>
+  </data>
+  <data name="Startup_ColKind" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="Startup_ColName" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Startup_ColRuns" xml:space="preserve">
+    <value>Що запускає / Коли</value>
+  </data>
+  <data name="Startup_ColUser" xml:space="preserve">
+    <value>Користувач</value>
+  </data>
+  <data name="Startup_ColSource" xml:space="preserve">
+    <value>Джерело</value>
+  </data>
+  <data name="Startup_ColStatus" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="Startup_Active" xml:space="preserve">
+    <value>активний</value>
+  </data>
+  <data name="Startup_Empty" xml:space="preserve">
+    <value>Нічого, що запускається саме, не знайдено.</value>
+  </data>
+  <data name="Startup_Verbatim" xml:space="preserve">
+    <value>Командні рядки показано так, як вони записані в системі.</value>
+  </data>
+  <data name="Startup_K_Service" xml:space="preserve">
+    <value>Сервіс</value>
+  </data>
+  <data name="Startup_K_Timer" xml:space="preserve">
+    <value>Таймер</value>
+  </data>
+  <data name="Startup_K_Socket" xml:space="preserve">
+    <value>Сокет</value>
+  </data>
+  <data name="Startup_K_BootScript" xml:space="preserve">
+    <value>Скрипт завантаження</value>
+  </data>
+  <data name="Startup_K_Desktop" xml:space="preserve">
+    <value>Стільниця</value>
+  </data>
+  <data name="Startup_K_UserService" xml:space="preserve">
+    <value>Сервіс користувача</value>
+  </data>
+  <data name="Startup_K_Cron" xml:space="preserve">
+    <value>Cron</value>
+  </data>
+  <data name="Startup_R_Disabled" xml:space="preserve">
+    <value>не ввімкнено</value>
+  </data>
+  <data name="Startup_R_Masked" xml:space="preserve">
+    <value>замасковано</value>
+  </data>
+  <data name="Startup_R_UnitMissing" xml:space="preserve">
+    <value>файл юніта відсутній</value>
+  </data>
+  <data name="Startup_R_TargetNotReached" xml:space="preserve">
+    <value>його ціль не досягається під час завантаження</value>
+  </data>
+  <data name="Startup_R_HiddenEntry" xml:space="preserve">
+    <value>приховано або вимкнено в самому записі</value>
+  </data>
+  <data name="Startup_R_NotExecutable" xml:space="preserve">
+    <value>не є виконуваним</value>
+  </data>
+  <data name="Startup_R_IgnoredName" xml:space="preserve">
+    <value>cron ігнорує назву файлу</value>
+  </data>
+  <data name="Startup_R_NothingRunsIt" xml:space="preserve">
+    <value>цей каталог ніщо не запускає</value>
+  </data>
+  <data name="Startup_R_NoSuchUser" xml:space="preserve">
+    <value>користувача не існує</value>
+  </data>
+  <data name="Startup_R_NoCron" xml:space="preserve">
+    <value>cron не встановлено</value>
+  </data>
+  <data name="Startup_R_Malformed" xml:space="preserve">
+    <value>не вдалося розпізнати</value>
+  </data>
+  <data name="Startup_R_Unreadable" xml:space="preserve">
+    <value>не вдалося прочитати</value>
+  </data>
+  <data name="Startup_N_NoCron" xml:space="preserve">
+    <value>У цій системі cron не встановлено.</value>
+  </data>
+  <data name="Startup_N_CronNotEnabled" xml:space="preserve">
+    <value>Службу cron не ввімкнено; заплановані завдання виконуються лише після її запуску.</value>
+  </data>
+  <data name="Sched_AtBoot" xml:space="preserve">
+    <value>під час завантаження</value>
+  </data>
+  <data name="Sched_EveryMinute" xml:space="preserve">
+    <value>щохвилини</value>
+  </data>
+  <data name="Sched_EveryNMinutes" xml:space="preserve">
+    <value>кожні {0} хв</value>
+  </data>
+  <data name="Sched_HourlyAt" xml:space="preserve">
+    <value>щогодини о :{0}</value>
+  </data>
+  <data name="Sched_DailyAt" xml:space="preserve">
+    <value>щодня о {0}</value>
+  </data>
+  <data name="Sched_WeeklyOn" xml:space="preserve">
+    <value>щотижня: {0} о {1}</value>
+  </data>
+  <data name="Sched_MonthlyOn" xml:space="preserve">
+    <value>{0}-го числа щомісяця о {1}</value>
+  </data>
+  <data name="Sched_YearlyOn" xml:space="preserve">
+    <value>щороку {0} о {1}</value>
+  </data>
+  <data name="Sched_EveryDay" xml:space="preserve">
+    <value>щодня</value>
+  </data>
+  <data name="Sched_EveryNDays" xml:space="preserve">
+    <value>кожні {0} дн.</value>
+  </data>
+  <data name="Sched_Custom" xml:space="preserve">
+    <value>за розкладом {0}</value>
+  </data>
+  <data name="Sched_TimeList" xml:space="preserve">
+    <value>{0} і {1}</value>
+  </data>
+  <data name="Report_Date" xml:space="preserve">
+    <value>Дата: {0}</value>
+  </data>
+  <data name="Report_Copy" xml:space="preserve">
+    <value>Копіювати</value>
+  </data>
+  <data name="Report_Save" xml:space="preserve">
+    <value>Зберегти як…</value>
+  </data>
+  <data name="Report_Saved" xml:space="preserve">
+    <value>Збережено в {0}</value>
+  </data>
+  <data name="Report_Failed" xml:space="preserve">
+    <value>Не вдалося зберегти звіт: {0}</value>
+  </data>
+  <data name="Report_Copied" xml:space="preserve">
+    <value>Скопійовано в буфер обміну.</value>
+  </data>
+  <data name="Report_CopyFailed" xml:space="preserve">
+    <value>Буфер обміну зайнятий іншою програмою. Спробуйте ще раз.</value>
+  </data>
+  <data name="Report_SaveTitle" xml:space="preserve">
+    <value>Зберегти звіт</value>
+  </data>
+  <data name="Dialog_ReportFilter" xml:space="preserve">
+    <value>Текстові файли (*.txt)|*.txt|Усі файли (*.*)|*.*</value>
+  </data>
 </root>

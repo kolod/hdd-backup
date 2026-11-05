@@ -26,6 +26,11 @@ SD/microSD cards.
   as a file tree with a viewer for the selected file. **Extract…** copies a file or a whole
   directory to a folder on your computer, so you can fetch a configuration file from a backup
   without writing the image to a card.
+- The **Tools** button next to **Extract…** runs two read-only checks on the opened Linux system:
+  an **SSH check** (is the SSH server installed and set to start, who can log in and how) and a
+  list of **startup and scheduled tasks** (services, timers, boot scripts, desktop autostart and
+  cron, with the schedule in words). They only read, never change anything, and never show
+  passwords or keys.
 - UI languages: English, Ukrainian, German, French, Spanish, Japanese.
 
 ## Screenshots
@@ -49,6 +54,15 @@ calculate checksums, and repair the file system of a card that lost power:
 directory:
 
 ![Files tab](docs/screenshots/files.png)
+
+**Tools → SSH check** — will SSH work on this card, and if not, why:
+
+![SSH check](docs/screenshots/ssh-check.png)
+
+**Tools → Startup and scheduled tasks** — everything that starts by itself, with its schedule in
+words:
+
+![Startup and scheduled tasks](docs/screenshots/startup-tasks.png)
 
 ## Disclaimer
 
@@ -191,10 +205,45 @@ boot partition of a Raspberry Pi card, are listed but cannot be browsed.
 - An extraction can be cancelled at any time. A file is written under a temporary name and
   renamed when complete, so no half-written file looks finished.
 
+### Tools: SSH check, startup and scheduled tasks
+
+The **Tools** button of the **Files** tab is enabled whenever a file system is open. Both tools
+read the files of the opened Linux system (inside the image, following its symbolic links), on
+their own read-only handle; nothing is written, locked or dismounted, and nothing is sent anywhere.
+
+- **SSH check…** is a four-step wizard: *Server* (is an OpenSSH server installed, and is it set to
+  start at boot, by socket, or by old init scripts), *Settings* (port, administrator login,
+  password and key login, user restrictions, each with the file and line it comes from or
+  "default"), *Accounts* (shell, password state, number of authorized keys and whether the account
+  can log in) and *Result*: one of "SSH should work: pi — a password and a key", "will not start
+  by itself", "no server installed", "the server is set up but nobody can log in", or "cannot be
+  determined", with the reasons in the order a person would fix them. It only advises; it never
+  changes the image. Network, firewall and `Match` blocks (which depend on who connects from where)
+  are not evaluated; `Match` settings are reported as notes. A Raspberry Pi can also switch SSH on
+  at the first boot through a file on the FAT boot partition, which is not read, so the result then
+  says "not enabled in the Linux system, may still be switched on at the first boot" rather than
+  "SSH is off".
+- **Startup and scheduled tasks…** lists, in one filterable and searchable table, the systemd
+  services, timers and sockets that really start (enabled and reachable from the default target),
+  per-user systemd units, `/etc/rc.local` and old init scripts, desktop autostart entries
+  (`.desktop`, LXDE and labwc autostart) and cron tasks (`/etc/crontab`, `/etc/cron.d`, user
+  crontabs, anacron and the `cron.hourly/daily/weekly/monthly` directories, with the schedule in
+  words such as "every day at 6:25 AM"). Entries that will **not** run (masked, in a target that
+  is not reached, hidden, not executable, ignored by cron because of the file name, for a user
+  that does not exist) are hidden by default; clear **Only what is active** to see them with the
+  reason. Command lines are shown exactly as they are written in the system.
+- Both windows have **Copy** and **Save as…** (UTF-8 text; saving never replaces a file without
+  asking). Password hashes, keys and private key files are never read into a result, so they cannot
+  appear in the window, the clipboard or a saved report.
+- Only ext4 partitions are analysed; the FAT boot partition is not read. A partition that is not
+  the root of a Linux system ("no system configuration was found") and a file system that was not
+  cleanly unmounted (shown with the same warning as in the tree) are reported honestly.
+
 Hardware validation steps: [docs/manual-hardware-checklist.md](docs/manual-hardware-checklist.md).
 Design documents: [specs/001-usb-sd-imaging/](specs/001-usb-sd-imaging/),
 [specs/002-ext4-image-shrink/](specs/002-ext4-image-shrink/),
-[specs/008-ext4-browser/](specs/008-ext4-browser/).
+[specs/008-ext4-browser/](specs/008-ext4-browser/),
+[specs/009-image-diagnostic-tools/](specs/009-image-diagnostic-tools/).
 
 ## License
 

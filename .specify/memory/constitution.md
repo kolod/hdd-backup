@@ -1,6 +1,20 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.3.0 → 1.4.0 (2026-11-05)
+Bump rationale: MINOR — scope of Principle VII materially expanded (feature 009).
+Modified principles:
+- VII. Simplicity — scope now also covers read-only diagnostics of the ext4 file system that is
+  open for browsing: interpreting its system configuration (whether the SSH server is set up to
+  start and to accept remote login; what starts automatically; the cron tasks) and reporting the
+  findings. The diagnostics change nothing in the image or the device, never display or save
+  secrets (password hashes, private keys, authorized key text), and make no network access.
+Modified sections:
+- Technology & Platform Constraints — ext4 content is also analysed (read-only) by own managed code.
+Templates requiring updates: none (plan Constitution Check is derived at plan time).
+Deferred TODOs: none.
+
+Previous report (1.3.0):
 Version change: 1.2.0 → 1.3.0 (2026-11-05)
 Bump rationale: MINOR — scope of Principle VII materially expanded (feature 008).
 Modified principles:
@@ -177,11 +191,15 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
   shrinking the last ext4 partition of an image so it fits a smaller medium, and to repairing
   that ext4 file system after an unclean shutdown (replaying its journal, removing orphan inodes
   and correcting free space accounting), and to browsing the file system of an ext4 partition of
-  an image or device and extracting individual files and directories from it. Shrinking and
-  repair rebuild the file system into a new image; the original image is never modified, and
-  damage beyond an unclean shutdown is refused, not repaired. Browsing and extraction are
-  read-only: the source is never modified, and no file is ever written into an image or onto a
-  device by them. Features outside that scope (file-level backup that writes into images or
+  an image or device and extracting individual files and directories from it, and to read-only
+  diagnostics of that file system: interpreting its system configuration (for example whether
+  the SSH server is set up to start and to accept remote login, what starts automatically, the
+  cron tasks) and reporting the findings. Shrinking and repair rebuild the file system into a new
+  image; the original image is never modified, and damage beyond an unclean shutdown is refused,
+  not repaired. Browsing, extraction and diagnostics are read-only: the source is never
+  modified, and no file is ever written into an image or onto a device by them. Diagnostics
+  report and advise but never change a setting, never display, copy or save secrets (password
+  hashes, private keys, authorized key text) and make no network access. Features outside that scope (file-level backup that writes into images or
   devices, cloud upload, scheduling, other compression formats, growing or shrinking other file
   systems, general file system repair) require a constitution amendment.
 - Prefer the simplest design that satisfies the principles above (YAGNI); abstractions MUST be
@@ -204,8 +222,8 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
 - **Build**: SDK-style project targeting `net48`, `AnyCPU` (prefer 32-bit off), producing one
   executable; reproducible build via `dotnet build` / MSBuild.
 - **Testing**: an xUnit- or NUnit-based test project that targets `net48`.
-- **File systems**: ext4 is read, browsed, repaired and written by own managed code (no GPL code,
-  no native libraries). Linux tools (e.g. `mke2fs`, `e2fsck` in Docker) MAY be used on developer machines
+- **File systems**: ext4 is read, browsed, analysed (read-only diagnostics), repaired and written
+  by own managed code (no GPL code, no native libraries). Linux tools (e.g. `mke2fs`, `e2fsck` in Docker) MAY be used on developer machines
   to create test fixtures and to check outputs independently; the product MUST NOT depend on
   them.
 
@@ -233,4 +251,4 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
 - Compliance is reviewed at every plan's Constitution Check and in every code review; any
   justified deviation MUST be recorded in the plan's Complexity Tracking table.
 
-**Version**: 1.3.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-11-05
+**Version**: 1.4.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-11-05

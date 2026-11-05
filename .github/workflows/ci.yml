@@ -77,7 +77,7 @@ jobs:
       - name: Install e2fsprogs
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq e2fsprogs dosfstools fdisk
+          sudo apt-get install -y -qq e2fsprogs dosfstools fdisk openssh-server systemd
 
       - name: Check every image with e2fsck and a tree comparison
         run: tools/ci/Invoke-Ext4Checks.sh "$RUNNER_TEMP/ext4-exports" tests/HddBackup.Core.Tests/Fixtures/ext4

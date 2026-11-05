@@ -986,4 +986,454 @@ Linux (ext4) パーティションの使用量: {1}
   <data name="Files_SourceDevice" xml:space="preserve">
     <value>デバイス</value>
   </data>
+  <data name="Tools_Button" xml:space="preserve">
+    <value>ツール</value>
+  </data>
+  <data name="Tools_Ssh" xml:space="preserve">
+    <value>SSH の確認…</value>
+  </data>
+  <data name="Tools_Startup" xml:space="preserve">
+    <value>自動起動と定期タスク…</value>
+  </data>
+  <data name="Tooltip_Tools" xml:space="preserve">
+    <value>開いている Linux システムを読み取り、見つけた内容を報告するツールです。何も変更されません。</value>
+  </data>
+  <data name="Tools_Analysing" xml:space="preserve">
+    <value>解析中…</value>
+  </data>
+  <data name="Tools_NoFileSystem" xml:space="preserve">
+    <value>先にファイルシステムを開いてください。</value>
+  </data>
+  <data name="Tools_Busy" xml:space="preserve">
+    <value>抽出または別のツールを実行中です。</value>
+  </data>
+  <data name="Ssh_Title" xml:space="preserve">
+    <value>SSH の確認 — {0}</value>
+  </data>
+  <data name="Ssh_Step1" xml:space="preserve">
+    <value>サーバー</value>
+  </data>
+  <data name="Ssh_Step2" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Ssh_Step3" xml:space="preserve">
+    <value>アカウント</value>
+  </data>
+  <data name="Ssh_Step4" xml:space="preserve">
+    <value>結果</value>
+  </data>
+  <data name="Ssh_Back" xml:space="preserve">
+    <value>◂ 戻る</value>
+  </data>
+  <data name="Ssh_Next" xml:space="preserve">
+    <value>次へ ▸</value>
+  </data>
+  <data name="Ssh_NotLinux" xml:space="preserve">
+    <value>このパーティションにはシステム設定が見つかりませんでした。Linux システムのルートではないようです。</value>
+  </data>
+  <data name="Ssh_ShowSystemAccounts" xml:space="preserve">
+    <value>システムアカウントを表示</value>
+  </data>
+  <data name="Ssh_Why" xml:space="preserve">
+    <value>理由</value>
+  </data>
+  <data name="Ssh_CouldNotCheck" xml:space="preserve">
+    <value>確認できなかった項目</value>
+  </data>
+  <data name="Ssh_SettingFrom" xml:space="preserve">
+    <value>{0}、{1} 行目</value>
+  </data>
+  <data name="Ssh_FromDefault" xml:space="preserve">
+    <value>既定値</value>
+  </data>
+  <data name="Ssh_ColAccount" xml:space="preserve">
+    <value>アカウント</value>
+  </data>
+  <data name="Ssh_ColShell" xml:space="preserve">
+    <value>シェル</value>
+  </data>
+  <data name="Ssh_ColPassword" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="Ssh_ColKeys" xml:space="preserve">
+    <value>鍵</value>
+  </data>
+  <data name="Ssh_ColCanLogIn" xml:space="preserve">
+    <value>ログイン可否</value>
+  </data>
+  <data name="Ssh_Pw_Set" xml:space="preserve">
+    <value>設定あり</value>
+  </data>
+  <data name="Ssh_Pw_Locked" xml:space="preserve">
+    <value>ロック中</value>
+  </data>
+  <data name="Ssh_Pw_NoPassword" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="Ssh_Pw_Empty" xml:space="preserve">
+    <value>空</value>
+  </data>
+  <data name="Ssh_Pw_Unknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="Ssh_With_Password" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="Ssh_With_Key" xml:space="preserve">
+    <value>鍵</value>
+  </data>
+  <data name="Ssh_With_Both" xml:space="preserve">
+    <value>パスワードと鍵</value>
+  </data>
+  <data name="Ssh_CanYes" xml:space="preserve">
+    <value>可: {0}</value>
+  </data>
+  <data name="Ssh_CanNo" xml:space="preserve">
+    <value>不可: {0}</value>
+  </data>
+  <data name="Ssh_CanUnknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="Ssh_KeysUnknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="Ssh_Root_Yes" xml:space="preserve">
+    <value>パスワードまたは鍵でログインできます</value>
+  </data>
+  <data name="Ssh_Root_ProhibitPassword" xml:space="preserve">
+    <value>鍵でのみログインできます</value>
+  </data>
+  <data name="Ssh_Root_ForcedCommandsOnly" xml:space="preserve">
+    <value>指定されたコマンドのみ実行できます</value>
+  </data>
+  <data name="Ssh_Root_No" xml:space="preserve">
+    <value>ログインできません</value>
+  </data>
+  <data name="Ssh_Empty_allowed" xml:space="preserve">
+    <value>許可されています</value>
+  </data>
+  <data name="Ssh_Empty_refused" xml:space="preserve">
+    <value>拒否されます</value>
+  </data>
+  <data name="Ssh_R_NoShell" xml:space="preserve">
+    <value>ログインシェルがありません</value>
+  </data>
+  <data name="Ssh_R_PasswordLocked" xml:space="preserve">
+    <value>パスワードがロックされています</value>
+  </data>
+  <data name="Ssh_R_NoPasswordNoKey" xml:space="preserve">
+    <value>パスワードも許可された鍵もありません</value>
+  </data>
+  <data name="Ssh_R_RootNotAllowed" xml:space="preserve">
+    <value>サーバーが管理者アカウントのログインを許可していません</value>
+  </data>
+  <data name="Ssh_R_NotInAllowUsers" xml:space="preserve">
+    <value>許可ユーザーの一覧にありません</value>
+  </data>
+  <data name="Ssh_R_Denied" xml:space="preserve">
+    <value>サーバー設定で拒否されています</value>
+  </data>
+  <data name="Ssh_R_PasswordAuthOffNoKey" xml:space="preserve">
+    <value>パスワードログインが無効で、許可された鍵もありません</value>
+  </data>
+  <data name="Ssh_R_KeyAuthOffNoPassword" xml:space="preserve">
+    <value>鍵ログインが無効で、使えるパスワードもありません</value>
+  </data>
+  <data name="Ssh_R_EmptyPasswordRefused" xml:space="preserve">
+    <value>パスワードが空で、サーバーは空のパスワードを拒否します</value>
+  </data>
+  <data name="Ssh_R_LockedRefused" xml:space="preserve">
+    <value>サーバーはロックされたアカウントを拒否します</value>
+  </data>
+  <data name="Ssh_R_MethodsNeedBoth" xml:space="preserve">
+    <value>サーバーはパスワードと鍵の両方を要求します</value>
+  </data>
+  <data name="Ssh_V_Works" xml:space="preserve">
+    <value>SSH は動作するはずです: {0}。</value>
+  </data>
+  <data name="Ssh_V_NotEnabled" xml:space="preserve">
+    <value>SSH は自動では起動しません。サーバーは起動時に開始する設定になっていません。</value>
+  </data>
+  <data name="Ssh_V_NotEnabledBootFlagPossible" xml:space="preserve">
+    <value>Linux システムでは SSH が有効になっていません。ブートパーティション上のファイルによって初回起動時に有効化される可能性がありますが、そこは確認していません。</value>
+  </data>
+  <data name="Ssh_V_NoServer" xml:space="preserve">
+    <value>SSH サーバーがインストールされていません。</value>
+  </data>
+  <data name="Ssh_V_NobodyCanLogIn" xml:space="preserve">
+    <value>サーバーは設定されていますが、ログインできるユーザーがいません。</value>
+  </data>
+  <data name="Ssh_V_Undetermined" xml:space="preserve">
+    <value>ファイルだけでは SSH が動作するか判断できません。確認できなかった項目を以下に示します。</value>
+  </data>
+  <data name="Ssh_F_ServerInstalled" xml:space="preserve">
+    <value>SSH サーバーがインストールされています ({0})。</value>
+  </data>
+  <data name="Ssh_F_ServerMissing" xml:space="preserve">
+    <value>SSH サーバーがインストールされていません。</value>
+  </data>
+  <data name="Ssh_F_ServerEnabled" xml:space="preserve">
+    <value>サーバーは起動時に開始されます ({0} が有効)。</value>
+  </data>
+  <data name="Ssh_F_ServerOnDemand" xml:space="preserve">
+    <value>接続があったときにサーバーが起動します ({0})。</value>
+  </data>
+  <data name="Ssh_F_ServerNotEnabled" xml:space="preserve">
+    <value>サーバーはインストールされていますが、起動時に開始する設定になっていません。</value>
+  </data>
+  <data name="Ssh_F_ServerMasked" xml:space="preserve">
+    <value>サーバーはマスクされており、起動できません。</value>
+  </data>
+  <data name="Ssh_F_ServerLegacy" xml:space="preserve">
+    <value>このシステムの従来の init スクリプトで起動されます ({0})。</value>
+  </data>
+  <data name="Ssh_F_BootFlagNotRead" xml:space="preserve">
+    <value>Raspberry Pi OS は、FAT のブートパーティション上のファイルによって初回起動時に SSH を有効にできます。このツールは Linux のファイルシステムだけを読むため、これは確認していません。</value>
+  </data>
+  <data name="Ssh_F_Port" xml:space="preserve">
+    <value>サーバーはポート {0} で待ち受けます。</value>
+  </data>
+  <data name="Ssh_F_RootLogin" xml:space="preserve">
+    <value>管理者アカウントは{0}。</value>
+  </data>
+  <data name="Ssh_F_PasswordAuthOn" xml:space="preserve">
+    <value>パスワードによるログインは許可されています。</value>
+  </data>
+  <data name="Ssh_F_PasswordAuthOff" xml:space="preserve">
+    <value>パスワードによるログインは許可されていません。</value>
+  </data>
+  <data name="Ssh_F_KeyAuthOn" xml:space="preserve">
+    <value>鍵によるログインは許可されています。</value>
+  </data>
+  <data name="Ssh_F_KeyAuthOff" xml:space="preserve">
+    <value>鍵によるログインは許可されていません。</value>
+  </data>
+  <data name="Ssh_F_EmptyPasswords" xml:space="preserve">
+    <value>空のパスワードのアカウントは{0}。</value>
+  </data>
+  <data name="Ssh_F_UserRestriction" xml:space="preserve">
+    <value>{0} によりログインできるユーザーが制限されています: {1}。</value>
+  </data>
+  <data name="Ssh_F_SettingDefault" xml:space="preserve">
+    <value>{0} は設定されていないため、既定値が使われます。</value>
+  </data>
+  <data name="Ssh_F_ConditionalSettings" xml:space="preserve">
+    <value>{0} は Match ブロックにも現れます。ユーザーやアドレスによって結果が異なる場合があります。</value>
+  </data>
+  <data name="Ssh_F_KeysFromCommand" xml:space="preserve">
+    <value>鍵がコマンドから供給される場合があり、確認できません。</value>
+  </data>
+  <data name="Ssh_F_AccountCanLogIn" xml:space="preserve">
+    <value>{0} は{1}でログインできます。</value>
+  </data>
+  <data name="Ssh_F_AccountCannot" xml:space="preserve">
+    <value>{0} はログインできません: {1}。</value>
+  </data>
+  <data name="Ssh_F_NoRegularAccount" xml:space="preserve">
+    <value>管理者以外のアカウントがありません。Raspberry Pi OS は初回起動時に作成します。</value>
+  </data>
+  <data name="Ssh_F_ShadowUnreadable" xml:space="preserve">
+    <value>パスワード情報を読み取れませんでした。</value>
+  </data>
+  <data name="Ssh_F_ConfigMissing" xml:space="preserve">
+    <value>/etc/ssh/sshd_config がないため、サーバーの既定値を前提とします。</value>
+  </data>
+  <data name="Diag_N_Truncated" xml:space="preserve">
+    <value>{0} は 1 MiB を超えているため、一部のみ読み取りました。</value>
+  </data>
+  <data name="Diag_N_Unreadable" xml:space="preserve">
+    <value>{0} を読み取れませんでした。</value>
+  </data>
+  <data name="Diag_N_ListCut" xml:space="preserve">
+    <value>{0} の一覧は {1} 件で打ち切られました。</value>
+  </data>
+  <data name="Startup_Title" xml:space="preserve">
+    <value>自動起動と定期タスク — {0}</value>
+  </data>
+  <data name="Startup_Filter" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="Startup_All" xml:space="preserve">
+    <value>すべて</value>
+  </data>
+  <data name="Startup_KindService" xml:space="preserve">
+    <value>サービス</value>
+  </data>
+  <data name="Startup_KindTimer" xml:space="preserve">
+    <value>タイマー</value>
+  </data>
+  <data name="Startup_KindBoot" xml:space="preserve">
+    <value>起動スクリプト</value>
+  </data>
+  <data name="Startup_KindDesktop" xml:space="preserve">
+    <value>デスクトップセッション</value>
+  </data>
+  <data name="Startup_KindCron" xml:space="preserve">
+    <value>Cron</value>
+  </data>
+  <data name="Startup_Search" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="Startup_OnlyActive" xml:space="preserve">
+    <value>有効なものだけ</value>
+  </data>
+  <data name="Startup_Counts" xml:space="preserve">
+    <value>{0} 件 (無効 {1} 件)</value>
+  </data>
+  <data name="Startup_CountsFiltered" xml:space="preserve">
+    <value>{1} 件中 {0} 件</value>
+  </data>
+  <data name="Startup_ColKind" xml:space="preserve">
+    <value>種類</value>
+  </data>
+  <data name="Startup_ColName" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="Startup_ColRuns" xml:space="preserve">
+    <value>実行内容 / 時期</value>
+  </data>
+  <data name="Startup_ColUser" xml:space="preserve">
+    <value>ユーザー</value>
+  </data>
+  <data name="Startup_ColSource" xml:space="preserve">
+    <value>取得元</value>
+  </data>
+  <data name="Startup_ColStatus" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="Startup_Active" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="Startup_Empty" xml:space="preserve">
+    <value>自動的に起動するものは見つかりませんでした。</value>
+  </data>
+  <data name="Startup_Verbatim" xml:space="preserve">
+    <value>コマンドラインはシステム上の記述のまま表示されます。</value>
+  </data>
+  <data name="Startup_K_Service" xml:space="preserve">
+    <value>サービス</value>
+  </data>
+  <data name="Startup_K_Timer" xml:space="preserve">
+    <value>タイマー</value>
+  </data>
+  <data name="Startup_K_Socket" xml:space="preserve">
+    <value>ソケット</value>
+  </data>
+  <data name="Startup_K_BootScript" xml:space="preserve">
+    <value>起動スクリプト</value>
+  </data>
+  <data name="Startup_K_Desktop" xml:space="preserve">
+    <value>デスクトップ</value>
+  </data>
+  <data name="Startup_K_UserService" xml:space="preserve">
+    <value>ユーザーサービス</value>
+  </data>
+  <data name="Startup_K_Cron" xml:space="preserve">
+    <value>Cron</value>
+  </data>
+  <data name="Startup_R_Disabled" xml:space="preserve">
+    <value>有効ではありません</value>
+  </data>
+  <data name="Startup_R_Masked" xml:space="preserve">
+    <value>マスク済み</value>
+  </data>
+  <data name="Startup_R_UnitMissing" xml:space="preserve">
+    <value>ユニットファイルがありません</value>
+  </data>
+  <data name="Startup_R_TargetNotReached" xml:space="preserve">
+    <value>起動時にそのターゲットに到達しません</value>
+  </data>
+  <data name="Startup_R_HiddenEntry" xml:space="preserve">
+    <value>エントリ内で非表示または無効にされています</value>
+  </data>
+  <data name="Startup_R_NotExecutable" xml:space="preserve">
+    <value>実行可能ではありません</value>
+  </data>
+  <data name="Startup_R_IgnoredName" xml:space="preserve">
+    <value>ファイル名が cron に無視されます</value>
+  </data>
+  <data name="Startup_R_NothingRunsIt" xml:space="preserve">
+    <value>このディレクトリを実行するものがありません</value>
+  </data>
+  <data name="Startup_R_NoSuchUser" xml:space="preserve">
+    <value>ユーザーが存在しません</value>
+  </data>
+  <data name="Startup_R_NoCron" xml:space="preserve">
+    <value>cron がインストールされていません</value>
+  </data>
+  <data name="Startup_R_Malformed" xml:space="preserve">
+    <value>解釈できませんでした</value>
+  </data>
+  <data name="Startup_R_Unreadable" xml:space="preserve">
+    <value>読み取れませんでした</value>
+  </data>
+  <data name="Startup_N_NoCron" xml:space="preserve">
+    <value>このシステムには cron がインストールされていません。</value>
+  </data>
+  <data name="Startup_N_CronNotEnabled" xml:space="preserve">
+    <value>cron サービスが有効になっていません。定期タスクはサービスが起動されたときだけ実行されます。</value>
+  </data>
+  <data name="Sched_AtBoot" xml:space="preserve">
+    <value>起動時</value>
+  </data>
+  <data name="Sched_EveryMinute" xml:space="preserve">
+    <value>毎分</value>
+  </data>
+  <data name="Sched_EveryNMinutes" xml:space="preserve">
+    <value>{0} 分ごと</value>
+  </data>
+  <data name="Sched_HourlyAt" xml:space="preserve">
+    <value>毎時 :{0}</value>
+  </data>
+  <data name="Sched_DailyAt" xml:space="preserve">
+    <value>毎日 {0}</value>
+  </data>
+  <data name="Sched_WeeklyOn" xml:space="preserve">
+    <value>毎週 {0} {1}</value>
+  </data>
+  <data name="Sched_MonthlyOn" xml:space="preserve">
+    <value>毎月 {0} 日 {1}</value>
+  </data>
+  <data name="Sched_YearlyOn" xml:space="preserve">
+    <value>毎年 {0} {1}</value>
+  </data>
+  <data name="Sched_EveryDay" xml:space="preserve">
+    <value>毎日</value>
+  </data>
+  <data name="Sched_EveryNDays" xml:space="preserve">
+    <value>{0} 日ごと</value>
+  </data>
+  <data name="Sched_Custom" xml:space="preserve">
+    <value>スケジュール {0}</value>
+  </data>
+  <data name="Sched_TimeList" xml:space="preserve">
+    <value>{0}と{1}</value>
+  </data>
+  <data name="Report_Date" xml:space="preserve">
+    <value>日付: {0}</value>
+  </data>
+  <data name="Report_Copy" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="Report_Save" xml:space="preserve">
+    <value>名前を付けて保存…</value>
+  </data>
+  <data name="Report_Saved" xml:space="preserve">
+    <value>{0} に保存しました</value>
+  </data>
+  <data name="Report_Failed" xml:space="preserve">
+    <value>レポートを保存できませんでした: {0}</value>
+  </data>
+  <data name="Report_Copied" xml:space="preserve">
+    <value>クリップボードにコピーしました。</value>
+  </data>
+  <data name="Report_CopyFailed" xml:space="preserve">
+    <value>クリップボードが他のプログラムで使用中です。もう一度お試しください。</value>
+  </data>
+  <data name="Report_SaveTitle" xml:space="preserve">
+    <value>レポートを保存</value>
+  </data>
+  <data name="Dialog_ReportFilter" xml:space="preserve">
+    <value>テキスト ファイル (*.txt)|*.txt|すべてのファイル (*.*)|*.*</value>
+  </data>
 </root>

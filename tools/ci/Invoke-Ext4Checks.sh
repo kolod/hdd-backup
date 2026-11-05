@@ -41,7 +41,7 @@ for path in "$EXPORTS"/*; do
     jobs+=("$path"$'\t'"$FIXTURES/$fixture.img.gz")
 done
 
-if [ ${#jobs[@]} -eq 0 ] && [ ! -s "$LOGS/results.tsv" ] && ! compgen -G "$EXPORTS/extracted/*.tsv" > /dev/null; then
+if [ ${#jobs[@]} -eq 0 ] && [ ! -s "$LOGS/results.tsv" ] && ! compgen -G "$EXPORTS/extracted/*.tsv" > /dev/null && ! compgen -G "$EXPORTS/diagnostics/*.tsv" > /dev/null; then
     echo "::error::No exported ext4 images found in $EXPORTS"
     exit 1
 fi
@@ -103,6 +103,10 @@ for listing in "$EXPORTS"/extracted/*.tsv; do
     [ -f "$listing" ] || continue
     check_extracted "$(basename "$listing" .tsv)" "$listing"
 done
+
+# Diagnostic tools (feature 009): the settings and enabled units the tools found in the fixtures must equal
+# `sshd -T` and `systemctl --root` over the same files (tests/fixtures/ext4/check-diagnostics.sh).
+bash "$(dirname "$CHECK")/check-diagnostics.sh" "$EXPORTS" "$FIXTURES" "$LOGS/results.tsv"
 
 failed=0
 {
