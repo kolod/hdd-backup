@@ -79,6 +79,11 @@ namespace HddBackup.Core.Imaging
                 return ValidateShrink(request);
             }
 
+            if (request.Kind == OperationKind.ExtractFiles)
+            {
+                return ValidateExtract(request);
+            }
+
             if (request.Kind == OperationKind.ConvertImage)
             {
                 return ValidateConvert(request, ImageDescriptor.Load(request.ImagePath));
@@ -148,6 +153,10 @@ namespace HddBackup.Core.Imaging
                 else if (request.Kind == OperationKind.ConvertImage)
                 {
                     RunConvert(request, model, result, ct);
+                }
+                else if (request.Kind == OperationKind.ExtractFiles)
+                {
+                    RunExtract(request, model, result, ct);
                 }
                 else if (request.IsRestore)
                 {
@@ -458,6 +467,110 @@ namespace HddBackup.Core.Imaging
                 {
                     result.SafeToRemove = result.ErrorCode != ErrorCode.DeviceRemoved;
                 }
+            }
+        }
+
+        /// <summary>Checks that need no I/O on the source; the destination is checked again while planning.</summary>
+        private IReadOnlyList<ValidationWarning> ValidateExtract(OperationRequest request)
+        {
+            if (request.BrowseDevice == null && string.IsNullOrWhiteSpace(request.BrowseImagePath))
+            {
+                throw new ImagingException(ErrorCode.InvalidRequest, "No image or device to extract from.");
+            }
+
+            if (string.IsNullOrEmpty(request.ExtractEntryPath))
+            {
+                throw new ImagingException(ErrorCode.InvalidRequest, "Nothing was chosen to extract.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.ExtractDestination) || !Directory.Exists(request.ExtractDestination))
+            {
+                throw new ImagingException(ErrorCode.InvalidRequest, "The destination folder does not exist.");
+            }
+
+            if (request.BrowseDevice != null
+                && _access.GetPathInfo(request.ExtractDestination).DiskNumbers.Contains(request.BrowseDevice.DiskNumber))
+            {
+                throw new ImagingException(ErrorCode.DestinationIsSource, "The destination is on the device being browsed.");
+            }
+
+            return Array.Empty<ValidationWarning>();
+        }
+
+        /// <summary>
+        /// Copies a file or directory out of an ext4 partition, read-only (feature 008): plan
+        /// (names, sizes, conflicts), then copy. The source is never written; the destination only
+        /// receives the extracted items.
+        /// </summary>
+        private void RunExtract(OperationRequest request, PhaseModel model, OperationResult result, CancellationToken ct)
+        {
+            Browsing.BrowseSource source = null;
+            Browsing.Ext4FileSystemView view = null;
+            try
+            {
+                ValidateExtract(request);
+                result.ImagePath = request.BrowseImagePath;
+                source = request.BrowseDevice != null
+                    ? Browsing.BrowseSource.OpenDevice(_access, request.BrowseDevice)
+                    : Browsing.BrowseSource.OpenImage(request.BrowseImagePath);
+                var partition = source.Browsable.FirstOrDefault(p => p.Number == request.BrowsePartitionNumber);
+                if (partition == null)
+                {
+                    throw new ImagingException(ErrorCode.InvalidRequest, "The partition cannot be browsed.");
+                }
+
+                view = source.OpenFileSystem(partition);
+                var entry = view.GetEntry(request.ExtractEntryPath, request.ExtractEntryInode);
+                if (entry == null)
+                {
+                    throw new ImagingException(ErrorCode.InvalidRequest, "The entry no longer exists: " + request.ExtractEntryPath);
+                }
+
+                var plan = Browsing.ExtractionPlanner.Plan(
+                    view,
+                    entry,
+                    request.ExtractDestination,
+                    _access.GetPathInfo(request.ExtractDestination),
+                    request.ExtractConflictPolicy,
+                    request.BrowseImagePath,
+                    ct);
+                if (plan.ProtectedPathHit != null)
+                {
+                    throw new ImagingException(ErrorCode.DestinationIsSource, "The extraction would overwrite the image: " + plan.ProtectedPathHit);
+                }
+
+                if (plan.InsufficientSpace)
+                {
+                    throw new ImagingException(
+                        ErrorCode.DestinationFull,
+                        "Needs " + plan.TotalBytes + " bytes, the destination has " + plan.FreeBytes + " free.");
+                }
+
+                model.SetState(OperationState.Running);
+                model.BeginPhase(OperationPhase.Transferring, Math.Max(1, plan.TotalBytes), plan.TotalBytes);
+                var summary = Browsing.Ext4Extractor.Run(
+                    view,
+                    plan,
+                    request.ExtractConflictPolicy,
+                    request.BrowseImagePath,
+                    done => model.SetUnits(done, done),
+                    ct);
+                model.SetState(OperationState.Finalizing);
+                result.Extraction = summary;
+                result.DataBytes = summary.BytesExtracted;
+                result.ContentComplete = true;
+                result.SafeToRemove = true;
+                result.State = OperationState.Completed;
+            }
+            catch (Exception ex) when (IsExpected(ex))
+            {
+                RecordFailure(result, ex);
+                result.SafeToRemove = ex is ImagingException imaging ? imaging.Code != ErrorCode.DeviceRemoved : true;
+            }
+            finally
+            {
+                view?.Dispose();
+                source?.Dispose();
             }
         }
 

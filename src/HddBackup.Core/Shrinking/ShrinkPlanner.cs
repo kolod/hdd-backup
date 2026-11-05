@@ -190,26 +190,7 @@ namespace HddBackup.Core.Shrinking
         }
 
         /// <summary>What an unclean shutdown left in this file system (feature 006).</summary>
-        internal static RepairReasons RepairReasonsOf(Ext4Superblock sb)
-        {
-            var reasons = RepairReasons.None;
-            if (sb.NeedsRecovery)
-            {
-                reasons |= RepairReasons.JournalNeedsRecovery;
-            }
-
-            if (sb.LastOrphan != 0 || (sb.State & Ext4Superblock.StateOrphans) != 0)
-            {
-                reasons |= RepairReasons.OrphanInodes;
-            }
-
-            if ((sb.State & Ext4Superblock.StateValid) == 0)
-            {
-                reasons |= RepairReasons.NotClean;
-            }
-
-            return reasons;
-        }
+        internal static RepairReasons RepairReasonsOf(Ext4Superblock sb) => Ext4StateProbe.ReasonsOf(sb);
 
         /// <summary>State of every ext4 partition, from its superblock (research R-5).</summary>
         private static void AddFileSystemStates(ShrinkPlan plan, IBlockDevice device, PartitionTable table, PartitionInfo root, Ext4Superblock rootSb)
@@ -233,19 +214,7 @@ namespace HddBackup.Core.Shrinking
                     }
                 }
 
-                var state = new FileSystemState { PartitionNumber = p.Number, Name = p.Name ?? string.Empty, IsRoot = ReferenceEquals(p, root) };
-                state.Reasons = RepairReasonsOf(sb);
-                if ((sb.State & Ext4Superblock.StateErrors) != 0 || sb.ErrorCount != 0)
-                {
-                    state.Condition = FileSystemCondition.Damaged;
-                    state.Problems = new[] { "The kernel recorded file system errors." };
-                }
-                else
-                {
-                    state.Condition = state.Reasons == RepairReasons.None ? FileSystemCondition.Clean : FileSystemCondition.NeedsRepair;
-                }
-
-                plan.FileSystems.Add(state);
+                plan.FileSystems.Add(Ext4StateProbe.Probe(sb, p.Number, p.Name, ReferenceEquals(p, root)));
             }
         }
 

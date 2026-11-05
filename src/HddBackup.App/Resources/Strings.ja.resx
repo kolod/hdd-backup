@@ -800,4 +800,190 @@ Linux (ext4) パーティションの使用量: {1}
   <data name="About_IconCredit" xml:space="preserve">
     <value>アイコン: Papirus アイコン テーマ (GPL-3.0)、カードの色を変更。</value>
   </data>
+  <data name="Tab_Files" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="Files_Source" xml:space="preserve">
+    <value>ソース</value>
+  </data>
+  <data name="Files_SourceImage" xml:space="preserve">
+    <value>イメージ ファイル</value>
+  </data>
+  <data name="Files_Partition" xml:space="preserve">
+    <value>パーティション</value>
+  </data>
+  <data name="Files_StateClean" xml:space="preserve">
+    <value>正常</value>
+  </data>
+  <data name="Files_StateNeedsRepair" xml:space="preserve">
+    <value>正常にアンマウントされていません。最新の変更が欠けているか、整合性が取れていない可能性があります。先に［イメージ］タブでイメージを修復してください。</value>
+  </data>
+  <data name="Files_StateDamaged" xml:space="preserve">
+    <value>カーネルがファイル システムのエラーを記録しています。読み取れないファイルがある可能性があります。</value>
+  </data>
+  <data name="Files_NeedsConversion" xml:space="preserve">
+    <value>圧縮されたイメージは参照できません。先に［イメージ］タブで .img に変換してください。</value>
+  </data>
+  <data name="Files_NoExt4" xml:space="preserve">
+    <value>ext4 パーティションが見つかりません。存在するパーティション: {0}</value>
+  </data>
+  <data name="Files_Unsupported" xml:space="preserve">
+    <value>このパーティションは参照できません: {0}</value>
+  </data>
+  <data name="Files_Counts" xml:space="preserve">
+    <value>ファイル {0} 個、ディレクトリ {1} 個</value>
+  </data>
+  <data name="Files_CountsApprox" xml:space="preserve">
+    <value>約 {0} 個のファイル、{1} 個のディレクトリ</value>
+  </data>
+  <data name="Files_Opening" xml:space="preserve">
+    <value>開いています…</value>
+  </data>
+  <data name="Files_ReadError" xml:space="preserve">
+    <value>ソースを読み取れませんでした: {0}</value>
+  </data>
+  <data name="Files_Unreadable" xml:space="preserve">
+    <value>読み取れません: {0}</value>
+  </data>
+  <data name="Files_LinkTarget" xml:space="preserve">
+    <value>リンク先: {0}</value>
+  </data>
+  <data name="Files_SpecialFile" xml:space="preserve">
+    <value>特殊ファイル ({0})</value>
+  </data>
+  <data name="Tooltip_Files_State" xml:space="preserve">
+    <value>ファイル システムが正常にアンマウントされたかどうか。内容はディスク上の状態のまま表示され、修復や変更は行われません。</value>
+  </data>
+  <data name="Files_Extract" xml:space="preserve">
+    <value>抽出…</value>
+  </data>
+  <data name="Tooltip_Files_Extract" xml:space="preserve">
+    <value>選択したファイルまたはディレクトリを、中身ごとこのコンピューター上のフォルダーにコピーします。</value>
+  </data>
+  <data name="Files_ExtractTitle" xml:space="preserve">
+    <value>抽出先</value>
+  </data>
+  <data name="Files_Planning" xml:space="preserve">
+    <value>抽出を準備しています…</value>
+  </data>
+  <data name="Extract_NoSpace" xml:space="preserve">
+    <value>コピー先の空き容量は {1} ですが、{0} 必要です。</value>
+  </data>
+  <data name="Extract_DestinationIsSource" xml:space="preserve">
+    <value>コピー先にイメージ自体や参照中のデバイスのボリュームは指定できません。</value>
+  </data>
+  <data name="Error_DestinationIsSource" xml:space="preserve">
+    <value>コピー先にイメージ自体や参照中のデバイスのボリュームは指定できません。</value>
+  </data>
+  <data name="Extract_Nothing" xml:space="preserve">
+    <value>抽出するものがありません。</value>
+  </data>
+  <data name="Extract_Conflicts" xml:space="preserve">
+    <value>コピー先に既に {0} 個のファイルがあります。</value>
+  </data>
+  <data name="Extract_Replace" xml:space="preserve">
+    <value>置き換える</value>
+  </data>
+  <data name="Extract_SkipExisting" xml:space="preserve">
+    <value>既存をスキップ</value>
+  </data>
+  <data name="Phase_Planning" xml:space="preserve">
+    <value>準備中…</value>
+  </data>
+  <data name="Phase_Extracting" xml:space="preserve">
+    <value>抽出中…</value>
+  </data>
+  <data name="Result_Extracted" xml:space="preserve">
+    <value>{0} 個のファイルと {1} 個のディレクトリを {2} に抽出しました。</value>
+  </data>
+  <data name="Result_ExtractedWithIssues" xml:space="preserve">
+    <value>{0} 個のファイルと {1} 個のディレクトリを {2} に抽出しました。スキップ、名前変更、または失敗した項目: {3} 個。</value>
+  </data>
+  <data name="Result_ExtractCancelled" xml:space="preserve">
+    <value>抽出をキャンセルしました。抽出済みのファイルは残されています。</value>
+  </data>
+  <data name="Extract_Details" xml:space="preserve">
+    <value>詳細…</value>
+  </data>
+  <data name="Extract_DetailsTitle" xml:space="preserve">
+    <value>抽出の詳細</value>
+  </data>
+  <data name="Extract_Copy" xml:space="preserve">
+    <value>クリップボードにコピー</value>
+  </data>
+  <data name="Extract_ColKind" xml:space="preserve">
+    <value>結果</value>
+  </data>
+  <data name="Extract_ColPath" xml:space="preserve">
+    <value>イメージ内のパス</value>
+  </data>
+  <data name="Extract_ColName" xml:space="preserve">
+    <value>Windows での名前</value>
+  </data>
+  <data name="Extract_ColReason" xml:space="preserve">
+    <value>理由</value>
+  </data>
+  <data name="Extract_KindSkipped" xml:space="preserve">
+    <value>スキップ</value>
+  </data>
+  <data name="Extract_KindRenamed" xml:space="preserve">
+    <value>名前変更</value>
+  </data>
+  <data name="Extract_KindFailed" xml:space="preserve">
+    <value>失敗</value>
+  </data>
+  <data name="Extract_IssueSkippedLink" xml:space="preserve">
+    <value>シンボリック リンクのため作成しませんでした</value>
+  </data>
+  <data name="Extract_IssueSkippedSpecial" xml:space="preserve">
+    <value>特殊ファイルのため作成しませんでした</value>
+  </data>
+  <data name="Extract_IssueSkippedExisting" xml:space="preserve">
+    <value>既に存在するためスキップしました</value>
+  </data>
+  <data name="Extract_IssueRenamed" xml:space="preserve">
+    <value>Windows で使用できない名前のため変更しました</value>
+  </data>
+  <data name="Extract_IssueTooLong" xml:space="preserve">
+    <value>パスが Windows の上限を超えています</value>
+  </data>
+  <data name="Extract_IssueFatLimit" xml:space="preserve">
+    <value>ファイルが 4 GiB 以上で、コピー先が FAT32 です</value>
+  </data>
+  <data name="Extract_IssueUnreadable" xml:space="preserve">
+    <value>読み取れませんでした: {0}</value>
+  </data>
+  <data name="Extract_IssueNotExtractable" xml:space="preserve">
+    <value>抽出できません: {0}</value>
+  </data>
+  <data name="Extract_IssueWriteFailed" xml:space="preserve">
+    <value>書き込めませんでした: {0}</value>
+  </data>
+  <data name="Files_ShownOf" xml:space="preserve">
+    <value>{1} のうち先頭の {0} を表示しています</value>
+  </data>
+  <data name="Files_ViewText" xml:space="preserve">
+    <value>テキスト</value>
+  </data>
+  <data name="Files_ViewAuto" xml:space="preserve">
+    <value>自動</value>
+  </data>
+  <data name="Files_ViewHex" xml:space="preserve">
+    <value>16進</value>
+  </data>
+  <data name="Files_NotViewable" xml:space="preserve">
+    <value>表示できません: {0}</value>
+  </data>
+  <data name="Tooltip_Files_ViewHex" xml:space="preserve">
+    <value>バイナリ ファイル向けに、オフセット付きでバイトを表示します。</value>
+  </data>
+  <data name="Files_Header" xml:space="preserve">
+    <value>{0} · {1} · uid {2}, gid {3} · {4}</value>
+  </data>
+  <data name="Files_KindDirectory" xml:space="preserve">
+    <value>ディレクトリ</value>
+  </data>
+  <data name="Files_SourceDevice" xml:space="preserve">
+    <value>デバイス</value>
+  </data>
 </root>

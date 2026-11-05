@@ -72,5 +72,8 @@ namespace HddBackup.Core.Imaging
 
         /// <summary>File names of checksum files written by the operation (conversion or checksum calculation).</summary>
         public IReadOnlyList<string> SavedChecksumFiles { get; set; } = Array.Empty<string>();
+
+        /// <summary>ExtractFiles: what was extracted and every item that was skipped, renamed or failed.</summary>
+        public Browsing.ExtractionSummary Extraction { get; set; }
     }
 }

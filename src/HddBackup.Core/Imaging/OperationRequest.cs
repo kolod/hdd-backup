@@ -14,6 +14,9 @@ namespace HddBackup.Core.Imaging
         /// <summary>Create a smaller copy of an image by rebuilding its last (ext4) partition.</summary>
         ShrinkImage,
 
+        /// <summary>Copy a file or directory out of an ext4 partition of an image or device (feature 008); read-only.</summary>
+        ExtractFiles,
+
         /// <summary>Copy an image into the other format (.img ↔ .img.gz); the content is unchanged.</summary>
         ConvertImage
     }
@@ -104,6 +107,27 @@ namespace HddBackup.Core.Imaging
         /// missing next to the image.
         /// </summary>
         public bool SaveMissingChecksums { get; set; }
+
+        /// <summary>ExtractFiles: the uncompressed image to read (when <see cref="BrowseDevice"/> is null).</summary>
+        public string BrowseImagePath { get; set; }
+
+        /// <summary>ExtractFiles: the device to read instead of an image; opened read-only.</summary>
+        public DeviceInfo BrowseDevice { get; set; }
+
+        /// <summary>ExtractFiles: number of the ext4 partition in the source.</summary>
+        public int BrowsePartitionNumber { get; set; }
+
+        /// <summary>ExtractFiles: path of the file or directory in the file system, e.g. "/etc".</summary>
+        public string ExtractEntryPath { get; set; }
+
+        /// <summary>ExtractFiles: its inode, to tell apart names that decode alike.</summary>
+        public uint? ExtractEntryInode { get; set; }
+
+        /// <summary>ExtractFiles: an existing folder on this computer.</summary>
+        public string ExtractDestination { get; set; }
+
+        /// <summary>ExtractFiles: what to do with files that already exist in the destination.</summary>
+        public Browsing.ConflictPolicy ExtractConflictPolicy { get; set; }
 
         public bool IsBackup => Kind == OperationKind.BackupDevice || Kind == OperationKind.BackupPartition;
 

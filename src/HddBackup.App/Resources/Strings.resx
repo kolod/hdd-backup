@@ -800,4 +800,190 @@ Smallest possible image: {2}</value>
   <data name="About_IconCredit" xml:space="preserve">
     <value>Icon: Papirus icon theme (GPL-3.0), card color changed.</value>
   </data>
+  <data name="Tab_Files" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="Files_Source" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Files_SourceImage" xml:space="preserve">
+    <value>Image file</value>
+  </data>
+  <data name="Files_Partition" xml:space="preserve">
+    <value>Partition</value>
+  </data>
+  <data name="Files_StateClean" xml:space="preserve">
+    <value>Clean</value>
+  </data>
+  <data name="Files_StateNeedsRepair" xml:space="preserve">
+    <value>Not cleanly unmounted: recent changes may be missing or inconsistent. Repair the image on the Image tab first.</value>
+  </data>
+  <data name="Files_StateDamaged" xml:space="preserve">
+    <value>The kernel recorded file system errors; some files may be unreadable.</value>
+  </data>
+  <data name="Files_NeedsConversion" xml:space="preserve">
+    <value>Compressed images cannot be browsed. Convert the image to .img on the Image tab first.</value>
+  </data>
+  <data name="Files_NoExt4" xml:space="preserve">
+    <value>No ext4 partition was found. Partitions present: {0}</value>
+  </data>
+  <data name="Files_Unsupported" xml:space="preserve">
+    <value>This partition cannot be browsed: {0}</value>
+  </data>
+  <data name="Files_Counts" xml:space="preserve">
+    <value>{0} files, {1} directories</value>
+  </data>
+  <data name="Files_CountsApprox" xml:space="preserve">
+    <value>About {0} files, {1} directories</value>
+  </data>
+  <data name="Files_Opening" xml:space="preserve">
+    <value>Opening…</value>
+  </data>
+  <data name="Files_ReadError" xml:space="preserve">
+    <value>Could not read the source: {0}</value>
+  </data>
+  <data name="Files_Unreadable" xml:space="preserve">
+    <value>Unreadable: {0}</value>
+  </data>
+  <data name="Files_LinkTarget" xml:space="preserve">
+    <value>Link to {0}</value>
+  </data>
+  <data name="Files_SpecialFile" xml:space="preserve">
+    <value>Special file ({0})</value>
+  </data>
+  <data name="Tooltip_Files_State" xml:space="preserve">
+    <value>Whether the file system was unmounted cleanly. The contents are shown as they are on disk; nothing is repaired or changed.</value>
+  </data>
+  <data name="Files_Extract" xml:space="preserve">
+    <value>Extract…</value>
+  </data>
+  <data name="Tooltip_Files_Extract" xml:space="preserve">
+    <value>Copies the selected file or directory, with everything in it, to a folder on this computer.</value>
+  </data>
+  <data name="Files_ExtractTitle" xml:space="preserve">
+    <value>Extract to</value>
+  </data>
+  <data name="Files_Planning" xml:space="preserve">
+    <value>Preparing extraction…</value>
+  </data>
+  <data name="Extract_NoSpace" xml:space="preserve">
+    <value>The destination has {1} free, but {0} are needed.</value>
+  </data>
+  <data name="Extract_DestinationIsSource" xml:space="preserve">
+    <value>The destination cannot be the image or a volume of the device being browsed.</value>
+  </data>
+  <data name="Error_DestinationIsSource" xml:space="preserve">
+    <value>The destination cannot be the image or a volume of the device being browsed.</value>
+  </data>
+  <data name="Extract_Nothing" xml:space="preserve">
+    <value>There is nothing to extract.</value>
+  </data>
+  <data name="Extract_Conflicts" xml:space="preserve">
+    <value>{0} files already exist in the destination.</value>
+  </data>
+  <data name="Extract_Replace" xml:space="preserve">
+    <value>Replace</value>
+  </data>
+  <data name="Extract_SkipExisting" xml:space="preserve">
+    <value>Skip existing</value>
+  </data>
+  <data name="Phase_Planning" xml:space="preserve">
+    <value>Preparing…</value>
+  </data>
+  <data name="Phase_Extracting" xml:space="preserve">
+    <value>Extracting…</value>
+  </data>
+  <data name="Result_Extracted" xml:space="preserve">
+    <value>{0} files and {1} directories extracted to {2}.</value>
+  </data>
+  <data name="Result_ExtractedWithIssues" xml:space="preserve">
+    <value>{0} files and {1} directories extracted to {2}. {3} items were skipped, renamed or failed.</value>
+  </data>
+  <data name="Result_ExtractCancelled" xml:space="preserve">
+    <value>Extraction cancelled. Files already extracted were kept.</value>
+  </data>
+  <data name="Extract_Details" xml:space="preserve">
+    <value>Details…</value>
+  </data>
+  <data name="Extract_DetailsTitle" xml:space="preserve">
+    <value>Extraction details</value>
+  </data>
+  <data name="Extract_Copy" xml:space="preserve">
+    <value>Copy to clipboard</value>
+  </data>
+  <data name="Extract_ColKind" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="Extract_ColPath" xml:space="preserve">
+    <value>Path in the image</value>
+  </data>
+  <data name="Extract_ColName" xml:space="preserve">
+    <value>Name on Windows</value>
+  </data>
+  <data name="Extract_ColReason" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="Extract_KindSkipped" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
+  <data name="Extract_KindRenamed" xml:space="preserve">
+    <value>Renamed</value>
+  </data>
+  <data name="Extract_KindFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="Extract_IssueSkippedLink" xml:space="preserve">
+    <value>Symbolic link, not created</value>
+  </data>
+  <data name="Extract_IssueSkippedSpecial" xml:space="preserve">
+    <value>Special file, not created</value>
+  </data>
+  <data name="Extract_IssueSkippedExisting" xml:space="preserve">
+    <value>Already exists, skipped</value>
+  </data>
+  <data name="Extract_IssueRenamed" xml:space="preserve">
+    <value>Renamed because Windows cannot store the name</value>
+  </data>
+  <data name="Extract_IssueTooLong" xml:space="preserve">
+    <value>The path is too long for Windows</value>
+  </data>
+  <data name="Extract_IssueFatLimit" xml:space="preserve">
+    <value>The file is 4 GiB or larger and the destination is FAT32</value>
+  </data>
+  <data name="Extract_IssueUnreadable" xml:space="preserve">
+    <value>Could not be read: {0}</value>
+  </data>
+  <data name="Extract_IssueNotExtractable" xml:space="preserve">
+    <value>Cannot be extracted: {0}</value>
+  </data>
+  <data name="Extract_IssueWriteFailed" xml:space="preserve">
+    <value>Could not be written: {0}</value>
+  </data>
+  <data name="Files_ShownOf" xml:space="preserve">
+    <value>Showing the first {0} of {1}</value>
+  </data>
+  <data name="Files_ViewText" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Files_ViewAuto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="Files_ViewHex" xml:space="preserve">
+    <value>Hex</value>
+  </data>
+  <data name="Files_NotViewable" xml:space="preserve">
+    <value>Cannot be shown: {0}</value>
+  </data>
+  <data name="Tooltip_Files_ViewHex" xml:space="preserve">
+    <value>Shows the bytes with their offsets, for binary files.</value>
+  </data>
+  <data name="Files_Header" xml:space="preserve">
+    <value>{0} · {1} · uid {2}, gid {3} · {4}</value>
+  </data>
+  <data name="Files_KindDirectory" xml:space="preserve">
+    <value>Directory</value>
+  </data>
+  <data name="Files_SourceDevice" xml:space="preserve">
+    <value>Device</value>
+  </data>
 </root>

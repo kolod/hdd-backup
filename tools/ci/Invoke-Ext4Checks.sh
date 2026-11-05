@@ -41,7 +41,7 @@ for path in "$EXPORTS"/*; do
     jobs+=("$path"$'\t'"$FIXTURES/$fixture.img.gz")
 done
 
-if [ ${#jobs[@]} -eq 0 ] && [ ! -s "$LOGS/results.tsv" ]; then
+if [ ${#jobs[@]} -eq 0 ] && [ ! -s "$LOGS/results.tsv" ] && ! compgen -G "$EXPORTS/extracted/*.tsv" > /dev/null; then
     echo "::error::No exported ext4 images found in $EXPORTS"
     exit 1
 fi
@@ -60,7 +60,49 @@ check_one() { # "<image>\t<source>"
 export -f check_one
 export CHECK LOGS
 
-printf '%s\n' "${jobs[@]}" | xargs -d '\n' -P "$(nproc)" -I{} bash -c 'check_one "$1"' _ {}
+[ ${#jobs[@]} -eq 0 ] || printf '%s\n' "${jobs[@]}" | xargs -d '\n' -P "$(nproc)" -I{} bash -c 'check_one "$1"' _ {}
+
+# Trees extracted by the Files tab tests (ExtractorTests): <exports>/extracted/<fixture>.tsv lists the
+# directories ("D<TAB>path") and regular files ("F<TAB>sha256<TAB>path") they extracted. It must equal
+# `debugfs rdump` of the fixture (symbolic links, FIFOs, sockets and device files are not extracted
+# on Windows and are not compared). Plain bytes, so no character set conversion is involved.
+tree_listing() { # dir -> the same listing format, sorted bytewise
+    (
+        cd "$1" || exit 1
+        find . -mindepth 1 -type d | sed -e 's|^\./||' -e 's|^|D\t|'
+        find . -type f -exec sha256sum {} + | sed -E 's|^([0-9a-f]{64}) [ *]\./(.*)$|F\t\1\t\2|'
+    ) | LC_ALL=C sort
+}
+
+check_extracted() { # fixture-name listing.tsv
+    local fixture=$1 listing=$2 work img fs start size
+    local gz="$FIXTURES/$fixture.img.gz"
+    [ -f "$gz" ] || { echo "extracted/$fixture	MISSING-FIXTURE" >> "$LOGS/results.tsv"; return; }
+    work=$(mktemp -d)
+    gunzip -c "$gz" > "$work/source.img"
+    img=$work/source.img
+    if sfdisk -d "$img" >/dev/null 2>&1; then
+        read -r start size < <(sfdisk -d "$img" | grep -E 'start=' | tail -1 | sed -E 's/.*start= *([0-9]+), size= *([0-9]+).*/\1 \2/')
+        dd if="$img" of="$work/fs.ext4" bs=512 skip="$start" count="$size" status=none
+        fs=$work/fs.ext4
+    else
+        fs=$img
+    fi
+    mkdir "$work/dump"
+    debugfs -R "rdump / $work/dump" "$fs" >/dev/null 2>&1
+    mkdir -p "$LOGS/extracted"
+    if diff <(tree_listing "$work/dump") <(LC_ALL=C sort "$listing") > "$LOGS/extracted/$fixture.log" 2>&1; then
+        echo "extracted/$fixture	OK	$(grep -c '^F' "$listing") files identical" >> "$LOGS/results.tsv"
+    else
+        echo "extracted/$fixture	FAILED" >> "$LOGS/results.tsv"
+    fi
+    rm -rf "$work"
+}
+
+for listing in "$EXPORTS"/extracted/*.tsv; do
+    [ -f "$listing" ] || continue
+    check_extracted "$(basename "$listing" .tsv)" "$listing"
+done
 
 failed=0
 {

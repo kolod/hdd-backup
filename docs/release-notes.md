@@ -8,6 +8,24 @@ release.
 The earlier local release candidates "1.0.0" and "1.1.0" of 2026-10-15 were never published.
 Their contents are part of 1.0.0-rc.1, the first public build.
 
+## Unreleased
+
+### Added
+
+- **Files tab: browse and extract files from an ext4 partition.** Open an uncompressed `.img`
+  image (whole-device or single-partition) or a USB/SD device, read-only, and see the ext4
+  partition as a file tree. Select a file to view its beginning as text or as a hex dump, with its
+  size, permissions, owner and time. **Extract…** copies a file or a whole directory to a folder
+  on your computer, with progress, **Cancel** and a list of everything that was skipped, renamed
+  or failed.
+  - Nothing is written to the image or the device; a device is not locked or dismounted.
+  - A file system that was not cleanly unmounted opens as it is on disk, with a warning (the
+    journal is not replayed). Unreadable entries are marked and do not stop the rest.
+  - Extraction keeps contents and modification times. Symbolic links, device files, FIFOs and
+    sockets are not created, and ownership and permissions are not recreated. Names Windows cannot
+    store are renamed predictably. Existing files are replaced only after you choose to.
+  - A compressed `.img.gz` image is not opened: convert it to `.img` on the Image tab first.
+
 ## 1.0.0-rc.2 — second release candidate (2026-11-02)
 
 Bug-fix pre-release. The features are the same as in
