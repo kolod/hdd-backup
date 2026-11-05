@@ -74,6 +74,28 @@ namespace HddBackup.App.Localization
             return Strings.Get("Error_" + code);
         }
 
+        /// <summary>The one-line explanation of a skipped, renamed or failed item of an extraction.</summary>
+        public static string ExtractIssue(HddBackup.Core.Browsing.ExtractionIssue issue)
+        {
+            switch (issue.Reason)
+            {
+                case HddBackup.Core.Browsing.ExtractionIssueReason.SymbolicLink: return Strings.Get("Extract_IssueSkippedLink");
+                case HddBackup.Core.Browsing.ExtractionIssueReason.SpecialFile: return Strings.Get("Extract_IssueSkippedSpecial");
+                case HddBackup.Core.Browsing.ExtractionIssueReason.AlreadyExists: return Strings.Get("Extract_IssueSkippedExisting");
+                case HddBackup.Core.Browsing.ExtractionIssueReason.WindowsName: return Strings.Get("Extract_IssueRenamed");
+                case HddBackup.Core.Browsing.ExtractionIssueReason.PathTooLong: return Strings.Get("Extract_IssueTooLong");
+                case HddBackup.Core.Browsing.ExtractionIssueReason.FatLimit: return Strings.Get("Extract_IssueFatLimit");
+                case HddBackup.Core.Browsing.ExtractionIssueReason.Unreadable: return Strings.Format("Extract_IssueUnreadable", issue.Detail);
+                case HddBackup.Core.Browsing.ExtractionIssueReason.NotExtractable: return Strings.Format("Extract_IssueNotExtractable", issue.Detail);
+                default: return Strings.Format("Extract_IssueWriteFailed", issue.Detail);
+            }
+        }
+
+        public static string ExtractKind(HddBackup.Core.Browsing.ExtractionIssueKind kind)
+        {
+            return Strings.Get("Extract_Kind" + kind);
+        }
+
         /// <summary>Localized bullet list of shrink blockers (technical detail appended verbatim).</summary>
         public static string Blockers(System.Collections.Generic.IEnumerable<HddBackup.Core.Shrinking.ShrinkBlockerInfo> blockers)
         {

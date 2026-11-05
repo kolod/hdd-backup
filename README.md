@@ -22,6 +22,10 @@ SD/microSD cards.
   `.img` or back (size "Same as the image", choose the other format, **Create image**; the result
   gets its checksum files and is verified before it is kept), verify an image against its
   checksum files, or **Calculate checksums** for an image that has none.
+- The **Files** tab opens an image or a USB/SD device, read-only, and shows the ext4 partitions
+  as a file tree with a viewer for the selected file. **Extract…** copies a file or a whole
+  directory to a folder on your computer, so you can fetch a configuration file from a backup
+  without writing the image to a card.
 - UI languages: English, Ukrainian, German, French, Spanish, Japanese.
 
 ## Screenshots
@@ -40,6 +44,11 @@ files:
 calculate checksums, and repair the file system of a card that lost power:
 
 ![Image tab with an image that needs repair](docs/screenshots/image-repair.png)
+
+**Files** — browse the ext4 partition of an image or a device, view a file, extract a file or a
+directory:
+
+![Files tab](docs/screenshots/files.png)
 
 ## Disclaimer
 
@@ -157,9 +166,35 @@ The smallest result is the used data plus a journal and free space of 5% of the 
 and, for an `.img.gz` source, for a temporary uncompressed copy. The temporary copy is deleted
 afterwards.
 
+### Browsing and extracting files
+
+The **Files** tab reads an uncompressed `.img` image (a whole-device image or a single-partition
+image) or a USB/SD device and lists its ext4 partitions. Nothing is ever written to the image or
+the device, and a device is neither locked nor dismounted. A compressed `.img.gz` image is not
+opened: convert it to `.img` on the **Image** tab first. Other file systems, such as the FAT
+boot partition of a Raspberry Pi card, are listed but cannot be browsed.
+
+- The tree shows directories and files; symbolic links show their target. Selecting a file
+  shows its beginning (up to 1 MiB as text, or 256 KiB as a hex dump) and its size, permissions,
+  owner and modification time.
+- A file system that was not cleanly unmounted (for example a Raspberry Pi card whose power was
+  pulled) is shown as it is on disk, with a warning. The journal is **not** replayed, so recent
+  changes may be missing. Repair the image on the **Image** tab first to see them. Unreadable
+  entries are marked and do not stop the rest.
+- **Extract…** copies the selected file or directory with all its contents, keeping the
+  contents and modification times. Existing files are replaced only after you choose to, and
+  the free space is checked first. Ownership, permissions and extended attributes cannot be
+  represented on Windows and are not recreated. Symbolic links, device files, FIFOs and sockets
+  are not created. Names that Windows cannot store (such as `a:b`, `CON` or a trailing dot) are
+  changed in a predictable way, and a file of 4 GiB or more cannot go to a FAT32 destination.
+  Everything that was skipped, renamed or failed is listed with its reason.
+- An extraction can be cancelled at any time. A file is written under a temporary name and
+  renamed when complete, so no half-written file looks finished.
+
 Hardware validation steps: [docs/manual-hardware-checklist.md](docs/manual-hardware-checklist.md).
 Design documents: [specs/001-usb-sd-imaging/](specs/001-usb-sd-imaging/),
-[specs/002-ext4-image-shrink/](specs/002-ext4-image-shrink/).
+[specs/002-ext4-image-shrink/](specs/002-ext4-image-shrink/),
+[specs/008-ext4-browser/](specs/008-ext4-browser/).
 
 ## License
 

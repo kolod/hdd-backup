@@ -33,9 +33,11 @@ namespace HddBackup.App.Forms
         private readonly TabPage _backupPage = new TabPage();
         private readonly TabPage _restorePage = new TabPage();
         private readonly TabPage _imagePage = new TabPage();
+        private readonly TabPage _filesPage = new TabPage();
         private readonly BackupTab _backup;
         private readonly RestoreTab _restore;
         private readonly ImageTab _imageTab;
+        private readonly FilesTab _filesTab;
         private readonly SelectedImage _image;
         private DeviceChangeWatcher _watcher;
         private OperationPanel _operation;
@@ -61,9 +63,12 @@ namespace HddBackup.App.Forms
             _imageTab = new ImageTab(settings, _image) { Dock = DockStyle.Fill };
             _restorePage.Controls.Add(_restore);
             _imagePage.Controls.Add(_imageTab);
+            _filesTab = new FilesTab(settings, _image, _access) { Dock = DockStyle.Fill };
+            _filesPage.Controls.Add(_filesTab);
             _tabs.TabPages.Add(_backupPage);
             _tabs.TabPages.Add(_restorePage);
             _tabs.TabPages.Add(_imagePage);
+            _tabs.TabPages.Add(_filesPage);
 
             foreach (var language in LanguageService.Supported)
             {
@@ -98,6 +103,7 @@ namespace HddBackup.App.Forms
             _backup.StartRequested += (s, request) => StartOperation(request);
             _restore.StartRequested += (s, request) => StartOperation(request);
             _imageTab.StartRequested += (s, request) => StartOperation(request);
+            _filesTab.StartRequested += (s, request) => StartOperation(request);
             LanguageService.LanguageChanged += OnLanguageChanged;
             ApplyStrings();
         }
@@ -112,6 +118,7 @@ namespace HddBackup.App.Forms
             _backupPage.Text = Strings.Get("Tab_Backup");
             _restorePage.Text = Strings.Get("Tab_Restore");
             _imagePage.Text = Strings.Get("Tab_Image");
+            _filesPage.Text = Strings.Get("Tab_Files");
             foreach (ToolStripMenuItem item in _languageMenu.DropDownItems)
             {
                 item.Checked = string.Equals((string)item.Tag, LanguageService.Current, StringComparison.Ordinal);
@@ -120,6 +127,7 @@ namespace HddBackup.App.Forms
             _backup.ApplyStrings();
             _restore.ApplyStrings();
             _imageTab.ApplyStrings();
+            _filesTab.ApplyStrings();
             _operation?.ApplyStrings();
         }
 
@@ -210,6 +218,7 @@ namespace HddBackup.App.Forms
             _backup.SetDevices(devices);
             _restore.SetDevices(devices);
             _imageTab.SetDevices(devices);
+            _filesTab.SetDevices(devices);
         }
 
         private async void StartOperation(OperationRequest request)
@@ -276,7 +285,7 @@ namespace HddBackup.App.Forms
                 _image.Reload();
             }
 
-            if (_refreshPending || !request.IsBackup || request.EjectAfter)
+            if (_refreshPending || (!request.IsBackup && request.Kind != OperationKind.ExtractFiles) || request.EjectAfter)
             {
                 _refreshPending = false;
                 RefreshDevices();
@@ -470,6 +479,7 @@ namespace HddBackup.App.Forms
             _backup.Enabled = !busy;
             _restore.Enabled = !busy;
             _imageTab.Enabled = !busy;
+            _filesTab.Enabled = !busy;
         }
 
         private bool Ask(string key, MessageBoxIcon icon = MessageBoxIcon.Warning)

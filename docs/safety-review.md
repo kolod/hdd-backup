@@ -51,6 +51,31 @@ Scope: `Jbd2Journal`, `OverlayBlockDevice`, `OrphanList`, `Ext4Checker` finding 
 | Damage beyond an unclean shutdown is refused, not "fixed" | `Ext4Checker.CheckDetailed` on the recovered view; any `Structural` finding or recorded kernel error blocks the repair before the output is written | `RepairTests.StructuralDamage_*`, `CheckerKindTests.*` |
 | The result equals what Linux recovery produces | Same verification as a shrink (own full check, tree comparison with the recovered source, prefix bytes); fixtures compared with `e2fsck -fy` references | `RepairTests.SameSizeRepair_EqualsLinuxRecovery`; CI `ext4-check` runs `e2fsck -fn` and a tree comparison against the references |
 
+## Browsing and extracting files (feature 008)
+
+Scope: `BrowseSource`, `Ext4FileSystemView`, `FilePreview`, `WindowsNames`, `ExtractionPlanner`,
+`Ext4Extractor`, the engine's `ExtractFiles` operation, and the Files tab. Review date: 2026-11-05.
+No code in `HddBackup.Core/Browsing/` has a write path to an image or a device: sources are opened
+through `FileBlockDevice.OpenRead` and `IDeviceAccess.OpenForRead`, never `OpenExclusiveForWrite`,
+and the journal and orphan code of feature 006 is not used.
+
+| Rule | Implementation | Automated evidence |
+|------|----------------|--------------------|
+| The image and the device are never written | Read-only handles only; no lock, dismount or eject; the Files tab never asks for a write confirmation | `ReadOnlyTests.BrowsingPlanningAndExtracting_NeverWriteToTheSource` (zero `Write`/`Flush` on a `ReadOnlyBlockDevice`), `ReadOnlyTests.EngineExtraction_LeavesTheImageUnchanged_AndTouchesNoDevice` (SHA-256 before/after, no exclusive open, no eject), `DeviceBrowseTests.BrowsingADevice_NeverLocksWritesOrEjects` |
+| The extraction cannot overwrite the image | `ExtractionPlanner` flags a destination file that `FileIdentity.IsSameFile` equals the image; the engine and `Ext4Extractor` refuse with `DestinationIsSource` | `ReadOnlyTests.ADestinationThatIsTheImageItself_IsRefused_AndTheImageIsUntouched`, `ExtractorTests.WritingOverTheProtectedImage_IsRefused` |
+| The extraction cannot write to the browsed device | `ImagingEngine.ValidateExtract` refuses a destination whose volumes are on the device's disk (`PathInfo.DiskNumbers`) | `ReadOnlyTests.ADestinationOnTheBrowsedDevice_IsRefusedBeforeAnythingHappens` |
+| Nothing is replaced without asking | The planner counts conflicts; the Files tab asks once (Replace / Skip existing / Cancel, default Cancel); the engine's default policy is Skip | `ExtractionPlannerTests.ExistingFiles_AreConflicts_SkippedOrKeptForReplacing`, `ExtractorTests.ExistingFiles_AreKeptUnderSkip_AndReplacedUnderReplace`, `ReadOnlyTests.AnExtractionThatSkipsExistingFiles_DoesNotTouchThem` |
+| Free space is checked before writing | `ExtractionPlan.InsufficientSpace` against `PathInfo.FreeBytes`; the engine fails with `DestinationFull` before the first byte | `ExtractionPlannerTests.NotEnoughFreeSpace_IsReportedWithBothSizes`, `ReadOnlyTests.NotEnoughSpace_StopsBeforeWriting` |
+| Partial output never looks complete | A file is written to `.hddbackup-part-<id>` and renamed when whole; the part file is deleted on cancel and on every error | `ExtractorTests.CancellingInTheMiddleOfAFile_LeavesNothingThatLooksComplete`, `CancellingBetweenFiles_KeepsTheCompletedFilesWhole`, `ASourceReadError_StopsTheExtraction_AndLeavesNoPartFile`, `DeviceBrowseTests.ADeviceThatDisappears_StopsAnExtraction_WithTheCause_AndNoPartFile` |
+| Errors stop with the cause; one bad item does not stop the rest | Source device errors rethrow (`DeviceRemoved`, `ReadError`); damaged items and destination problems are listed per item | `ExtractorTests.AnUnreadableItem_IsReported_AndTheRestIsExtracted`, `ADestinationWriteProblem_FailsOnlyThatItem`, `DamagedFileSystemTests.*` |
+| Names never collide or escape the destination | `WindowsNames` replaces invalid characters, trailing dots and spaces, reserved names and case-only duplicates; paths are built from mapped names only, never from raw file system paths | `WindowsNamesTests.*`, `ExtractorTests.TrickyNames_AreRenamedPredictably_AndContentSurvives` |
+| Extracted data equals the source | Independent comparison with `debugfs rdump` in CI (`tools/ci/Invoke-Ext4Checks.sh`) | `ExtractorTests.WholeFileSystem_IsIdenticalToTheManifest`; local Docker run: 1560 and 1564 files identical |
+| A damaged or not cleanly unmounted file system is shown as it is | No journal replay, no repair; state and warning from the superblock; unreadable entries marked | `DamagedFileSystemTests.TheJournalIsNotReplayed_SoTheContentIsTheOneOnDisk`, `PowerLossFileSystems_OpenWithTheirState_AndTheImageStaysUntouched` |
+
+Not automated: the modal dialogs of the Files tab (folder picker, conflict question, message
+boxes), a real removable device and Windows 7 SP1 are covered by the manual hardware checklist
+(steps 32–42).
+
 ## Release integrity (feature 003)
 
 Scope: `.github/workflows/release.yml`, `.github/actions/build-test`, `.github/rulesets/`,

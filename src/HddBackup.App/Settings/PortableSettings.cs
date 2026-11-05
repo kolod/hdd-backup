@@ -60,6 +60,13 @@ namespace HddBackup.App.Settings
             set => Set("lastImageFolder", value ?? string.Empty);
         }
 
+        /// <summary>Folder last chosen on the Files tab to extract into.</summary>
+        public string LastExtractFolder
+        {
+            get => Get("lastExtractFolder", string.Empty);
+            set => Set("lastExtractFolder", value ?? string.Empty);
+        }
+
         public static PortableSettings Load()
         {
             var settings = new PortableSettings(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FileName));

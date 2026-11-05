@@ -800,4 +800,190 @@ Plus petite image possible : {2}</value>
   <data name="About_IconCredit" xml:space="preserve">
     <value>Icône : thème d&apos;icônes Papirus (GPL-3.0), couleur de la carte modifiée.</value>
   </data>
+  <data name="Tab_Files" xml:space="preserve">
+    <value>Fichiers</value>
+  </data>
+  <data name="Files_Source" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Files_SourceImage" xml:space="preserve">
+    <value>Fichier image</value>
+  </data>
+  <data name="Files_Partition" xml:space="preserve">
+    <value>Partition</value>
+  </data>
+  <data name="Files_StateClean" xml:space="preserve">
+    <value>Propre</value>
+  </data>
+  <data name="Files_StateNeedsRepair" xml:space="preserve">
+    <value>Non démontée proprement : les dernières modifications peuvent manquer ou être incohérentes. Réparez d’abord l’image dans l’onglet « Image ».</value>
+  </data>
+  <data name="Files_StateDamaged" xml:space="preserve">
+    <value>Le noyau a enregistré des erreurs du système de fichiers ; certains fichiers peuvent être illisibles.</value>
+  </data>
+  <data name="Files_NeedsConversion" xml:space="preserve">
+    <value>Les images compressées ne peuvent pas être parcourues. Convertissez d’abord l’image en .img dans l’onglet « Image ».</value>
+  </data>
+  <data name="Files_NoExt4" xml:space="preserve">
+    <value>Aucune partition ext4 trouvée. Partitions présentes : {0}</value>
+  </data>
+  <data name="Files_Unsupported" xml:space="preserve">
+    <value>Cette partition ne peut pas être parcourue : {0}</value>
+  </data>
+  <data name="Files_Counts" xml:space="preserve">
+    <value>{0} fichiers, {1} répertoires</value>
+  </data>
+  <data name="Files_CountsApprox" xml:space="preserve">
+    <value>Environ {0} fichiers, {1} répertoires</value>
+  </data>
+  <data name="Files_Opening" xml:space="preserve">
+    <value>Ouverture…</value>
+  </data>
+  <data name="Files_ReadError" xml:space="preserve">
+    <value>Impossible de lire la source : {0}</value>
+  </data>
+  <data name="Files_Unreadable" xml:space="preserve">
+    <value>Illisible : {0}</value>
+  </data>
+  <data name="Files_LinkTarget" xml:space="preserve">
+    <value>Lien vers {0}</value>
+  </data>
+  <data name="Files_SpecialFile" xml:space="preserve">
+    <value>Fichier spécial ({0})</value>
+  </data>
+  <data name="Tooltip_Files_State" xml:space="preserve">
+    <value>Indique si le système de fichiers a été démonté proprement. Le contenu est affiché tel qu’il est sur le disque ; rien n’est réparé ni modifié.</value>
+  </data>
+  <data name="Files_Extract" xml:space="preserve">
+    <value>Extraire…</value>
+  </data>
+  <data name="Tooltip_Files_Extract" xml:space="preserve">
+    <value>Copie le fichier ou le répertoire sélectionné, avec tout son contenu, dans un dossier de cet ordinateur.</value>
+  </data>
+  <data name="Files_ExtractTitle" xml:space="preserve">
+    <value>Extraire vers</value>
+  </data>
+  <data name="Files_Planning" xml:space="preserve">
+    <value>Préparation de l’extraction…</value>
+  </data>
+  <data name="Extract_NoSpace" xml:space="preserve">
+    <value>La destination dispose de {1} libres, mais {0} sont nécessaires.</value>
+  </data>
+  <data name="Extract_DestinationIsSource" xml:space="preserve">
+    <value>La destination ne peut pas être l’image ni un volume du périphérique parcouru.</value>
+  </data>
+  <data name="Error_DestinationIsSource" xml:space="preserve">
+    <value>La destination ne peut pas être l’image ni un volume du périphérique parcouru.</value>
+  </data>
+  <data name="Extract_Nothing" xml:space="preserve">
+    <value>Il n’y a rien à extraire.</value>
+  </data>
+  <data name="Extract_Conflicts" xml:space="preserve">
+    <value>{0} fichiers existent déjà dans la destination.</value>
+  </data>
+  <data name="Extract_Replace" xml:space="preserve">
+    <value>Remplacer</value>
+  </data>
+  <data name="Extract_SkipExisting" xml:space="preserve">
+    <value>Ignorer les fichiers existants</value>
+  </data>
+  <data name="Phase_Planning" xml:space="preserve">
+    <value>Préparation…</value>
+  </data>
+  <data name="Phase_Extracting" xml:space="preserve">
+    <value>Extraction…</value>
+  </data>
+  <data name="Result_Extracted" xml:space="preserve">
+    <value>{0} fichiers et {1} répertoires extraits vers {2}.</value>
+  </data>
+  <data name="Result_ExtractedWithIssues" xml:space="preserve">
+    <value>{0} fichiers et {1} répertoires extraits vers {2}. {3} éléments ont été ignorés, renommés ou ont échoué.</value>
+  </data>
+  <data name="Result_ExtractCancelled" xml:space="preserve">
+    <value>Extraction annulée. Les fichiers déjà extraits ont été conservés.</value>
+  </data>
+  <data name="Extract_Details" xml:space="preserve">
+    <value>Détails…</value>
+  </data>
+  <data name="Extract_DetailsTitle" xml:space="preserve">
+    <value>Détails de l’extraction</value>
+  </data>
+  <data name="Extract_Copy" xml:space="preserve">
+    <value>Copier dans le presse-papiers</value>
+  </data>
+  <data name="Extract_ColKind" xml:space="preserve">
+    <value>Résultat</value>
+  </data>
+  <data name="Extract_ColPath" xml:space="preserve">
+    <value>Chemin dans l’image</value>
+  </data>
+  <data name="Extract_ColName" xml:space="preserve">
+    <value>Nom sous Windows</value>
+  </data>
+  <data name="Extract_ColReason" xml:space="preserve">
+    <value>Raison</value>
+  </data>
+  <data name="Extract_KindSkipped" xml:space="preserve">
+    <value>Ignoré</value>
+  </data>
+  <data name="Extract_KindRenamed" xml:space="preserve">
+    <value>Renommé</value>
+  </data>
+  <data name="Extract_KindFailed" xml:space="preserve">
+    <value>Échec</value>
+  </data>
+  <data name="Extract_IssueSkippedLink" xml:space="preserve">
+    <value>Lien symbolique, non créé</value>
+  </data>
+  <data name="Extract_IssueSkippedSpecial" xml:space="preserve">
+    <value>Fichier spécial, non créé</value>
+  </data>
+  <data name="Extract_IssueSkippedExisting" xml:space="preserve">
+    <value>Existe déjà, ignoré</value>
+  </data>
+  <data name="Extract_IssueRenamed" xml:space="preserve">
+    <value>Renommé car Windows ne peut pas stocker ce nom</value>
+  </data>
+  <data name="Extract_IssueTooLong" xml:space="preserve">
+    <value>Le chemin est trop long pour Windows</value>
+  </data>
+  <data name="Extract_IssueFatLimit" xml:space="preserve">
+    <value>Le fichier fait 4 Gio ou plus et la destination est en FAT32</value>
+  </data>
+  <data name="Extract_IssueUnreadable" xml:space="preserve">
+    <value>Lecture impossible : {0}</value>
+  </data>
+  <data name="Extract_IssueNotExtractable" xml:space="preserve">
+    <value>Extraction impossible : {0}</value>
+  </data>
+  <data name="Extract_IssueWriteFailed" xml:space="preserve">
+    <value>Écriture impossible : {0}</value>
+  </data>
+  <data name="Files_ShownOf" xml:space="preserve">
+    <value>Affichage des {0} premiers sur {1}</value>
+  </data>
+  <data name="Files_ViewText" xml:space="preserve">
+    <value>Texte</value>
+  </data>
+  <data name="Files_ViewAuto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="Files_ViewHex" xml:space="preserve">
+    <value>Hex</value>
+  </data>
+  <data name="Files_NotViewable" xml:space="preserve">
+    <value>Affichage impossible : {0}</value>
+  </data>
+  <data name="Tooltip_Files_ViewHex" xml:space="preserve">
+    <value>Affiche les octets avec leurs décalages, pour les fichiers binaires.</value>
+  </data>
+  <data name="Files_Header" xml:space="preserve">
+    <value>{0} · {1} · uid {2}, gid {3} · {4}</value>
+  </data>
+  <data name="Files_KindDirectory" xml:space="preserve">
+    <value>Répertoire</value>
+  </data>
+  <data name="Files_SourceDevice" xml:space="preserve">
+    <value>Périphérique</value>
+  </data>
 </root>

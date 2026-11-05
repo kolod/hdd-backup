@@ -33,7 +33,10 @@ namespace HddBackup.Core.Errors
         ShrinkNotPossible,
         ShrinkVerifyFailed,
         InvalidRequest,
-        Unexpected
+        Unexpected,
+
+        /// <summary>The destination of an extraction is the image or a volume of the browsed device.</summary>
+        DestinationIsSource
     }
 
     /// <summary>

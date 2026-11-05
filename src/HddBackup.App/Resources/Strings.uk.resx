@@ -800,4 +800,190 @@
   <data name="About_IconCredit" xml:space="preserve">
     <value>Іконка: тема іконок Papirus (GPL-3.0), колір карти змінено.</value>
   </data>
+  <data name="Tab_Files" xml:space="preserve">
+    <value>Файли</value>
+  </data>
+  <data name="Files_Source" xml:space="preserve">
+    <value>Джерело</value>
+  </data>
+  <data name="Files_SourceImage" xml:space="preserve">
+    <value>Файл образу</value>
+  </data>
+  <data name="Files_Partition" xml:space="preserve">
+    <value>Розділ</value>
+  </data>
+  <data name="Files_StateClean" xml:space="preserve">
+    <value>Чиста</value>
+  </data>
+  <data name="Files_StateNeedsRepair" xml:space="preserve">
+    <value>Файлову систему не було коректно відмонтовано: останні зміни можуть бути відсутні або неузгоджені. Спершу відновіть образ на вкладці «Образ».</value>
+  </data>
+  <data name="Files_StateDamaged" xml:space="preserve">
+    <value>Ядро зафіксувало помилки файлової системи; деякі файли можуть бути нечитабельними.</value>
+  </data>
+  <data name="Files_NeedsConversion" xml:space="preserve">
+    <value>Стиснені образи не можна переглядати. Спершу конвертуйте образ у .img на вкладці «Образ».</value>
+  </data>
+  <data name="Files_NoExt4" xml:space="preserve">
+    <value>Розділів ext4 не знайдено. Наявні розділи: {0}</value>
+  </data>
+  <data name="Files_Unsupported" xml:space="preserve">
+    <value>Цей розділ не можна переглядати: {0}</value>
+  </data>
+  <data name="Files_Counts" xml:space="preserve">
+    <value>{0} файлів, {1} каталогів</value>
+  </data>
+  <data name="Files_CountsApprox" xml:space="preserve">
+    <value>Приблизно {0} файлів, {1} каталогів</value>
+  </data>
+  <data name="Files_Opening" xml:space="preserve">
+    <value>Відкриття…</value>
+  </data>
+  <data name="Files_ReadError" xml:space="preserve">
+    <value>Не вдалося прочитати джерело: {0}</value>
+  </data>
+  <data name="Files_Unreadable" xml:space="preserve">
+    <value>Не читається: {0}</value>
+  </data>
+  <data name="Files_LinkTarget" xml:space="preserve">
+    <value>Посилання на {0}</value>
+  </data>
+  <data name="Files_SpecialFile" xml:space="preserve">
+    <value>Спеціальний файл ({0})</value>
+  </data>
+  <data name="Tooltip_Files_State" xml:space="preserve">
+    <value>Чи було файлову систему коректно відмонтовано. Вміст показано таким, яким він є на диску; нічого не виправляється й не змінюється.</value>
+  </data>
+  <data name="Files_Extract" xml:space="preserve">
+    <value>Витягти…</value>
+  </data>
+  <data name="Tooltip_Files_Extract" xml:space="preserve">
+    <value>Копіює вибраний файл або каталог з усім вмістом у папку на цьому комп&apos;ютері.</value>
+  </data>
+  <data name="Files_ExtractTitle" xml:space="preserve">
+    <value>Витягти до</value>
+  </data>
+  <data name="Files_Planning" xml:space="preserve">
+    <value>Підготовка до витягування…</value>
+  </data>
+  <data name="Extract_NoSpace" xml:space="preserve">
+    <value>У місці призначення вільно {1}, а потрібно {0}.</value>
+  </data>
+  <data name="Extract_DestinationIsSource" xml:space="preserve">
+    <value>Місцем призначення не може бути сам образ або том пристрою, який переглядається.</value>
+  </data>
+  <data name="Error_DestinationIsSource" xml:space="preserve">
+    <value>Місцем призначення не може бути сам образ або том пристрою, який переглядається.</value>
+  </data>
+  <data name="Extract_Nothing" xml:space="preserve">
+    <value>Немає що витягувати.</value>
+  </data>
+  <data name="Extract_Conflicts" xml:space="preserve">
+    <value>У місці призначення вже є файли з такими іменами: {0}.</value>
+  </data>
+  <data name="Extract_Replace" xml:space="preserve">
+    <value>Замінити</value>
+  </data>
+  <data name="Extract_SkipExisting" xml:space="preserve">
+    <value>Пропустити наявні</value>
+  </data>
+  <data name="Phase_Planning" xml:space="preserve">
+    <value>Підготовка…</value>
+  </data>
+  <data name="Phase_Extracting" xml:space="preserve">
+    <value>Витягування…</value>
+  </data>
+  <data name="Result_Extracted" xml:space="preserve">
+    <value>Витягнуто {0} файлів і {1} каталогів у {2}.</value>
+  </data>
+  <data name="Result_ExtractedWithIssues" xml:space="preserve">
+    <value>Витягнуто {0} файлів і {1} каталогів у {2}. Елементів, які пропущено, перейменовано або які не вдалося витягти: {3}.</value>
+  </data>
+  <data name="Result_ExtractCancelled" xml:space="preserve">
+    <value>Витягування скасовано. Уже витягнуті файли збережено.</value>
+  </data>
+  <data name="Extract_Details" xml:space="preserve">
+    <value>Докладніше…</value>
+  </data>
+  <data name="Extract_DetailsTitle" xml:space="preserve">
+    <value>Подробиці витягування</value>
+  </data>
+  <data name="Extract_Copy" xml:space="preserve">
+    <value>Копіювати в буфер обміну</value>
+  </data>
+  <data name="Extract_ColKind" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="Extract_ColPath" xml:space="preserve">
+    <value>Шлях в образі</value>
+  </data>
+  <data name="Extract_ColName" xml:space="preserve">
+    <value>Ім&apos;я у Windows</value>
+  </data>
+  <data name="Extract_ColReason" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="Extract_KindSkipped" xml:space="preserve">
+    <value>Пропущено</value>
+  </data>
+  <data name="Extract_KindRenamed" xml:space="preserve">
+    <value>Перейменовано</value>
+  </data>
+  <data name="Extract_KindFailed" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="Extract_IssueSkippedLink" xml:space="preserve">
+    <value>Символічне посилання, не створено</value>
+  </data>
+  <data name="Extract_IssueSkippedSpecial" xml:space="preserve">
+    <value>Спеціальний файл, не створено</value>
+  </data>
+  <data name="Extract_IssueSkippedExisting" xml:space="preserve">
+    <value>Уже існує, пропущено</value>
+  </data>
+  <data name="Extract_IssueRenamed" xml:space="preserve">
+    <value>Перейменовано, бо Windows не може зберегти таке ім&apos;я</value>
+  </data>
+  <data name="Extract_IssueTooLong" xml:space="preserve">
+    <value>Шлях задовгий для Windows</value>
+  </data>
+  <data name="Extract_IssueFatLimit" xml:space="preserve">
+    <value>Файл завбільшки 4 ГіБ або більше, а місце призначення — FAT32</value>
+  </data>
+  <data name="Extract_IssueUnreadable" xml:space="preserve">
+    <value>Не вдалося прочитати: {0}</value>
+  </data>
+  <data name="Extract_IssueNotExtractable" xml:space="preserve">
+    <value>Неможливо витягти: {0}</value>
+  </data>
+  <data name="Extract_IssueWriteFailed" xml:space="preserve">
+    <value>Не вдалося записати: {0}</value>
+  </data>
+  <data name="Files_ShownOf" xml:space="preserve">
+    <value>Показано перші {0} з {1}</value>
+  </data>
+  <data name="Files_ViewText" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="Files_ViewAuto" xml:space="preserve">
+    <value>Авто</value>
+  </data>
+  <data name="Files_ViewHex" xml:space="preserve">
+    <value>Hex</value>
+  </data>
+  <data name="Files_NotViewable" xml:space="preserve">
+    <value>Неможливо показати: {0}</value>
+  </data>
+  <data name="Tooltip_Files_ViewHex" xml:space="preserve">
+    <value>Показує байти зі зміщеннями — для двійкових файлів.</value>
+  </data>
+  <data name="Files_Header" xml:space="preserve">
+    <value>{0} · {1} · uid {2}, gid {3} · {4}</value>
+  </data>
+  <data name="Files_KindDirectory" xml:space="preserve">
+    <value>Каталог</value>
+  </data>
+  <data name="Files_SourceDevice" xml:space="preserve">
+    <value>Пристрій</value>
+  </data>
 </root>

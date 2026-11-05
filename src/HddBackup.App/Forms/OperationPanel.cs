@@ -31,6 +31,7 @@ namespace HddBackup.App.Forms
         // UseMnemonic = false: paths and device IDs may contain '&', which must be shown literally.
         private readonly Label _banner = new Label { AutoSize = true, Padding = new Padding(8), Dock = DockStyle.Top, Visible = false, UseMnemonic = false };
         private readonly Button _copy = Ui.Button();
+        private readonly Button _details = Ui.Button();
         private readonly Button _close = Ui.Button();
         private readonly Timer _timer = new Timer { Interval = 250 };
         private readonly TaskbarProgress _taskbar;
@@ -67,7 +68,10 @@ namespace HddBackup.App.Forms
             var footer = new TableLayoutPanel { ColumnCount = 2, AutoSize = true, Dock = DockStyle.Top, Margin = new Padding(0) };
             footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
             footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            footer.Controls.Add(_copy, 0, 0);
+            var extras = Ui.Flow();
+            extras.WrapContents = false;
+            extras.Controls.AddRange(new Control[] { _copy, _details });
+            footer.Controls.Add(extras, 0, 0);
             footer.Controls.Add(_close, 1, 0);
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.Controls.Add(footer);
@@ -77,9 +81,11 @@ namespace HddBackup.App.Forms
             Controls.Add(root);
 
             _copy.Visible = false;
+            _details.Visible = false;
             _close.Visible = false;
             _cancel.Click += (s, e) => CancelRequested?.Invoke(this, EventArgs.Empty);
             _copy.Click += (s, e) => CopyChecksum();
+            _details.Click += (s, e) => ShowExtractDetails();
             _close.Click += (s, e) => CloseResult();
             _timer.Tick += (s, e) => Refresh(_engine.CurrentProgress);
             Visible = false;
@@ -99,6 +105,7 @@ namespace HddBackup.App.Forms
             _last = OperationProgress.Idle;
             _banner.Visible = false;
             _copy.Visible = false;
+            _details.Visible = false;
             _close.Visible = false;
             _cancel.Visible = true;
             _cancel.Enabled = true;
@@ -137,6 +144,7 @@ namespace HddBackup.App.Forms
             _phase.Font = new Font(Font, FontStyle.Bold);
             _cancel.Text = Strings.Get("Common_Cancel");
             _copy.Text = Strings.Get("Result_CopySha");
+            _details.Text = Strings.Get("Extract_Details");
             _close.Text = Strings.Get("Common_Close");
             if (_engine != null)
             {
@@ -225,6 +233,13 @@ namespace HddBackup.App.Forms
                 return Strings.Get("Phase_Shrink_" + phase);
             }
 
+            if (_request?.Kind == OperationKind.ExtractFiles)
+            {
+                return phase == OperationPhase.Preparing ? Strings.Get("Phase_Planning")
+                    : phase == OperationPhase.Transferring ? Strings.Get("Phase_Extracting")
+                    : Strings.Get("Phase_" + phase);
+            }
+
             if (phase == OperationPhase.Transferring && _request?.Kind == OperationKind.ConvertImage)
             {
                 return Strings.Get("Phase_Convert_Transferring");
@@ -270,6 +285,21 @@ namespace HddBackup.App.Forms
                     {
                         lines.Add(Strings.Format("Result_Converted", r.OutputPath));
                     }
+                    else if (r.Kind == OperationKind.ExtractFiles)
+                    {
+                        var e = r.Extraction;
+                        string files = e.FilesExtracted.ToString("N0", LanguageService.Culture);
+                        string dirs = e.DirectoriesCreated.ToString("N0", LanguageService.Culture);
+                        if (e.Issues.Count == 0)
+                        {
+                            lines.Add(Strings.Format("Result_Extracted", files, dirs, e.DestinationFolder));
+                        }
+                        else
+                        {
+                            color = WarningColor;
+                            lines.Add(Strings.Format("Result_ExtractedWithIssues", files, dirs, e.DestinationFolder, e.Issues.Count));
+                        }
+                    }
                     else
                     {
                         lines.Add(Strings.Get("Result_SafeToRemove"));
@@ -303,7 +333,7 @@ namespace HddBackup.App.Forms
                     break;
                 case OperationState.Cancelled:
                     color = WarningColor;
-                    lines.Add(Strings.Get("Result_Cancelled"));
+                    lines.Add(Strings.Get(r.Kind == OperationKind.ExtractFiles ? "Result_ExtractCancelled" : "Result_Cancelled"));
                     AddDeviceState(r, lines);
                     break;
                 default:
@@ -350,13 +380,27 @@ namespace HddBackup.App.Forms
             _banner.MaximumSize = new Size(Math.Max(200, Width - 24), 0);
             _banner.Visible = true;
             _copy.Visible = !string.IsNullOrEmpty(sha);
+            _details.Visible = r.Kind == OperationKind.ExtractFiles && r.State == OperationState.Completed && r.Extraction != null && r.Extraction.Issues.Count > 0;
+        }
+
+        private void ShowExtractDetails()
+        {
+            if (_result?.Extraction == null)
+            {
+                return;
+            }
+
+            using (var dialog = new ExtractSummaryDialog(_result.Extraction))
+            {
+                dialog.ShowDialog(FindForm());
+            }
         }
 
         private static void AddDeviceState(OperationResult r, List<string> lines)
         {
-            if (r.Kind == OperationKind.VerifyImage)
+            if (r.Kind == OperationKind.VerifyImage || r.Kind == OperationKind.ExtractFiles)
             {
-                return;
+                return; // nothing is written to a device, and nothing is left half-done
             }
 
             if (r.Kind == OperationKind.ShrinkImage)
