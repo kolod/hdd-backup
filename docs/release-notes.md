@@ -6,9 +6,13 @@ copies it verbatim (see [releasing.md](releasing.md)). Keep the heading format
 release.
 
 The earlier local release candidates "1.0.0" and "1.1.0" of 2026-10-15 were never published.
-Their contents are part of 1.0.0-rc.1, the first public build.
+Their contents are part of 1.0.0-rc.1, the first public build. The draft 1.0.0-rc.2 was never
+published either; its fix is part of 1.0.0-rc.3.
 
-## Unreleased
+## 1.0.0-rc.3 — third release candidate (2026-11-05)
+
+New **Files** tab and a fix for restoring on Windows 7. The rest is as in
+[1.0.0-rc.1](https://github.com/kolod/hdd-backup/releases/tag/v1.0.0-rc.1).
 
 ### Added
 
@@ -26,11 +30,6 @@ Their contents are part of 1.0.0-rc.1, the first public build.
     store are renamed predictably. Existing files are replaced only after you choose to.
   - A compressed `.img.gz` image is not opened: convert it to `.img` on the Image tab first.
 
-## 1.0.0-rc.2 — second release candidate (2026-11-02)
-
-Bug-fix pre-release. The features are the same as in
-[1.0.0-rc.1](https://github.com/kolod/hdd-backup/releases/tag/v1.0.0-rc.1).
-
 ### Fixed
 
 - **Restore failed on Windows 7 with some USB card readers.** The whole image was written, but
@@ -47,10 +46,13 @@ Bug-fix pre-release. The features are the same as in
 
 | Check | Result |
 |-------|--------|
-| Automated tests | 355 passed, 2 skipped |
-| Independent e2fsprogs check (CI job `ext4-check`) | Clean and identical |
+| Release build | 0 warnings, 0 errors |
+| Automated tests | 483 passed, 2 skipped |
+| Independent e2fsprogs check (CI job `ext4-check`), including files extracted on the Files tab compared with `debugfs rdump` | Clean and identical |
+| Layout of the Files tab on Windows 11 at 100% (en, uk, de, fr, es, ja) | No clipped text |
 | Restore with verification on Windows 7 SP1 through the card reader that failed in rc.1 | **Pending** |
-| Manual hardware checklist on Windows 7 SP1 and Windows 11 | **Pending** |
+| Files tab on real media, on Windows 7 SP1 and Windows 11 (steps 32–42 of the manual hardware checklist) | **Pending** |
+| 150% and 200% display scaling | **Pending** |
 
 **Use only with media whose contents you can afford to lose until the hardware checklist has
 passed.** The program comes with no warranty (GPL-3.0).
