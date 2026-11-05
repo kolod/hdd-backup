@@ -81,7 +81,7 @@ namespace HddBackup.Core.Tests.Diagnostics
             Assert.Contains("      default", lines);
             Assert.Contains("  pi\tYes", lines);
             Assert.Contains("  root\tNo", lines);
-            Assert.True(text.EndsWith("\r\n", StringComparison.Ordinal));
+            Assert.EndsWith("\r\n", text);
             Assert.DoesNotContain("\n", text.Replace("\r\n", string.Empty));
         }
 

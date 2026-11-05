@@ -262,7 +262,7 @@ namespace HddBackup.Core.Tests.Diagnostics
 
             var r = Run(b);
 
-            Assert.Single(r.Entries.Where(e => e.Name == "ssh" || e.Name == "ssh.service"));
+            Assert.Single(r.Entries, e => e.Name == "ssh" || e.Name == "ssh.service");
         }
 
         [Fact]
