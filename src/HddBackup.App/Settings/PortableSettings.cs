@@ -67,6 +67,13 @@ namespace HddBackup.App.Settings
             set => Set("lastExtractFolder", value ?? string.Empty);
         }
 
+        /// <summary>Folder last chosen to save a diagnostic report into (Tools on the Files tab).</summary>
+        public string LastReportFolder
+        {
+            get => Get("lastReportFolder", string.Empty);
+            set => Set("lastReportFolder", value ?? string.Empty);
+        }
+
         public static PortableSettings Load()
         {
             var settings = new PortableSettings(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FileName));

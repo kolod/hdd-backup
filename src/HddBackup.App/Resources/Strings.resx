@@ -986,4 +986,454 @@ Smallest possible image: {2}</value>
   <data name="Files_SourceDevice" xml:space="preserve">
     <value>Device</value>
   </data>
+  <data name="Tools_Button" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="Tools_Ssh" xml:space="preserve">
+    <value>SSH check…</value>
+  </data>
+  <data name="Tools_Startup" xml:space="preserve">
+    <value>Startup and scheduled tasks…</value>
+  </data>
+  <data name="Tooltip_Tools" xml:space="preserve">
+    <value>Tools that read the opened Linux system and report what they find. Nothing is changed.</value>
+  </data>
+  <data name="Tools_Analysing" xml:space="preserve">
+    <value>Analysing…</value>
+  </data>
+  <data name="Tools_NoFileSystem" xml:space="preserve">
+    <value>Open a file system first.</value>
+  </data>
+  <data name="Tools_Busy" xml:space="preserve">
+    <value>An extraction or another tool is running.</value>
+  </data>
+  <data name="Ssh_Title" xml:space="preserve">
+    <value>SSH check — {0}</value>
+  </data>
+  <data name="Ssh_Step1" xml:space="preserve">
+    <value>Server</value>
+  </data>
+  <data name="Ssh_Step2" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Ssh_Step3" xml:space="preserve">
+    <value>Accounts</value>
+  </data>
+  <data name="Ssh_Step4" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="Ssh_Back" xml:space="preserve">
+    <value>◂ Back</value>
+  </data>
+  <data name="Ssh_Next" xml:space="preserve">
+    <value>Next ▸</value>
+  </data>
+  <data name="Ssh_NotLinux" xml:space="preserve">
+    <value>No system configuration was found on this partition. It is probably not the root of a Linux system.</value>
+  </data>
+  <data name="Ssh_ShowSystemAccounts" xml:space="preserve">
+    <value>Show system accounts</value>
+  </data>
+  <data name="Ssh_Why" xml:space="preserve">
+    <value>Why</value>
+  </data>
+  <data name="Ssh_CouldNotCheck" xml:space="preserve">
+    <value>Could not check</value>
+  </data>
+  <data name="Ssh_SettingFrom" xml:space="preserve">
+    <value>{0}, line {1}</value>
+  </data>
+  <data name="Ssh_FromDefault" xml:space="preserve">
+    <value>default</value>
+  </data>
+  <data name="Ssh_ColAccount" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="Ssh_ColShell" xml:space="preserve">
+    <value>Shell</value>
+  </data>
+  <data name="Ssh_ColPassword" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Ssh_ColKeys" xml:space="preserve">
+    <value>Keys</value>
+  </data>
+  <data name="Ssh_ColCanLogIn" xml:space="preserve">
+    <value>Can log in</value>
+  </data>
+  <data name="Ssh_Pw_Set" xml:space="preserve">
+    <value>set</value>
+  </data>
+  <data name="Ssh_Pw_Locked" xml:space="preserve">
+    <value>locked</value>
+  </data>
+  <data name="Ssh_Pw_NoPassword" xml:space="preserve">
+    <value>none</value>
+  </data>
+  <data name="Ssh_Pw_Empty" xml:space="preserve">
+    <value>empty</value>
+  </data>
+  <data name="Ssh_Pw_Unknown" xml:space="preserve">
+    <value>unknown</value>
+  </data>
+  <data name="Ssh_With_Password" xml:space="preserve">
+    <value>a password</value>
+  </data>
+  <data name="Ssh_With_Key" xml:space="preserve">
+    <value>a key</value>
+  </data>
+  <data name="Ssh_With_Both" xml:space="preserve">
+    <value>a password and a key</value>
+  </data>
+  <data name="Ssh_CanYes" xml:space="preserve">
+    <value>yes: {0}</value>
+  </data>
+  <data name="Ssh_CanNo" xml:space="preserve">
+    <value>no: {0}</value>
+  </data>
+  <data name="Ssh_CanUnknown" xml:space="preserve">
+    <value>unknown</value>
+  </data>
+  <data name="Ssh_KeysUnknown" xml:space="preserve">
+    <value>unknown</value>
+  </data>
+  <data name="Ssh_Root_Yes" xml:space="preserve">
+    <value>can log in with a password or a key</value>
+  </data>
+  <data name="Ssh_Root_ProhibitPassword" xml:space="preserve">
+    <value>can log in with a key only</value>
+  </data>
+  <data name="Ssh_Root_ForcedCommandsOnly" xml:space="preserve">
+    <value>can only run forced commands</value>
+  </data>
+  <data name="Ssh_Root_No" xml:space="preserve">
+    <value>cannot log in</value>
+  </data>
+  <data name="Ssh_Empty_allowed" xml:space="preserve">
+    <value>are allowed</value>
+  </data>
+  <data name="Ssh_Empty_refused" xml:space="preserve">
+    <value>are refused</value>
+  </data>
+  <data name="Ssh_R_NoShell" xml:space="preserve">
+    <value>it has no login shell</value>
+  </data>
+  <data name="Ssh_R_PasswordLocked" xml:space="preserve">
+    <value>its password is locked</value>
+  </data>
+  <data name="Ssh_R_NoPasswordNoKey" xml:space="preserve">
+    <value>it has no password and no authorized key</value>
+  </data>
+  <data name="Ssh_R_RootNotAllowed" xml:space="preserve">
+    <value>the server does not allow the administrator account to log in</value>
+  </data>
+  <data name="Ssh_R_NotInAllowUsers" xml:space="preserve">
+    <value>it is not in the list of allowed users</value>
+  </data>
+  <data name="Ssh_R_Denied" xml:space="preserve">
+    <value>it is denied by the server settings</value>
+  </data>
+  <data name="Ssh_R_PasswordAuthOffNoKey" xml:space="preserve">
+    <value>password login is off and it has no authorized key</value>
+  </data>
+  <data name="Ssh_R_KeyAuthOffNoPassword" xml:space="preserve">
+    <value>key login is off and it has no usable password</value>
+  </data>
+  <data name="Ssh_R_EmptyPasswordRefused" xml:space="preserve">
+    <value>its password is empty and the server refuses empty passwords</value>
+  </data>
+  <data name="Ssh_R_LockedRefused" xml:space="preserve">
+    <value>the server refuses locked accounts</value>
+  </data>
+  <data name="Ssh_R_MethodsNeedBoth" xml:space="preserve">
+    <value>the server requires a password and a key together</value>
+  </data>
+  <data name="Ssh_V_Works" xml:space="preserve">
+    <value>SSH should work: {0}.</value>
+  </data>
+  <data name="Ssh_V_NotEnabled" xml:space="preserve">
+    <value>SSH will not start by itself: the server is not set to start at boot.</value>
+  </data>
+  <data name="Ssh_V_NotEnabledBootFlagPossible" xml:space="preserve">
+    <value>SSH is not enabled in the Linux system. It may still be switched on at the first boot by a file on the boot partition, which was not checked.</value>
+  </data>
+  <data name="Ssh_V_NoServer" xml:space="preserve">
+    <value>No SSH server is installed.</value>
+  </data>
+  <data name="Ssh_V_NobodyCanLogIn" xml:space="preserve">
+    <value>The server is set up, but nobody can log in.</value>
+  </data>
+  <data name="Ssh_V_Undetermined" xml:space="preserve">
+    <value>From the files alone it cannot be determined whether SSH works. See what could not be checked below.</value>
+  </data>
+  <data name="Ssh_F_ServerInstalled" xml:space="preserve">
+    <value>The SSH server is installed ({0}).</value>
+  </data>
+  <data name="Ssh_F_ServerMissing" xml:space="preserve">
+    <value>No SSH server is installed.</value>
+  </data>
+  <data name="Ssh_F_ServerEnabled" xml:space="preserve">
+    <value>The server is set to start at boot ({0} is enabled).</value>
+  </data>
+  <data name="Ssh_F_ServerOnDemand" xml:space="preserve">
+    <value>The server starts when someone connects ({0}).</value>
+  </data>
+  <data name="Ssh_F_ServerNotEnabled" xml:space="preserve">
+    <value>The server is installed but not set to start at boot.</value>
+  </data>
+  <data name="Ssh_F_ServerMasked" xml:space="preserve">
+    <value>The server is masked: it cannot start.</value>
+  </data>
+  <data name="Ssh_F_ServerLegacy" xml:space="preserve">
+    <value>Started by the old init scripts of this system ({0}).</value>
+  </data>
+  <data name="Ssh_F_BootFlagNotRead" xml:space="preserve">
+    <value>Raspberry Pi OS can switch SSH on at the first boot with a file on the FAT boot partition. This tool reads only the Linux file system and did not check that.</value>
+  </data>
+  <data name="Ssh_F_Port" xml:space="preserve">
+    <value>The server listens on port {0}.</value>
+  </data>
+  <data name="Ssh_F_RootLogin" xml:space="preserve">
+    <value>The administrator account {0}.</value>
+  </data>
+  <data name="Ssh_F_PasswordAuthOn" xml:space="preserve">
+    <value>Password login is allowed.</value>
+  </data>
+  <data name="Ssh_F_PasswordAuthOff" xml:space="preserve">
+    <value>Password login is not allowed.</value>
+  </data>
+  <data name="Ssh_F_KeyAuthOn" xml:space="preserve">
+    <value>Key login is allowed.</value>
+  </data>
+  <data name="Ssh_F_KeyAuthOff" xml:space="preserve">
+    <value>Key login is not allowed.</value>
+  </data>
+  <data name="Ssh_F_EmptyPasswords" xml:space="preserve">
+    <value>Accounts with an empty password {0}.</value>
+  </data>
+  <data name="Ssh_F_UserRestriction" xml:space="preserve">
+    <value>{0} limits who can log in: {1}.</value>
+  </data>
+  <data name="Ssh_F_SettingDefault" xml:space="preserve">
+    <value>{0} is not set; the default is used.</value>
+  </data>
+  <data name="Ssh_F_ConditionalSettings" xml:space="preserve">
+    <value>{0} also appear in Match blocks; the result may differ for some users or addresses.</value>
+  </data>
+  <data name="Ssh_F_KeysFromCommand" xml:space="preserve">
+    <value>Keys may come from a command; they cannot be checked.</value>
+  </data>
+  <data name="Ssh_F_AccountCanLogIn" xml:space="preserve">
+    <value>{0} can log in with {1}.</value>
+  </data>
+  <data name="Ssh_F_AccountCannot" xml:space="preserve">
+    <value>{0} cannot log in: {1}.</value>
+  </data>
+  <data name="Ssh_F_NoRegularAccount" xml:space="preserve">
+    <value>No account other than the administrator exists; Raspberry Pi OS creates one at the first boot.</value>
+  </data>
+  <data name="Ssh_F_ShadowUnreadable" xml:space="preserve">
+    <value>Password information could not be read.</value>
+  </data>
+  <data name="Ssh_F_ConfigMissing" xml:space="preserve">
+    <value>There is no /etc/ssh/sshd_config; the defaults of the server are assumed.</value>
+  </data>
+  <data name="Diag_N_Truncated" xml:space="preserve">
+    <value>{0} is larger than 1 MiB and was read only in part.</value>
+  </data>
+  <data name="Diag_N_Unreadable" xml:space="preserve">
+    <value>{0} could not be read.</value>
+  </data>
+  <data name="Diag_N_ListCut" xml:space="preserve">
+    <value>The list of {0} was cut at {1} entries.</value>
+  </data>
+  <data name="Startup_Title" xml:space="preserve">
+    <value>Startup and scheduled tasks — {0}</value>
+  </data>
+  <data name="Startup_Filter" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="Startup_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Startup_KindService" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="Startup_KindTimer" xml:space="preserve">
+    <value>Timers</value>
+  </data>
+  <data name="Startup_KindBoot" xml:space="preserve">
+    <value>Boot scripts</value>
+  </data>
+  <data name="Startup_KindDesktop" xml:space="preserve">
+    <value>Desktop session</value>
+  </data>
+  <data name="Startup_KindCron" xml:space="preserve">
+    <value>Cron</value>
+  </data>
+  <data name="Startup_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Startup_OnlyActive" xml:space="preserve">
+    <value>Only what is active</value>
+  </data>
+  <data name="Startup_Counts" xml:space="preserve">
+    <value>{0} entries ({1} inactive)</value>
+  </data>
+  <data name="Startup_CountsFiltered" xml:space="preserve">
+    <value>{0} of {1} entries</value>
+  </data>
+  <data name="Startup_ColKind" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="Startup_ColName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Startup_ColRuns" xml:space="preserve">
+    <value>What it runs / When</value>
+  </data>
+  <data name="Startup_ColUser" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="Startup_ColSource" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Startup_ColStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Startup_Active" xml:space="preserve">
+    <value>active</value>
+  </data>
+  <data name="Startup_Empty" xml:space="preserve">
+    <value>Nothing that starts by itself was found.</value>
+  </data>
+  <data name="Startup_Verbatim" xml:space="preserve">
+    <value>Command lines are shown as written in the system.</value>
+  </data>
+  <data name="Startup_K_Service" xml:space="preserve">
+    <value>Service</value>
+  </data>
+  <data name="Startup_K_Timer" xml:space="preserve">
+    <value>Timer</value>
+  </data>
+  <data name="Startup_K_Socket" xml:space="preserve">
+    <value>Socket</value>
+  </data>
+  <data name="Startup_K_BootScript" xml:space="preserve">
+    <value>Boot script</value>
+  </data>
+  <data name="Startup_K_Desktop" xml:space="preserve">
+    <value>Desktop</value>
+  </data>
+  <data name="Startup_K_UserService" xml:space="preserve">
+    <value>User service</value>
+  </data>
+  <data name="Startup_K_Cron" xml:space="preserve">
+    <value>Cron</value>
+  </data>
+  <data name="Startup_R_Disabled" xml:space="preserve">
+    <value>not enabled</value>
+  </data>
+  <data name="Startup_R_Masked" xml:space="preserve">
+    <value>masked</value>
+  </data>
+  <data name="Startup_R_UnitMissing" xml:space="preserve">
+    <value>the unit file is missing</value>
+  </data>
+  <data name="Startup_R_TargetNotReached" xml:space="preserve">
+    <value>its target is not reached at boot</value>
+  </data>
+  <data name="Startup_R_HiddenEntry" xml:space="preserve">
+    <value>hidden or switched off in the entry</value>
+  </data>
+  <data name="Startup_R_NotExecutable" xml:space="preserve">
+    <value>not executable</value>
+  </data>
+  <data name="Startup_R_IgnoredName" xml:space="preserve">
+    <value>the file name is ignored by cron</value>
+  </data>
+  <data name="Startup_R_NothingRunsIt" xml:space="preserve">
+    <value>nothing runs this directory</value>
+  </data>
+  <data name="Startup_R_NoSuchUser" xml:space="preserve">
+    <value>the user does not exist</value>
+  </data>
+  <data name="Startup_R_NoCron" xml:space="preserve">
+    <value>cron is not installed</value>
+  </data>
+  <data name="Startup_R_Malformed" xml:space="preserve">
+    <value>could not be understood</value>
+  </data>
+  <data name="Startup_R_Unreadable" xml:space="preserve">
+    <value>could not be read</value>
+  </data>
+  <data name="Startup_N_NoCron" xml:space="preserve">
+    <value>Cron is not installed on this system.</value>
+  </data>
+  <data name="Startup_N_CronNotEnabled" xml:space="preserve">
+    <value>The cron service is not enabled; scheduled tasks run only when it is started.</value>
+  </data>
+  <data name="Sched_AtBoot" xml:space="preserve">
+    <value>at boot</value>
+  </data>
+  <data name="Sched_EveryMinute" xml:space="preserve">
+    <value>every minute</value>
+  </data>
+  <data name="Sched_EveryNMinutes" xml:space="preserve">
+    <value>every {0} minutes</value>
+  </data>
+  <data name="Sched_HourlyAt" xml:space="preserve">
+    <value>every hour at :{0}</value>
+  </data>
+  <data name="Sched_DailyAt" xml:space="preserve">
+    <value>every day at {0}</value>
+  </data>
+  <data name="Sched_WeeklyOn" xml:space="preserve">
+    <value>every {0} at {1}</value>
+  </data>
+  <data name="Sched_MonthlyOn" xml:space="preserve">
+    <value>on day {0} of every month at {1}</value>
+  </data>
+  <data name="Sched_YearlyOn" xml:space="preserve">
+    <value>every year on {0} at {1}</value>
+  </data>
+  <data name="Sched_EveryDay" xml:space="preserve">
+    <value>every day</value>
+  </data>
+  <data name="Sched_EveryNDays" xml:space="preserve">
+    <value>every {0} days</value>
+  </data>
+  <data name="Sched_Custom" xml:space="preserve">
+    <value>on the schedule {0}</value>
+  </data>
+  <data name="Sched_TimeList" xml:space="preserve">
+    <value>{0} and {1}</value>
+  </data>
+  <data name="Report_Date" xml:space="preserve">
+    <value>Date: {0}</value>
+  </data>
+  <data name="Report_Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Report_Save" xml:space="preserve">
+    <value>Save as…</value>
+  </data>
+  <data name="Report_Saved" xml:space="preserve">
+    <value>Saved to {0}</value>
+  </data>
+  <data name="Report_Failed" xml:space="preserve">
+    <value>Could not save the report: {0}</value>
+  </data>
+  <data name="Report_Copied" xml:space="preserve">
+    <value>Copied to the clipboard.</value>
+  </data>
+  <data name="Report_CopyFailed" xml:space="preserve">
+    <value>The clipboard is in use by another program. Try again.</value>
+  </data>
+  <data name="Report_SaveTitle" xml:space="preserve">
+    <value>Save the report</value>
+  </data>
+  <data name="Dialog_ReportFilter" xml:space="preserve">
+    <value>Text files (*.txt)|*.txt|All files (*.*)|*.*</value>
+  </data>
 </root>

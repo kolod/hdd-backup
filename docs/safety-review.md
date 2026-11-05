@@ -76,6 +76,32 @@ Not automated: the modal dialogs of the Files tab (folder picker, conflict quest
 boxes), a real removable device and Windows 7 SP1 are covered by the manual hardware checklist
 (steps 32–42).
 
+## Diagnostic tools (feature 009)
+
+Scope: `HddBackup.Core/Diagnostics/` (`SystemReader`, `DiagnosticsRunner`, `LinuxRoot`, `SshdConfig`,
+`AccountDatabase`, `SshCheck`, `SystemdScan`, `CronScan`, `AutostartScan`, `StartupInventory`,
+`ReportBuilder`), the Tools button, `SshWizardDialog`, `StartupTasksWindow` and `ReportActions` in the
+App. Review date: 2026-11-05. The tools only read the opened image or device; the constitution
+amendment 1.4.0 extends Principle VII to read-only diagnostics.
+
+| Rule | Implementation | Automated evidence |
+|------|----------------|--------------------|
+| The image and the device are never written | `DiagnosticsRunner` opens its own read-only source through `BrowseSource` (`FileBlockDevice.OpenRead`, `IDeviceAccess.OpenForRead`), never `OpenExclusiveForWrite`; `SystemReader` has no write path | `DiagnosticsRunnerTests.RunsAToolOnADeviceThroughTheReadHandleOnly` (zero exclusive opens, zero writes), `TheImageIsNotModified` (SHA-256 before/after), `SshFixtureTests.TheImageIsNotModified`, `DiagnosticsPerformanceTests` (zero `Write` calls) |
+| The source is released after every run | `DiagnosticsRunner` disposes the file system and the source in `finally` | `DiagnosticsRunnerTests.ReleasesTheSourceWhenTheToolFailsOrIsCancelled`, `ADeviceThatFailsMidwayThrowsAnImagingExceptionAndIsReleased`, `DegradedSourceTests.ADeviceThatFailsWhileAToolRunsAbortsWithTheCauseAndReleasesTheSource` |
+| No secret is ever read into a result | Password fields become a `PasswordState` and key lines are only counted inside the parsers (`AccountDatabase`); no result type has a field that can hold a hash, a key or a private key; private key files are never opened | `AccountDatabaseTests.NoAccountObjectHoldsAPlantedSecret`, `SecretLeakTests.*` (every field of every result of five real images, all matrix cases and the reference system, planted `$6$PLANTEDSECRET…`, `PLANTEDKEYBLOB`, a private key file), `SshFixtureTests.NeverOpensThePrivateKey` |
+| No secret reaches the clipboard or a saved file | `ReportBuilder` reads only the structured results | `ReportBuilderTests.NoReportOfAFixtureContainsASecret` |
+| Symbolic links are resolved inside the image, never on the host | `SystemReader` walks the components through `IFileTree` with a limit of 40 links | `SystemReaderTests.*` (absolute, relative, chained, merged `/usr`, loops, `/dev/null`) |
+| The reported facts equal what the real programs say | `SshdConfig` follows `sshd -T` (first value wins, `Include`, `Match` conditional); `SystemdScan` follows `systemctl is-enabled` | `check-diagnostics.sh` in the `ext4-check` job compares the exported settings with `sshd -T` and the enabled units with `systemctl --root` for every fixture (local Docker run: all identical) |
+| An unreadable or damaged source does not crash a tool | Read problems become return values and notes; only errors of the source (`DeviceRemoved`, `ReadError`) abort, with the cause, and no window opens | `SystemReaderTests.AnUnreadableEntryIsAValueNotAnException`, `DegradedSourceTests.*`, `StartupInventoryTests.OneUnreadableSourceMarksItsEntriesAndDoesNotStopTheScan` |
+| "SSH is off" is never said when something unread could matter | The verdict `NotEnabledBootFlagPossible` for Raspberry Pi systems with an unread FAT boot partition | `SshCheckMatrixTests` (case 17), `SshFixtureTests.RaspberryPiLikeImageNeverSaysSshIsOff` |
+| Advice never becomes an action | Neither window has a control that changes the image; the Tools button is a menu of two read-only tools; there is no network access | Code review; `Tools` strings state "Nothing is changed" |
+| Saving never replaces a file silently | `SaveFileDialog.OverwritePrompt = true`; text is written as UTF-8 with a byte order mark | Manual checklist step 45 (the dialog is not automated) |
+
+Not automated: the modal windows and the Save as… dialog, a real removable device, timing on a
+16–32 GiB image over USB 2.0 and Windows 7 SP1 are covered by the manual hardware checklist
+(steps 43–45). The independent `sshd -T` and `systemctl --root` comparison runs in the `ext4-check`
+CI job and was run locally in Docker (debian:bookworm).
+
 ## Release integrity (feature 003)
 
 Scope: `.github/workflows/release.yml`, `.github/actions/build-test`, `.github/rulesets/`,

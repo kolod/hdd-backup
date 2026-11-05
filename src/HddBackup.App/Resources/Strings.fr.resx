@@ -986,4 +986,454 @@ Plus petite image possible : {2}</value>
   <data name="Files_SourceDevice" xml:space="preserve">
     <value>Périphérique</value>
   </data>
+  <data name="Tools_Button" xml:space="preserve">
+    <value>Outils</value>
+  </data>
+  <data name="Tools_Ssh" xml:space="preserve">
+    <value>Vérifier SSH…</value>
+  </data>
+  <data name="Tools_Startup" xml:space="preserve">
+    <value>Démarrage et tâches planifiées…</value>
+  </data>
+  <data name="Tooltip_Tools" xml:space="preserve">
+    <value>Des outils qui lisent le système Linux ouvert et signalent ce qu’ils trouvent. Rien n’est modifié.</value>
+  </data>
+  <data name="Tools_Analysing" xml:space="preserve">
+    <value>Analyse…</value>
+  </data>
+  <data name="Tools_NoFileSystem" xml:space="preserve">
+    <value>Ouvrez d’abord un système de fichiers.</value>
+  </data>
+  <data name="Tools_Busy" xml:space="preserve">
+    <value>Une extraction ou un autre outil est en cours.</value>
+  </data>
+  <data name="Ssh_Title" xml:space="preserve">
+    <value>Vérification SSH — {0}</value>
+  </data>
+  <data name="Ssh_Step1" xml:space="preserve">
+    <value>Serveur</value>
+  </data>
+  <data name="Ssh_Step2" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="Ssh_Step3" xml:space="preserve">
+    <value>Comptes</value>
+  </data>
+  <data name="Ssh_Step4" xml:space="preserve">
+    <value>Résultat</value>
+  </data>
+  <data name="Ssh_Back" xml:space="preserve">
+    <value>◂ Retour</value>
+  </data>
+  <data name="Ssh_Next" xml:space="preserve">
+    <value>Suivant ▸</value>
+  </data>
+  <data name="Ssh_NotLinux" xml:space="preserve">
+    <value>Aucune configuration système n’a été trouvée sur cette partition. Ce n’est probablement pas la racine d’un système Linux.</value>
+  </data>
+  <data name="Ssh_ShowSystemAccounts" xml:space="preserve">
+    <value>Afficher les comptes système</value>
+  </data>
+  <data name="Ssh_Why" xml:space="preserve">
+    <value>Pourquoi</value>
+  </data>
+  <data name="Ssh_CouldNotCheck" xml:space="preserve">
+    <value>Non vérifié</value>
+  </data>
+  <data name="Ssh_SettingFrom" xml:space="preserve">
+    <value>{0}, ligne {1}</value>
+  </data>
+  <data name="Ssh_FromDefault" xml:space="preserve">
+    <value>valeur par défaut</value>
+  </data>
+  <data name="Ssh_ColAccount" xml:space="preserve">
+    <value>Compte</value>
+  </data>
+  <data name="Ssh_ColShell" xml:space="preserve">
+    <value>Shell</value>
+  </data>
+  <data name="Ssh_ColPassword" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="Ssh_ColKeys" xml:space="preserve">
+    <value>Clés</value>
+  </data>
+  <data name="Ssh_ColCanLogIn" xml:space="preserve">
+    <value>Peut se connecter</value>
+  </data>
+  <data name="Ssh_Pw_Set" xml:space="preserve">
+    <value>défini</value>
+  </data>
+  <data name="Ssh_Pw_Locked" xml:space="preserve">
+    <value>verrouillé</value>
+  </data>
+  <data name="Ssh_Pw_NoPassword" xml:space="preserve">
+    <value>aucun</value>
+  </data>
+  <data name="Ssh_Pw_Empty" xml:space="preserve">
+    <value>vide</value>
+  </data>
+  <data name="Ssh_Pw_Unknown" xml:space="preserve">
+    <value>inconnu</value>
+  </data>
+  <data name="Ssh_With_Password" xml:space="preserve">
+    <value>un mot de passe</value>
+  </data>
+  <data name="Ssh_With_Key" xml:space="preserve">
+    <value>une clé</value>
+  </data>
+  <data name="Ssh_With_Both" xml:space="preserve">
+    <value>un mot de passe et une clé</value>
+  </data>
+  <data name="Ssh_CanYes" xml:space="preserve">
+    <value>oui : {0}</value>
+  </data>
+  <data name="Ssh_CanNo" xml:space="preserve">
+    <value>non : {0}</value>
+  </data>
+  <data name="Ssh_CanUnknown" xml:space="preserve">
+    <value>inconnu</value>
+  </data>
+  <data name="Ssh_KeysUnknown" xml:space="preserve">
+    <value>inconnues</value>
+  </data>
+  <data name="Ssh_Root_Yes" xml:space="preserve">
+    <value>peut se connecter avec un mot de passe ou une clé</value>
+  </data>
+  <data name="Ssh_Root_ProhibitPassword" xml:space="preserve">
+    <value>ne peut se connecter qu’avec une clé</value>
+  </data>
+  <data name="Ssh_Root_ForcedCommandsOnly" xml:space="preserve">
+    <value>ne peut exécuter que des commandes imposées</value>
+  </data>
+  <data name="Ssh_Root_No" xml:space="preserve">
+    <value>ne peut pas se connecter</value>
+  </data>
+  <data name="Ssh_Empty_allowed" xml:space="preserve">
+    <value>sont autorisés</value>
+  </data>
+  <data name="Ssh_Empty_refused" xml:space="preserve">
+    <value>sont refusés</value>
+  </data>
+  <data name="Ssh_R_NoShell" xml:space="preserve">
+    <value>il n’a pas de shell de connexion</value>
+  </data>
+  <data name="Ssh_R_PasswordLocked" xml:space="preserve">
+    <value>son mot de passe est verrouillé</value>
+  </data>
+  <data name="Ssh_R_NoPasswordNoKey" xml:space="preserve">
+    <value>il n’a ni mot de passe ni clé autorisée</value>
+  </data>
+  <data name="Ssh_R_RootNotAllowed" xml:space="preserve">
+    <value>le serveur n’autorise pas la connexion du compte administrateur</value>
+  </data>
+  <data name="Ssh_R_NotInAllowUsers" xml:space="preserve">
+    <value>il ne figure pas dans la liste des utilisateurs autorisés</value>
+  </data>
+  <data name="Ssh_R_Denied" xml:space="preserve">
+    <value>il est refusé par les paramètres du serveur</value>
+  </data>
+  <data name="Ssh_R_PasswordAuthOffNoKey" xml:space="preserve">
+    <value>la connexion par mot de passe est désactivée et il n’a pas de clé autorisée</value>
+  </data>
+  <data name="Ssh_R_KeyAuthOffNoPassword" xml:space="preserve">
+    <value>la connexion par clé est désactivée et il n’a pas de mot de passe utilisable</value>
+  </data>
+  <data name="Ssh_R_EmptyPasswordRefused" xml:space="preserve">
+    <value>son mot de passe est vide et le serveur refuse les mots de passe vides</value>
+  </data>
+  <data name="Ssh_R_LockedRefused" xml:space="preserve">
+    <value>le serveur refuse les comptes verrouillés</value>
+  </data>
+  <data name="Ssh_R_MethodsNeedBoth" xml:space="preserve">
+    <value>le serveur exige un mot de passe et une clé ensemble</value>
+  </data>
+  <data name="Ssh_V_Works" xml:space="preserve">
+    <value>SSH devrait fonctionner : {0}.</value>
+  </data>
+  <data name="Ssh_V_NotEnabled" xml:space="preserve">
+    <value>SSH ne démarrera pas tout seul : le serveur n’est pas configuré pour démarrer au boot.</value>
+  </data>
+  <data name="Ssh_V_NotEnabledBootFlagPossible" xml:space="preserve">
+    <value>SSH n’est pas activé dans le système Linux. Il peut encore être activé au premier démarrage par un fichier de la partition de démarrage, qui n’a pas été vérifiée.</value>
+  </data>
+  <data name="Ssh_V_NoServer" xml:space="preserve">
+    <value>Aucun serveur SSH n’est installé.</value>
+  </data>
+  <data name="Ssh_V_NobodyCanLogIn" xml:space="preserve">
+    <value>Le serveur est configuré, mais personne ne peut se connecter.</value>
+  </data>
+  <data name="Ssh_V_Undetermined" xml:space="preserve">
+    <value>Les fichiers seuls ne permettent pas de savoir si SSH fonctionne. Voir ci-dessous ce qui n’a pas pu être vérifié.</value>
+  </data>
+  <data name="Ssh_F_ServerInstalled" xml:space="preserve">
+    <value>Le serveur SSH est installé ({0}).</value>
+  </data>
+  <data name="Ssh_F_ServerMissing" xml:space="preserve">
+    <value>Aucun serveur SSH n’est installé.</value>
+  </data>
+  <data name="Ssh_F_ServerEnabled" xml:space="preserve">
+    <value>Le serveur démarre au boot ({0} est activé).</value>
+  </data>
+  <data name="Ssh_F_ServerOnDemand" xml:space="preserve">
+    <value>Le serveur démarre quand quelqu’un se connecte ({0}).</value>
+  </data>
+  <data name="Ssh_F_ServerNotEnabled" xml:space="preserve">
+    <value>Le serveur est installé mais n’est pas configuré pour démarrer au boot.</value>
+  </data>
+  <data name="Ssh_F_ServerMasked" xml:space="preserve">
+    <value>Le serveur est masqué : il ne peut pas démarrer.</value>
+  </data>
+  <data name="Ssh_F_ServerLegacy" xml:space="preserve">
+    <value>Démarré par les anciens scripts init de ce système ({0}).</value>
+  </data>
+  <data name="Ssh_F_BootFlagNotRead" xml:space="preserve">
+    <value>Raspberry Pi OS peut activer SSH au premier démarrage grâce à un fichier sur la partition de démarrage FAT. Cet outil ne lit que le système de fichiers Linux et ne l’a pas vérifié.</value>
+  </data>
+  <data name="Ssh_F_Port" xml:space="preserve">
+    <value>Le serveur écoute sur le port {0}.</value>
+  </data>
+  <data name="Ssh_F_RootLogin" xml:space="preserve">
+    <value>Le compte administrateur {0}.</value>
+  </data>
+  <data name="Ssh_F_PasswordAuthOn" xml:space="preserve">
+    <value>La connexion par mot de passe est autorisée.</value>
+  </data>
+  <data name="Ssh_F_PasswordAuthOff" xml:space="preserve">
+    <value>La connexion par mot de passe n’est pas autorisée.</value>
+  </data>
+  <data name="Ssh_F_KeyAuthOn" xml:space="preserve">
+    <value>La connexion par clé est autorisée.</value>
+  </data>
+  <data name="Ssh_F_KeyAuthOff" xml:space="preserve">
+    <value>La connexion par clé n’est pas autorisée.</value>
+  </data>
+  <data name="Ssh_F_EmptyPasswords" xml:space="preserve">
+    <value>Les comptes sans mot de passe {0}.</value>
+  </data>
+  <data name="Ssh_F_UserRestriction" xml:space="preserve">
+    <value>{0} limite qui peut se connecter : {1}.</value>
+  </data>
+  <data name="Ssh_F_SettingDefault" xml:space="preserve">
+    <value>{0} n’est pas défini ; la valeur par défaut s’applique.</value>
+  </data>
+  <data name="Ssh_F_ConditionalSettings" xml:space="preserve">
+    <value>{0} figurent aussi dans des blocs Match ; le résultat peut différer pour certains utilisateurs ou adresses.</value>
+  </data>
+  <data name="Ssh_F_KeysFromCommand" xml:space="preserve">
+    <value>Les clés peuvent provenir d’une commande ; elles ne peuvent pas être vérifiées.</value>
+  </data>
+  <data name="Ssh_F_AccountCanLogIn" xml:space="preserve">
+    <value>{0} peut se connecter avec {1}.</value>
+  </data>
+  <data name="Ssh_F_AccountCannot" xml:space="preserve">
+    <value>{0} ne peut pas se connecter : {1}.</value>
+  </data>
+  <data name="Ssh_F_NoRegularAccount" xml:space="preserve">
+    <value>Il n’existe aucun compte autre que l’administrateur ; Raspberry Pi OS en crée un au premier démarrage.</value>
+  </data>
+  <data name="Ssh_F_ShadowUnreadable" xml:space="preserve">
+    <value>Les informations sur les mots de passe n’ont pas pu être lues.</value>
+  </data>
+  <data name="Ssh_F_ConfigMissing" xml:space="preserve">
+    <value>Il n’y a pas de /etc/ssh/sshd_config ; les valeurs par défaut du serveur sont supposées.</value>
+  </data>
+  <data name="Diag_N_Truncated" xml:space="preserve">
+    <value>{0} dépasse 1 Mio et n’a été lu qu’en partie.</value>
+  </data>
+  <data name="Diag_N_Unreadable" xml:space="preserve">
+    <value>{0} n’a pas pu être lu.</value>
+  </data>
+  <data name="Diag_N_ListCut" xml:space="preserve">
+    <value>La liste de {0} a été coupée à {1} entrées.</value>
+  </data>
+  <data name="Startup_Title" xml:space="preserve">
+    <value>Démarrage et tâches planifiées — {0}</value>
+  </data>
+  <data name="Startup_Filter" xml:space="preserve">
+    <value>Afficher</value>
+  </data>
+  <data name="Startup_All" xml:space="preserve">
+    <value>Tout</value>
+  </data>
+  <data name="Startup_KindService" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="Startup_KindTimer" xml:space="preserve">
+    <value>Minuteries</value>
+  </data>
+  <data name="Startup_KindBoot" xml:space="preserve">
+    <value>Scripts de démarrage</value>
+  </data>
+  <data name="Startup_KindDesktop" xml:space="preserve">
+    <value>Session de bureau</value>
+  </data>
+  <data name="Startup_KindCron" xml:space="preserve">
+    <value>Cron</value>
+  </data>
+  <data name="Startup_Search" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+  <data name="Startup_OnlyActive" xml:space="preserve">
+    <value>Seulement ce qui est actif</value>
+  </data>
+  <data name="Startup_Counts" xml:space="preserve">
+    <value>{0} entrées ({1} inactives)</value>
+  </data>
+  <data name="Startup_CountsFiltered" xml:space="preserve">
+    <value>{0} entrées sur {1}</value>
+  </data>
+  <data name="Startup_ColKind" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Startup_ColName" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Startup_ColRuns" xml:space="preserve">
+    <value>Ce qui s’exécute / Quand</value>
+  </data>
+  <data name="Startup_ColUser" xml:space="preserve">
+    <value>Utilisateur</value>
+  </data>
+  <data name="Startup_ColSource" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Startup_ColStatus" xml:space="preserve">
+    <value>État</value>
+  </data>
+  <data name="Startup_Active" xml:space="preserve">
+    <value>actif</value>
+  </data>
+  <data name="Startup_Empty" xml:space="preserve">
+    <value>Rien qui démarre tout seul n’a été trouvé.</value>
+  </data>
+  <data name="Startup_Verbatim" xml:space="preserve">
+    <value>Les lignes de commande sont affichées telles qu’elles sont écrites dans le système.</value>
+  </data>
+  <data name="Startup_K_Service" xml:space="preserve">
+    <value>Service</value>
+  </data>
+  <data name="Startup_K_Timer" xml:space="preserve">
+    <value>Minuterie</value>
+  </data>
+  <data name="Startup_K_Socket" xml:space="preserve">
+    <value>Socket</value>
+  </data>
+  <data name="Startup_K_BootScript" xml:space="preserve">
+    <value>Script de démarrage</value>
+  </data>
+  <data name="Startup_K_Desktop" xml:space="preserve">
+    <value>Bureau</value>
+  </data>
+  <data name="Startup_K_UserService" xml:space="preserve">
+    <value>Service utilisateur</value>
+  </data>
+  <data name="Startup_K_Cron" xml:space="preserve">
+    <value>Cron</value>
+  </data>
+  <data name="Startup_R_Disabled" xml:space="preserve">
+    <value>non activé</value>
+  </data>
+  <data name="Startup_R_Masked" xml:space="preserve">
+    <value>masqué</value>
+  </data>
+  <data name="Startup_R_UnitMissing" xml:space="preserve">
+    <value>le fichier d’unité est absent</value>
+  </data>
+  <data name="Startup_R_TargetNotReached" xml:space="preserve">
+    <value>sa cible n’est pas atteinte au démarrage</value>
+  </data>
+  <data name="Startup_R_HiddenEntry" xml:space="preserve">
+    <value>masqué ou désactivé dans l’entrée</value>
+  </data>
+  <data name="Startup_R_NotExecutable" xml:space="preserve">
+    <value>non exécutable</value>
+  </data>
+  <data name="Startup_R_IgnoredName" xml:space="preserve">
+    <value>cron ignore le nom du fichier</value>
+  </data>
+  <data name="Startup_R_NothingRunsIt" xml:space="preserve">
+    <value>rien n’exécute ce répertoire</value>
+  </data>
+  <data name="Startup_R_NoSuchUser" xml:space="preserve">
+    <value>l’utilisateur n’existe pas</value>
+  </data>
+  <data name="Startup_R_NoCron" xml:space="preserve">
+    <value>cron n’est pas installé</value>
+  </data>
+  <data name="Startup_R_Malformed" xml:space="preserve">
+    <value>n’a pas pu être interprété</value>
+  </data>
+  <data name="Startup_R_Unreadable" xml:space="preserve">
+    <value>n’a pas pu être lu</value>
+  </data>
+  <data name="Startup_N_NoCron" xml:space="preserve">
+    <value>Cron n’est pas installé sur ce système.</value>
+  </data>
+  <data name="Startup_N_CronNotEnabled" xml:space="preserve">
+    <value>Le service cron n’est pas activé ; les tâches planifiées ne s’exécutent que s’il est démarré.</value>
+  </data>
+  <data name="Sched_AtBoot" xml:space="preserve">
+    <value>au démarrage</value>
+  </data>
+  <data name="Sched_EveryMinute" xml:space="preserve">
+    <value>chaque minute</value>
+  </data>
+  <data name="Sched_EveryNMinutes" xml:space="preserve">
+    <value>toutes les {0} minutes</value>
+  </data>
+  <data name="Sched_HourlyAt" xml:space="preserve">
+    <value>chaque heure à :{0}</value>
+  </data>
+  <data name="Sched_DailyAt" xml:space="preserve">
+    <value>tous les jours à {0}</value>
+  </data>
+  <data name="Sched_WeeklyOn" xml:space="preserve">
+    <value>chaque {0} à {1}</value>
+  </data>
+  <data name="Sched_MonthlyOn" xml:space="preserve">
+    <value>le {0} de chaque mois à {1}</value>
+  </data>
+  <data name="Sched_YearlyOn" xml:space="preserve">
+    <value>chaque année le {0} à {1}</value>
+  </data>
+  <data name="Sched_EveryDay" xml:space="preserve">
+    <value>tous les jours</value>
+  </data>
+  <data name="Sched_EveryNDays" xml:space="preserve">
+    <value>tous les {0} jours</value>
+  </data>
+  <data name="Sched_Custom" xml:space="preserve">
+    <value>selon le calendrier {0}</value>
+  </data>
+  <data name="Sched_TimeList" xml:space="preserve">
+    <value>{0} et {1}</value>
+  </data>
+  <data name="Report_Date" xml:space="preserve">
+    <value>Date : {0}</value>
+  </data>
+  <data name="Report_Copy" xml:space="preserve">
+    <value>Copier</value>
+  </data>
+  <data name="Report_Save" xml:space="preserve">
+    <value>Enregistrer sous…</value>
+  </data>
+  <data name="Report_Saved" xml:space="preserve">
+    <value>Enregistré dans {0}</value>
+  </data>
+  <data name="Report_Failed" xml:space="preserve">
+    <value>Le rapport n’a pas pu être enregistré : {0}</value>
+  </data>
+  <data name="Report_Copied" xml:space="preserve">
+    <value>Copié dans le presse-papiers.</value>
+  </data>
+  <data name="Report_CopyFailed" xml:space="preserve">
+    <value>Le presse-papiers est utilisé par un autre programme. Réessayez.</value>
+  </data>
+  <data name="Report_SaveTitle" xml:space="preserve">
+    <value>Enregistrer le rapport</value>
+  </data>
+  <data name="Dialog_ReportFilter" xml:space="preserve">
+    <value>Fichiers texte (*.txt)|*.txt|Tous les fichiers (*.*)|*.*</value>
+  </data>
 </root>

@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using HddBackup.Core.Diagnostics;
 using HddBackup.Core.Errors;
 using HddBackup.Core.Formats;
 using HddBackup.Core.Imaging;
@@ -100,6 +101,30 @@ namespace HddBackup.Core.Tests.Localization
             required.AddRange(Enum.GetNames(typeof(OperationPhase)).Select(n => "Phase_" + n));
             required.AddRange(Enum.GetNames(typeof(VerificationStatus)).Select(n => "Check_" + n));
             required.AddRange(Enum.GetNames(typeof(TableStyle)).Select(n => "Table_" + n));
+            foreach (var key in required)
+            {
+                Assert.True(english.ContainsKey(key), "Missing string " + key);
+            }
+        }
+    
+        [Fact]
+        public void EveryDiagnosticCode_HasAString()
+        {
+            var english = Load(Files[0]);
+            var required = new List<string>();
+            required.AddRange(Enum.GetNames(typeof(FindingCode)).Select(n => "Ssh_F_" + n));
+            required.AddRange(Enum.GetNames(typeof(VerdictCode)).Where(n => n != nameof(VerdictCode.NotALinuxRoot) && n != nameof(VerdictCode.Works)).Select(n => "Ssh_V_" + n));
+            required.Add("Ssh_V_Works");
+            required.Add("Ssh_NotLinux");
+            required.AddRange(Enum.GetNames(typeof(LoginReason)).Where(n => n != nameof(LoginReason.None)).Select(n => "Ssh_R_" + n));
+            required.AddRange(Enum.GetNames(typeof(RootLoginMode)).Select(n => "Ssh_Root_" + n));
+            required.AddRange(Enum.GetNames(typeof(PasswordState)).Select(n => "Ssh_Pw_" + n));
+            required.AddRange(Enum.GetNames(typeof(LoginMethod)).Where(n => n != nameof(LoginMethod.None)).Select(n => "Ssh_With_" + n));
+            required.AddRange(new[] { "Ssh_Empty_allowed", "Ssh_Empty_refused" });
+            required.AddRange(Enum.GetNames(typeof(StartupKind)).Select(n => "Startup_K_" + n));
+            required.AddRange(Enum.GetNames(typeof(InactiveReason)).Where(n => n != nameof(InactiveReason.None)).Select(n => "Startup_R_" + n));
+            required.AddRange(Enum.GetNames(typeof(ScheduleClass)).Select(n => "Sched_" + n));
+            required.AddRange(new[] { "Sched_EveryDay", "Sched_TimeList", "Startup_N_NoCron", "Startup_N_CronNotEnabled", "Diag_N_ListCut", "Diag_N_Truncated", "Diag_N_Unreadable" });
             foreach (var key in required)
             {
                 Assert.True(english.ContainsKey(key), "Missing string " + key);

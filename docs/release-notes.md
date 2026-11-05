@@ -9,6 +9,27 @@ The earlier local release candidates "1.0.0" and "1.1.0" of 2026-10-15 were neve
 Their contents are part of 1.0.0-rc.1, the first public build. The draft 1.0.0-rc.2 was never
 published either; its fix is part of 1.0.0-rc.3.
 
+## Unreleased
+
+### Added
+
+- **Tools on the Files tab.** A new **Tools** button next to **Extract…** opens two read-only
+  checks of the opened Linux system. Both only read; nothing is written to the image or the card,
+  and passwords, key text and private keys are never read into a result.
+  - **SSH check…** — a four-step wizard (Server, Settings, Accounts, Result). It tells whether an
+    OpenSSH server is installed and set to start, which settings apply (with the file and line each
+    comes from), who can log in and how, and ends in a verdict with the reasons: "SSH should work",
+    "will not start by itself", "no server installed", "nobody can log in" or "cannot be
+    determined". On a Raspberry Pi image it says that SSH may still be switched on at the first
+    boot by a file on the boot partition, which is not read.
+  - **Startup and scheduled tasks…** — one filterable, searchable list of systemd services, timers
+    and sockets that really start, per-user units, boot scripts, desktop autostart entries and cron
+    tasks, with the schedule in words ("every day at 6:25 AM") in your language. Entries that will
+    not run are hidden until you ask for them, with the reason (masked, target not reached, not
+    executable, ignored by cron, unknown user, …).
+  - **Copy** and **Save as…** keep the result as text.
+  - Only ext4 partitions are analysed. Network, firewall and `Match` blocks are not evaluated.
+
 ## 1.0.0-rc.3 — third release candidate (2026-11-05)
 
 New **Files** tab and a fix for restoring on Windows 7. The rest is as in

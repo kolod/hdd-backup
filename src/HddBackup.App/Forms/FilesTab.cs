@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -10,6 +10,7 @@ using HddBackup.App.Localization;
 using HddBackup.App.Settings;
 using HddBackup.Core.Browsing;
 using HddBackup.Core.Devices;
+using HddBackup.Core.Diagnostics;
 using HddBackup.Core.Errors;
 using HddBackup.Core.Imaging;
 using HddBackup.Core.Shrinking;
@@ -28,6 +29,10 @@ namespace HddBackup.App.Forms
         private readonly SelectedImage _selected;
         private readonly IDeviceAccess _access;
         private readonly Button _extract = Ui.Button();
+        private readonly Button _tools = Ui.Button();
+        private readonly ContextMenuStrip _toolsMenu = new ContextMenuStrip();
+        private readonly ToolStripMenuItem _menuSsh = new ToolStripMenuItem();
+        private readonly ToolStripMenuItem _menuStartup = new ToolStripMenuItem();
         private readonly ContextMenuStrip _menu = new ContextMenuStrip();
         private readonly ToolStripMenuItem _menuExtract = new ToolStripMenuItem();
         private readonly Label _sourceCaption = Ui.Caption();
@@ -72,6 +77,8 @@ namespace HddBackup.App.Forms
         private bool _settingPath;
         private bool _splitterPlaced;
         private bool _planning;
+        private bool _toolRunning;
+        private CancellationTokenSource _toolCts;
         private FsEntry _shownEntry;
         private FilePreview _shownPreview;
         private string _viewerError;
@@ -118,11 +125,13 @@ namespace HddBackup.App.Forms
             _split.Panel1.Controls.Add(_tree);
             _split.Panel2.Controls.Add(_rightPanel);
             Ui.AddRow(_root, _split, fill: true);
-            var bottom = new TableLayoutPanel { ColumnCount = 2, AutoSize = true, Dock = DockStyle.Top, Margin = new Padding(0) };
+            var bottom = new TableLayoutPanel { ColumnCount = 3, AutoSize = true, Dock = DockStyle.Top, Margin = new Padding(0) };
             bottom.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
             bottom.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            bottom.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             bottom.Controls.Add(_status, 0, 0);
-            bottom.Controls.Add(_extract, 1, 0);
+            bottom.Controls.Add(_tools, 1, 0);
+            bottom.Controls.Add(_extract, 2, 0);
             Ui.AddRow(_root, bottom);
             _status.Dock = DockStyle.None;
             _menu.Items.Add(_menuExtract);
@@ -190,6 +199,27 @@ namespace HddBackup.App.Forms
                 }
             };
             _extract.Click += (s, e) => ExtractSelected();
+            _tools.Click += (s, e) => OnToolsClick();
+            _toolsMenu.Items.Add(_menuSsh);
+            _toolsMenu.Items.Add(_menuStartup);
+            _menuStartup.Click += (s, e) => RunTool(
+                (reader, source) => StartupInventory.Run(reader, source, CancellationToken.None),
+                (result, source) =>
+                {
+                    using (var window = new StartupTasksWindow(result, _settings))
+                    {
+                        window.ShowDialog(this);
+                    }
+                });
+            _menuSsh.Click += (s, e) => RunTool(
+                (reader, source) => SshCheck.Run(reader, source, CancellationToken.None),
+                (report, source) =>
+                {
+                    using (var dialog = new SshWizardDialog(report, _settings))
+                    {
+                        dialog.ShowDialog(this);
+                    }
+                });
             _menuExtract.Click += (s, e) => ExtractSelected();
             SizeChanged += (s, e) => FitLabels();
 
@@ -211,6 +241,9 @@ namespace HddBackup.App.Forms
             _extract.Text = Strings.Get("Files_Extract");
             _menuExtract.Text = Strings.Get("Files_Extract");
             _tips.SetToolTip(_extract, Strings.Get("Tooltip_Files_Extract"));
+            RenderToolsButton();
+            _menuSsh.Text = Strings.Get("Tools_Ssh");
+            _menuStartup.Text = Strings.Get("Tools_Startup");
             _viewAuto.Text = Strings.Get("Files_ViewAuto");
             _viewText.Text = Strings.Get("Files_ViewText");
             _viewHex.Text = Strings.Get("Files_ViewHex");
@@ -706,8 +739,134 @@ namespace HddBackup.App.Forms
         {
             var entry = _tree.SelectedNode?.Tag as FsEntry;
             bool can = _view != null && entry != null && entry.Unreadable == null && !_planning;
-            _extract.Enabled = can;
-            _menuExtract.Enabled = can;
+            _extract.Enabled = can && !_toolRunning;
+            _menuExtract.Enabled = can && !_toolRunning;
+            RenderToolsButton();
+        }
+
+        /// <summary>The Tools button: a menu button, or Cancel while a tool analyses; its tooltip says why it is disabled.</summary>
+        private void RenderToolsButton()
+        {
+            if (_toolRunning)
+            {
+                _tools.Text = Strings.Get("Common_Cancel");
+                _tools.Enabled = true;
+                _tips.SetToolTip(_tools, Strings.Get("Tools_Analysing"));
+                return;
+            }
+
+            _tools.Text = Strings.Get("Tools_Button") + " ▾";
+            bool open = _view != null;
+            _tools.Enabled = open && !_planning;
+            _tips.SetToolTip(
+                _tools,
+                !open ? Strings.Get("Tools_NoFileSystem") : _planning ? Strings.Get("Tools_Busy") : Strings.Get("Tooltip_Tools"));
+        }
+
+        private void OnToolsClick()
+        {
+            if (_toolRunning)
+            {
+                _toolCts?.Cancel();
+                return;
+            }
+
+            if (_view != null && _toolsMenu.Items.Count > 0)
+            {
+                _toolsMenu.Show(_tools, new Point(0, _tools.Height));
+            }
+        }
+
+        private DiagnosticsSource BuildToolSource()
+        {
+            var item = _partition.SelectedItem as PartitionItem;
+            if (item == null || _view == null)
+            {
+                return null;
+            }
+
+            var p = item.Partition;
+            bool device = DeviceMode;
+            return new DiagnosticsSource
+            {
+                ImagePath = device ? null : _openedPath,
+                Device = device ? _openedDevice : null,
+                PartitionNumber = p.Number,
+                DisplayName = device ? new DeviceItem(_openedDevice).ToString() : Path.GetFileName(_openedPath ?? string.Empty),
+                State = p.State,
+                HasUnreadBootPartition = _source != null
+                    && _source.Partitions.Any(x => x.Number != p.Number && x.FileSystem != null && x.FileSystem.StartsWith("FAT", StringComparison.OrdinalIgnoreCase))
+            };
+        }
+
+        /// <summary>
+        /// Runs a read-only diagnostic tool on its own handle of the opened source (not the tab's
+        /// view, so the tree stays responsive), then shows its result. Cancel stops it; a read error
+        /// is shown in the status line and no window opens.
+        /// </summary>
+        private async void RunTool<T>(Func<SystemReader, DiagnosticsSource, T> tool, Action<T, DiagnosticsSource> show)
+        {
+            var source = BuildToolSource();
+            if (source == null || _toolRunning)
+            {
+                return;
+            }
+
+            var openedView = _view;
+            var cts = new CancellationTokenSource();
+            _toolCts = cts;
+            _toolRunning = true;
+            UpdateExtractEnabled();
+            UseWaitCursor = true;
+            SetStatus(() => Strings.Get("Tools_Analysing"), false);
+            T result;
+            try
+            {
+                result = await Task.Run(() => DiagnosticsRunner.Run(_access, source, tool, cts.Token));
+            }
+            catch (OperationCanceledException)
+            {
+                result = default(T);
+                cts.Cancel();
+            }
+            catch (Exception ex) when (ex is ImagingException || ex is ObjectDisposedException || ex is IOException || ex is UnauthorizedAccessException)
+            {
+                if (!IsDisposed)
+                {
+                    ShowReadError(ex);
+                }
+
+                result = default(T);
+                cts.Cancel();
+            }
+            finally
+            {
+                _toolRunning = false;
+                _toolCts = null;
+                if (!IsDisposed)
+                {
+                    UseWaitCursor = false;
+                    UpdateExtractEnabled();
+                }
+            }
+
+            if (cts.IsCancellationRequested || IsDisposed)
+            {
+                if (!IsDisposed && _view != null && _statusText().Equals(Strings.Get("Tools_Analysing")))
+                {
+                    RenderCounts();
+                }
+
+                return;
+            }
+
+            if (!ReferenceEquals(openedView, _view))
+            {
+                return; // another file system was opened meanwhile; the result belongs to the old one
+            }
+
+            RenderCounts();
+            show(result, source);
         }
 
         /// <summary>
