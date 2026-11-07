@@ -1445,4 +1445,7 @@ Kleinstmögliches Abbild: {2}</value>
   <data name="Ssh_F_AccountKeysUnknown" xml:space="preserve">
     <value>Die autorisierten Schlüssel von {0} konnten nicht geprüft werden.</value>
   </data>
+  <data name="Startup_Legend" xml:space="preserve">
+    <value>Blau: Linux-Standard (gehört zum System). Schwarz: von einer Person hinzugefügt oder geändert. Grau: wird nicht ausgeführt.</value>
+  </data>
 </root>

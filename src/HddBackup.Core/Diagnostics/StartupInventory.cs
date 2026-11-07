@@ -60,9 +60,15 @@ namespace HddBackup.Core.Diagnostics
                 notes.Add(new StartupNote(StartupNoteCode.CronNotEnabled));
             }
 
+            foreach (var e in entries)
+            {
+                e.Origin = OriginOf(e);
+            }
+
             var sorted = entries
                 .OrderBy(e => e.Active ? 0 : 1)
                 .ThenBy(e => (int)e.Kind)
+                .ThenBy(e => (int)e.Origin) // what a person added comes first within its kind
                 .ThenBy(e => e.Name, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(e => e.User, StringComparer.Ordinal)
                 .ThenBy(e => e.Source, StringComparer.Ordinal)
@@ -76,6 +82,35 @@ namespace HddBackup.Core.Diagnostics
             result.Entries = sorted;
             result.Notes = notes;
             return result;
+        }
+
+        /// <summary>Standard = shipped by the distribution: vendor units, system autostart, package cron files, init scripts.</summary>
+        internal static EntryOrigin OriginOf(StartupEntry e)
+        {
+            string c = e.Command ?? string.Empty;
+            if (c.Contains("/usr/local/") || c.Contains("/home/") || c.Contains("/opt/") || c.Contains("/root/"))
+            {
+                return EntryOrigin.Custom;
+            }
+
+            switch (e.Kind)
+            {
+                case StartupKind.Service:
+                case StartupKind.Timer:
+                case StartupKind.Socket:
+                    string unit = e.Evidence.Count > 1 ? e.Evidence[1] : string.Empty;
+                    return unit.StartsWith("/usr/lib/systemd/system/", StringComparison.Ordinal) || unit.StartsWith("/lib/systemd/system/", StringComparison.Ordinal)
+                        ? EntryOrigin.Standard
+                        : EntryOrigin.Custom;
+                case StartupKind.BootScript:
+                    return e.Source == "/etc/rc.local" ? EntryOrigin.Custom : EntryOrigin.Standard;
+                case StartupKind.Desktop:
+                    return e.User.Length == 0 ? EntryOrigin.Standard : EntryOrigin.Custom;
+                case StartupKind.Cron:
+                    return e.Source.StartsWith("/var/spool/cron", StringComparison.Ordinal) ? EntryOrigin.Custom : EntryOrigin.Standard;
+                default:
+                    return EntryOrigin.Custom;
+            }
         }
 
         private static void SystemdEntries(SystemdScan systemd, List<StartupEntry> entries, List<KeyValuePair<string, string>> homes)

@@ -1445,4 +1445,7 @@ Plus petite image possible : {2}</value>
   <data name="Ssh_F_AccountKeysUnknown" xml:space="preserve">
     <value>Les clés autorisées de {0} n’ont pas pu être vérifiées.</value>
   </data>
+  <data name="Startup_Legend" xml:space="preserve">
+    <value>Bleu : standard sous Linux (fourni avec le système). Noir : ajouté ou modifié par une personne. Gris : ne s’exécutera pas.</value>
+  </data>
 </root>
