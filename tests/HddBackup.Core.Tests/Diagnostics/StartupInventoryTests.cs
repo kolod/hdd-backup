@@ -34,7 +34,7 @@ namespace HddBackup.Core.Tests.Diagnostics
             b.Dir("/home/pi").Dir("/root");
             b.Executable("/usr/sbin/cron");
 
-            foreach (string n in new[] { "cron", "rsyslog", "ssh", "avahi-daemon", "bluetooth", "wpa_supplicant", "NetworkManager", "triggerhappy", "dphys-swapfile", "rpi-eeprom-update", "ModemManager", "polkit" })
+            foreach (string n in new[] { "cron", "rsyslog", "ssh", "avahi-daemon", "bluetooth", "wpa_supplicant", "NetworkManager", "triggerhappy", "dphys-swapfile", "rpi-eeprom-update", "ModemManager", "polkit", "unattended-upgrades" })
             {
                 Svc(b, n, "/usr/sbin/" + n + " -f");
             }
@@ -89,19 +89,19 @@ namespace HddBackup.Core.Tests.Diagnostics
 
         private static string Key(StartupEntry e) => e.Kind + "|" + e.Name + "|" + e.User + "|" + e.Source;
 
-        // Kind|Name|User|Source — the expected active list, 42 entries.
+        // Kind|Name|User|Source — the expected active list, 41 entries.
         private static readonly string[] ExpectedActive =
         {
             "Service|cron.service|root|multi-user.target", "Service|rsyslog.service|root|multi-user.target", "Service|ssh.service|root|multi-user.target",
             "Service|avahi-daemon.service|root|multi-user.target", "Service|bluetooth.service|root|multi-user.target", "Service|wpa_supplicant.service|root|multi-user.target",
             "Service|NetworkManager.service|root|multi-user.target", "Service|triggerhappy.service|root|multi-user.target", "Service|dphys-swapfile.service|root|multi-user.target",
-            "Service|rpi-eeprom-update.service|root|multi-user.target", "Service|ModemManager.service|root|multi-user.target", "Service|polkit.service|root|multi-user.target",
+            "Service|rpi-eeprom-update.service|root|multi-user.target", "Service|ModemManager.service|root|multi-user.target", "Service|polkit.service|root|multi-user.target", "Service|unattended-upgrades.service|root|multi-user.target",
             "Service|getty@tty1.service|root|getty.target", "Service|lightdm.service|root|graphical.target",
             "Timer|apt-daily.timer|root|timers.target", "Timer|apt-daily-upgrade.timer|root|timers.target", "Timer|man-db.timer|root|timers.target",
             "Timer|logrotate.timer|root|timers.target", "Timer|fstrim.timer|root|timers.target", "Timer|e2scrub_all.timer|root|timers.target",
             "Socket|avahi-daemon.socket||sockets.target", "Socket|syslog.socket||sockets.target",
             "UserService|sync.service|pi|default.target",
-            "BootScript|led-on.sh|root|/etc/rc.local", "BootScript|announce-ip.sh|root|/etc/rc.local",
+            "BootScript|rc.local|root|/etc/rc.local",
             "Desktop|Network Manager Applet||/etc/xdg/autostart/nm-applet.desktop", "Desktop|LXPolKit||/etc/xdg/autostart/lxpolkit.desktop",
             "Desktop|Pulse||/etc/xdg/autostart/pulse.desktop", "Desktop|Dashboard|pi|/home/pi/.config/autostart/dashboard.desktop",
             "Desktop|lxpanel||/etc/xdg/lxsession/LXDE-pi/autostart", "Desktop|pcmanfm||/etc/xdg/lxsession/LXDE-pi/autostart", "Desktop|wallpaper.sh||/etc/xdg/lxsession/LXDE-pi/autostart",
@@ -172,7 +172,7 @@ namespace HddBackup.Core.Tests.Diagnostics
             Assert.Equal(ScheduleClass.AtBoot, byName["start-tunnel.sh"].Schedule.Class);
             Assert.Equal(ScheduleClass.WeeklyOn, byName["weekly-report.sh"].Schedule.Class);
             Assert.Equal("06:25", byName["logrotate"].Schedule.Times[0].ToString());
-            Assert.Equal(ScheduleClass.AtBoot, byName["led-on.sh"].Schedule.Class);
+            Assert.Equal(ScheduleClass.AtBoot, byName["rc.local"].Schedule.Class);
             Assert.Null(byName["cron.service"].Schedule);
         }
 
@@ -196,7 +196,7 @@ namespace HddBackup.Core.Tests.Diagnostics
         {
             var r = Run(ReferenceSystem());
 
-            Assert.Equal("/home/pi/announce-ip.sh &", r.Entries.Single(e => e.Name == "announce-ip.sh").Command);
+            Assert.Equal("/usr/local/bin/led-on.sh; /home/pi/announce-ip.sh &", r.Entries.Single(e => e.Name == "rc.local").Command);
             Assert.Equal("nm-applet", r.Entries.Single(e => e.Name == "Network Manager Applet").Command);
             Assert.Equal("test -e /run/systemd/system || SERVICE_MODE=1 /usr/lib/e2fsprogs/e2scrub_all_cron", r.Entries.Single(e => e.Name == "e2scrub_all_cron").Command);
         }

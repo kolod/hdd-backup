@@ -28,7 +28,7 @@ namespace HddBackup.Core.Tests.Diagnostics
             Assert.Equal(EntryOrigin.Standard, Find(r, "logrotate", null).Origin);
 
             Assert.Equal(EntryOrigin.Custom, Find(r, "sync.service").Origin);
-            Assert.Equal(EntryOrigin.Custom, Find(r, "led-on.sh").Origin);
+            Assert.Equal(EntryOrigin.Custom, Find(r, "rc.local").Origin);
             Assert.Equal(EntryOrigin.Custom, Find(r, "Dashboard").Origin);
             Assert.Equal(EntryOrigin.Custom, Find(r, "backup.sh").Origin);
             Assert.Equal(EntryOrigin.Custom, Find(r, "start-tunnel.sh").Origin);

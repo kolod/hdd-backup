@@ -58,7 +58,7 @@ namespace HddBackup.Core.Tests.Diagnostics
             var r = Run("diag-startup");
             var e = r.Entries.ToLookup(x => x.Name);
 
-            Assert.Equal(2, r.Entries.Count(x => x.Kind == StartupKind.BootScript && x.Active));
+            Assert.Equal(1, r.Entries.Count(x => x.Kind == StartupKind.BootScript && x.Active));
             Assert.Equal(InactiveReason.HiddenEntry, e["Keyring"].Single().InactiveReason);
             var pulse = r.Entries.Where(x => x.Source.EndsWith("/pulseaudio-start.desktop")).ToList();
             Assert.Equal(2, pulse.Count);

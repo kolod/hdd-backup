@@ -44,20 +44,24 @@ namespace HddBackup.Core.Diagnostics
             }
 
             bool executable = (info.Mode & 0x49) != 0;
-            foreach (string line in Statements(reader.ReadLines(path)))
+            // /etc/rc.local is one boot script: a single entry that shows what it runs.
+            var statements = Statements(reader.ReadLines(path)).ToList();
+            if (statements.Count == 0)
             {
-                entries.Add(new StartupEntry
-                {
-                    Kind = StartupKind.BootScript,
-                    Name = StatementName(line),
-                    Command = line,
-                    Schedule = CronSchedule.AtBoot(string.Empty),
-                    User = "root",
-                    Source = path,
-                    InactiveReason = executable ? InactiveReason.None : InactiveReason.NotExecutable,
-                    Evidence = new[] { path }
-                });
+                return;
             }
+
+            entries.Add(new StartupEntry
+            {
+                Kind = StartupKind.BootScript,
+                Name = "rc.local",
+                Command = string.Join("; ", statements.Select(x => x.TrimEnd(';'))),
+                Schedule = CronSchedule.AtBoot(string.Empty),
+                User = "root",
+                Source = path,
+                InactiveReason = executable ? InactiveReason.None : InactiveReason.NotExecutable,
+                Evidence = new[] { path }
+            });
         }
 
         /// <summary>
@@ -122,12 +126,6 @@ namespace HddBackup.Core.Diagnostics
             }
 
             return sb.ToString();
-        }
-
-        private static string StatementName(string statement)
-        {
-            string first = statement.Split(' ', ';')[0];
-            return first == "if" || first == "for" || first == "while" || first == "case" ? first : CronScan.NameOf(statement);
         }
 
         private static bool IsExit(string line)
