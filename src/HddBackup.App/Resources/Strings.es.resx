@@ -1436,4 +1436,13 @@ Imagen más pequeña posible: {2}</value>
   <data name="Dialog_ReportFilter" xml:space="preserve">
     <value>Archivos de texto (*.txt)|*.txt|Todos los archivos (*.*)|*.*</value>
   </data>
+  <data name="Ssh_F_AccountKeys" xml:space="preserve">
+    <value>{0} tiene {1} clave(s) autorizada(s) instalada(s).</value>
+  </data>
+  <data name="Ssh_F_AccountNoKeys" xml:space="preserve">
+    <value>{0} no tiene ninguna clave autorizada instalada.</value>
+  </data>
+  <data name="Ssh_F_AccountKeysUnknown" xml:space="preserve">
+    <value>No se pudieron comprobar las claves autorizadas de {0}.</value>
+  </data>
 </root>

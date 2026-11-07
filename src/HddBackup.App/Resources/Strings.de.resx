@@ -1436,4 +1436,13 @@ Kleinstmögliches Abbild: {2}</value>
   <data name="Dialog_ReportFilter" xml:space="preserve">
     <value>Textdateien (*.txt)|*.txt|Alle Dateien (*.*)|*.*</value>
   </data>
+  <data name="Ssh_F_AccountKeys" xml:space="preserve">
+    <value>Für {0} sind {1} autorisierte Schlüssel installiert.</value>
+  </data>
+  <data name="Ssh_F_AccountNoKeys" xml:space="preserve">
+    <value>Für {0} ist kein autorisierter Schlüssel installiert.</value>
+  </data>
+  <data name="Ssh_F_AccountKeysUnknown" xml:space="preserve">
+    <value>Die autorisierten Schlüssel von {0} konnten nicht geprüft werden.</value>
+  </data>
 </root>
