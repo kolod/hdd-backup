@@ -205,6 +205,23 @@ namespace HddBackup.Core.Tests.Diagnostics
         }
 
         [Fact]
+        public void KeysInstalledForUsersAreReportedPerAccount()
+        {
+            var withKey = SshCheck.Run(Build(new Case { PiKey = true }).Reader(), new DiagnosticsSource(), System.Threading.CancellationToken.None);
+            var noKey = SshCheck.Run(Build(new Case { Config = "PasswordAuthentication no\nKbdInteractiveAuthentication no\n" }).Reader(), new DiagnosticsSource(), System.Threading.CancellationToken.None);
+            var viaCommand = SshCheck.Run(Build(new Case { Config = "AuthorizedKeysCommand /bin/keys\n" }).Reader(), new DiagnosticsSource(), System.Threading.CancellationToken.None);
+
+            var ok = withKey.Findings.Single(f => f.Code == FindingCode.AccountKeys);
+            Assert.Equal(new[] { "pi", "1" }, ok.Args);
+            Assert.Equal(FindingStatus.Ok, ok.Status);
+            var none = noKey.Findings.Single(f => f.Code == FindingCode.AccountNoKeys && f.Args[0] == "pi");
+            Assert.Equal("pi", none.Args[0]);
+            Assert.Equal(FindingStatus.Problem, none.Status);
+            Assert.Contains(withKey.Findings, f => f.Code == FindingCode.AccountNoKeys && f.Args[0] == "root");
+            Assert.Contains(viaCommand.Findings, f => f.Code == FindingCode.AccountKeysUnknown && f.Args[0] == "pi");
+        }
+
+        [Fact]
         public void TheMatrixHasAtLeastAScoreOfConfigurations()
         {
             Assert.True(All().Count() >= 12);

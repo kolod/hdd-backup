@@ -29,10 +29,23 @@ namespace HddBackup.Core.Diagnostics
 
         public InactiveReason InactiveReason { get; internal set; }
 
+        /// <summary>
+        /// <see cref="EntryOrigin.Standard"/> for entries that come with the distribution (vendor unit files, system
+        /// autostart files, package cron files); a heuristic from the place of the file and the command.
+        /// </summary>
+        public EntryOrigin Origin { get; internal set; }
+
         public bool Active => InactiveReason == InactiveReason.None;
 
         /// <summary>Image paths the entry rests on.</summary>
         public IReadOnlyList<string> Evidence { get; internal set; } = Array.Empty<string>();
+    }
+
+    /// <summary>Whether an entry is what a Linux distribution ships, or something a person added or changed.</summary>
+    public enum EntryOrigin
+    {
+        Custom,
+        Standard
     }
 
     /// <summary>Things the user should know about the list as a whole.</summary>

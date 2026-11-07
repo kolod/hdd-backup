@@ -44,26 +44,88 @@ namespace HddBackup.Core.Diagnostics
             }
 
             bool executable = (info.Mode & 0x49) != 0;
-            foreach (string raw in reader.ReadLines(path))
+            // /etc/rc.local is one boot script: a single entry that shows what it runs.
+            var statements = Statements(reader.ReadLines(path)).ToList();
+            if (statements.Count == 0)
+            {
+                return;
+            }
+
+            entries.Add(new StartupEntry
+            {
+                Kind = StartupKind.BootScript,
+                Name = "rc.local",
+                Command = string.Join("; ", statements.Select(x => x.TrimEnd(';'))),
+                Schedule = CronSchedule.AtBoot(string.Empty),
+                User = "root",
+                Source = path,
+                InactiveReason = executable ? InactiveReason.None : InactiveReason.NotExecutable,
+                Evidence = new[] { path }
+            });
+        }
+
+        /// <summary>
+        /// One statement per command line; an <c>if … fi</c> block (or a <c>for</c>/<c>while</c> loop) is one statement,
+        /// so that keywords such as <c>then</c> and <c>fi</c> do not show up as commands of their own.
+        /// </summary>
+        internal static IEnumerable<string> Statements(IEnumerable<string> lines)
+        {
+            var block = new List<string>();
+            int depth = 0;
+            foreach (string raw in lines)
             {
                 string line = raw.Trim();
-                if (line.Length == 0 || line[0] == '#' || IsExit(line))
+                if (line.Length == 0 || line[0] == '#' || (depth == 0 && IsExit(line)))
                 {
                     continue;
                 }
 
-                entries.Add(new StartupEntry
+                string first = line.Split(' ', '	', ';')[0];
+                if (first == "if" || first == "for" || first == "while" || first == "case")
                 {
-                    Kind = StartupKind.BootScript,
-                    Name = CronScan.NameOf(line),
-                    Command = line,
-                    Schedule = CronSchedule.AtBoot(string.Empty),
-                    User = "root",
-                    Source = path,
-                    InactiveReason = executable ? InactiveReason.None : InactiveReason.NotExecutable,
-                    Evidence = new[] { path }
-                });
+                    depth++;
+                }
+
+                block.Add(line);
+                if (first == "fi" || first == "done" || first == "esac")
+                {
+                    depth = Math.Max(0, depth - 1);
+                }
+
+                if (depth == 0)
+                {
+                    yield return JoinBlock(block);
+                    block.Clear();
+                }
             }
+
+            if (block.Count > 0)
+            {
+                yield return JoinBlock(block);
+            }
+        }
+
+        /// <summary>Lines of one block joined the way a shell reads them: with ";" unless a keyword or ";" already ends the line.</summary>
+        private static string JoinBlock(List<string> lines)
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < lines.Count; i++)
+            {
+                string l = lines[i];
+                sb.Append(l);
+                if (i < lines.Count - 1 && !l.EndsWith(";", StringComparison.Ordinal) && !l.EndsWith("then", StringComparison.Ordinal)
+                    && !l.EndsWith("else", StringComparison.Ordinal) && !l.EndsWith("do", StringComparison.Ordinal))
+                {
+                    sb.Append(';');
+                }
+
+                if (i < lines.Count - 1)
+                {
+                    sb.Append(' ');
+                }
+            }
+
+            return sb.ToString();
         }
 
         private static bool IsExit(string line)

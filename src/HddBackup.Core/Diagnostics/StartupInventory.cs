@@ -60,9 +60,25 @@ namespace HddBackup.Core.Diagnostics
                 notes.Add(new StartupNote(StartupNoteCode.CronNotEnabled));
             }
 
+            var packages = new PackageOwnership(reader);
+            foreach (var e in entries)
+            {
+                e.Origin = OriginOf(e);
+                if (e.Origin == EntryOrigin.Standard && packages.Available)
+                {
+                    // A file in /etc that no package lists was put there by a person, whatever its name looks like.
+                    string file = ConfigFileOf(e);
+                    if (file != null && packages.Owns(file) == false)
+                    {
+                        e.Origin = EntryOrigin.Custom;
+                    }
+                }
+            }
+
             var sorted = entries
                 .OrderBy(e => e.Active ? 0 : 1)
                 .ThenBy(e => (int)e.Kind)
+                .ThenBy(e => (int)e.Origin) // what a person added comes first within its kind
                 .ThenBy(e => e.Name, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(e => e.User, StringComparer.Ordinal)
                 .ThenBy(e => e.Source, StringComparer.Ordinal)
@@ -76,6 +92,52 @@ namespace HddBackup.Core.Diagnostics
             result.Entries = sorted;
             result.Notes = notes;
             return result;
+        }
+
+        /// <summary>Standard = shipped by the distribution: vendor units, system autostart, package cron files, init scripts.</summary>
+        internal static EntryOrigin OriginOf(StartupEntry e)
+        {
+            string c = e.Command ?? string.Empty;
+            if (c.Contains("/usr/local/") || c.Contains("/home/") || c.Contains("/opt/") || c.Contains("/root/"))
+            {
+                return EntryOrigin.Custom;
+            }
+
+            switch (e.Kind)
+            {
+                case StartupKind.Service:
+                case StartupKind.Timer:
+                case StartupKind.Socket:
+                    string unit = e.Evidence.Count > 1 ? e.Evidence[1] : string.Empty;
+                    return unit.StartsWith("/usr/lib/systemd/system/", StringComparison.Ordinal) || unit.StartsWith("/lib/systemd/system/", StringComparison.Ordinal)
+                        ? EntryOrigin.Standard
+                        : EntryOrigin.Custom;
+                case StartupKind.BootScript:
+                    return e.Source == "/etc/rc.local" ? EntryOrigin.Custom : EntryOrigin.Standard;
+                case StartupKind.Desktop:
+                    return e.User.Length == 0 ? EntryOrigin.Standard : EntryOrigin.Custom;
+                case StartupKind.Cron:
+                    return e.Source.StartsWith("/var/spool/cron", StringComparison.Ordinal) ? EntryOrigin.Custom : EntryOrigin.Standard;
+                default:
+                    return EntryOrigin.Custom;
+            }
+        }
+
+        /// <summary>The file in /etc an entry stands on, when package ownership can tell something about it.</summary>
+        private static string ConfigFileOf(StartupEntry e)
+        {
+            switch (e.Kind)
+            {
+                case StartupKind.BootScript:
+                    return e.Command.StartsWith("/etc/init.d/", StringComparison.Ordinal) ? e.Command : null;
+                case StartupKind.Desktop:
+                    return e.Source.StartsWith("/etc/", StringComparison.Ordinal) ? e.Source : null;
+                case StartupKind.Cron:
+                    string path = e.Evidence.Count > 0 ? e.Evidence[0] : null;
+                    return path != null && path.StartsWith("/etc/", StringComparison.Ordinal) && path != "/etc/crontab" ? path : null;
+                default:
+                    return null;
+            }
         }
 
         private static void SystemdEntries(SystemdScan systemd, List<StartupEntry> entries, List<KeyValuePair<string, string>> homes)

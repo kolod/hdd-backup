@@ -1436,4 +1436,16 @@
   <data name="Dialog_ReportFilter" xml:space="preserve">
     <value>Текстові файли (*.txt)|*.txt|Усі файли (*.*)|*.*</value>
   </data>
+  <data name="Ssh_F_AccountKeys" xml:space="preserve">
+    <value>Для {0} встановлено авторизованих ключів: {1}.</value>
+  </data>
+  <data name="Ssh_F_AccountNoKeys" xml:space="preserve">
+    <value>Для {0} не встановлено жодного авторизованого ключа.</value>
+  </data>
+  <data name="Ssh_F_AccountKeysUnknown" xml:space="preserve">
+    <value>Авторизовані ключі {0} не вдалося перевірити.</value>
+  </data>
+  <data name="Startup_Legend" xml:space="preserve">
+    <value>Синій: стандартне для Linux (постачається із системою). Чорний: додано або змінено людиною. Сірий: не виконуватиметься.</value>
+  </data>
 </root>

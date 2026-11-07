@@ -88,6 +88,9 @@ namespace HddBackup.Core.Diagnostics
         KeysFromCommand,
         AccountCanLogIn,
         AccountCannot,
+        AccountKeys,
+        AccountNoKeys,
+        AccountKeysUnknown,
         NoRegularAccount,
         ShadowUnreadable,
         ConfigMissing

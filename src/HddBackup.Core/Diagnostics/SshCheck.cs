@@ -296,6 +296,22 @@ namespace HddBackup.Core.Diagnostics
                 }
             }
 
+            foreach (var a in shown.Where(x => !x.IsSystemAccount && x.HasUsableShell))
+            {
+                if (a.KeyCount > 0)
+                {
+                    findings.Add(new Finding(FindingCode.AccountKeys, FindingStatus.Ok, 3, new[] { a.Name, a.KeyCount.ToString(System.Globalization.CultureInfo.InvariantCulture) }));
+                }
+                else if (a.KeysUnknown)
+                {
+                    findings.Add(new Finding(FindingCode.AccountKeysUnknown, FindingStatus.Unknown, 3, new[] { a.Name }));
+                }
+                else
+                {
+                    findings.Add(new Finding(FindingCode.AccountNoKeys, a.CanLogInWithPassword == LoginAnswer.Yes ? FindingStatus.Info : FindingStatus.Problem, 3, new[] { a.Name }));
+                }
+            }
+
             if (root.IsRaspberryPiOs && !shown.Any(a => a.Name != "root" && !a.IsSystemAccount))
             {
                 findings.Add(new Finding(FindingCode.NoRegularAccount, FindingStatus.Info, 3));

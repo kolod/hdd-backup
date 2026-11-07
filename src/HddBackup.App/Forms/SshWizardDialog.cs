@@ -38,6 +38,7 @@ namespace HddBackup.App.Forms
             MultiSelect = false
         };
         private readonly NoteListPanel _server = new NoteListPanel();
+        private readonly NoteListPanel _keyNotes = new NoteListPanel { Dock = DockStyle.Bottom, Height = 130 };
         private readonly NoteListPanel _settings = new NoteListPanel();
         private readonly Panel _verdictBanner = new Panel { Dock = DockStyle.Top, AutoSize = true, Padding = new Padding(12) };
         private readonly Label _verdictText = new Label { AutoSize = true, UseMnemonic = false };
@@ -148,6 +149,7 @@ namespace HddBackup.App.Forms
             _showSystem.Dock = DockStyle.Bottom;
             _showSystem.CheckedChanged += (s, e) => FillAccounts();
             page.Controls.Add(_accounts);
+            page.Controls.Add(_keyNotes);
             page.Controls.Add(_showSystem);
         }
 
@@ -210,6 +212,9 @@ namespace HddBackup.App.Forms
         {
             _server.SetItems(_report.Findings.Where(f => f.Page == 1).Select(ToItem));
             _settings.SetItems(_report.Findings.Where(f => f.Page == 2).Select(ToItem));
+            _keyNotes.SetItems(_report.Findings
+                .Where(f => f.Code == FindingCode.AccountKeys || f.Code == FindingCode.AccountNoKeys || f.Code == FindingCode.AccountKeysUnknown)
+                .Select(ToItem));
             FillAccounts();
             FillResult();
         }

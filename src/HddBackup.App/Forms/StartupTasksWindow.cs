@@ -42,6 +42,10 @@ namespace HddBackup.App.Forms
         private readonly Button _save = Ui.Button();
         private readonly Label _reportStatus = new Label { AutoSize = true, UseMnemonic = false, Margin = new Padding(0, 0, 0, 2) };
         private readonly PortableSettings _settings;
+        /// <summary>Entries that come with the distribution; everything the person added stays in the normal text colour.</summary>
+        private static readonly Color StandardColor = Color.FromArgb(0x2B, 0x5C, 0x9E);
+
+        private readonly Label _legend = new Label { AutoSize = true, UseMnemonic = false, ForeColor = StandardColor, Margin = new Padding(0, 0, 0, 2) };
         private int _sortColumn = -1;
         private bool _sortDescending;
 
@@ -89,6 +93,7 @@ namespace HddBackup.App.Forms
 
             var below = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Top, FlowDirection = FlowDirection.TopDown, WrapContents = false, Margin = new Padding(0) };
             below.Controls.Add(_counts);
+            below.Controls.Add(_legend);
             below.Controls.Add(_notes);
             below.Controls.Add(_verbatim);
             root.Controls.Add(below, 0, 3);
@@ -136,6 +141,7 @@ namespace HddBackup.App.Forms
             _search.TextChanged += (s, e) => Fill();
             _onlyActive.CheckedChanged += (s, e) => Fill();
             _verbatim.Text = Strings.Get("Startup_Verbatim");
+            _legend.Text = Strings.Get("Startup_Legend");
             Fill();
         }
 
@@ -193,6 +199,7 @@ namespace HddBackup.App.Forms
                 }
 
                 _verbatim.Visible = false;
+                _legend.Visible = false;
                 _copy.Visible = _save.Visible = false;
                 _list.Visible = false;
                 _empty.Text = Strings.Get("Ssh_NotLinux");
@@ -223,6 +230,10 @@ namespace HddBackup.App.Forms
                 if (!e.Active)
                 {
                     item.ForeColor = SystemColors.GrayText;
+                }
+                else if (e.Origin == EntryOrigin.Standard)
+                {
+                    item.ForeColor = StandardColor;
                 }
 
                 _list.Items.Add(item);

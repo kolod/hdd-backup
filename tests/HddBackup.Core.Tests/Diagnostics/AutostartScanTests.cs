@@ -25,11 +25,10 @@ namespace HddBackup.Core.Tests.Diagnostics
 
             var e = Scan(b);
 
-            Assert.Equal(2, e.Count);
+            Assert.Single(e);
             Assert.All(e, x => Assert.Equal(StartupKind.BootScript, x.Kind));
-            Assert.Equal("led-on.sh", e[0].Name);
-            Assert.Equal("/usr/local/bin/led-on.sh", e[0].Command);
-            Assert.Equal("/home/pi/announce-ip.sh &", e[1].Command);
+            Assert.Equal("rc.local", e[0].Name);
+            Assert.Equal("/usr/local/bin/led-on.sh; /home/pi/announce-ip.sh &", e[0].Command);
             Assert.Equal(ScheduleClass.AtBoot, e[0].Schedule.Class);
             Assert.Equal("/etc/rc.local", e[0].Source);
             Assert.All(e, x => Assert.True(x.Active));
@@ -181,6 +180,20 @@ namespace HddBackup.Core.Tests.Diagnostics
 
             Assert.Equal(InactiveReason.Unreadable, e["bad"].InactiveReason);
             Assert.True(e["Good"].Active);
+        }
+
+        [Fact]
+        public void RcLocalIsOneEntryEvenWithShellBlocks()
+        {
+            var b = new LinuxRootBuilder().Executable("/etc/rc.local", "#!/bin/sh -e\n_IP=$(hostname -I) || true\nif [ \"$_IP\" ]; then\n  printf \"My IP is %s\\n\" \"$_IP\"\nfi\n/usr/local/bin/led-on.sh\nexit 0\n");
+
+            var e = Scan(b);
+
+            var rc = Assert.Single(e);
+            Assert.Equal("rc.local", rc.Name);
+            Assert.Contains("if [ \"$_IP\" ]; then printf", rc.Command);
+            Assert.Contains("; fi; /usr/local/bin/led-on.sh", rc.Command);
+            Assert.DoesNotContain("exit", rc.Command);
         }
 
         [Theory]

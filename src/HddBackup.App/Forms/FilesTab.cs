@@ -206,19 +206,13 @@ namespace HddBackup.App.Forms
                 (reader, source) => StartupInventory.Run(reader, source, CancellationToken.None),
                 (result, source) =>
                 {
-                    using (var window = new StartupTasksWindow(result, _settings))
-                    {
-                        window.ShowDialog(this);
-                    }
+                    ShowTool(new StartupTasksWindow(result, _settings));
                 });
             _menuSsh.Click += (s, e) => RunTool(
                 (reader, source) => SshCheck.Run(reader, source, CancellationToken.None),
                 (report, source) =>
                 {
-                    using (var dialog = new SshWizardDialog(report, _settings))
-                    {
-                        dialog.ShowDialog(this);
-                    }
+                    ShowTool(new SshWizardDialog(report, _settings));
                 });
             _menuExtract.Click += (s, e) => ExtractSelected();
             SizeChanged += (s, e) => FitLabels();
@@ -775,6 +769,16 @@ namespace HddBackup.App.Forms
             {
                 _toolsMenu.Show(_tools, new Point(0, _tools.Height));
             }
+        }
+
+        /// <summary>
+        /// Opens a result window that does not block the main window (the person can keep browsing, or open the other
+        /// tool); it belongs to the main window, so it closes and minimizes with it, and it holds no handle on the source.
+        /// </summary>
+        private void ShowTool(Form window)
+        {
+            window.FormClosed += (s, e) => window.Dispose();
+            window.Show(FindForm());
         }
 
         private DiagnosticsSource BuildToolSource()

@@ -1436,4 +1436,16 @@ Smallest possible image: {2}</value>
   <data name="Dialog_ReportFilter" xml:space="preserve">
     <value>Text files (*.txt)|*.txt|All files (*.*)|*.*</value>
   </data>
+  <data name="Ssh_F_AccountKeys" xml:space="preserve">
+    <value>{0} has {1} authorized key(s) installed.</value>
+  </data>
+  <data name="Ssh_F_AccountNoKeys" xml:space="preserve">
+    <value>{0} has no authorized key installed.</value>
+  </data>
+  <data name="Ssh_F_AccountKeysUnknown" xml:space="preserve">
+    <value>The authorized keys of {0} could not be checked.</value>
+  </data>
+  <data name="Startup_Legend" xml:space="preserve">
+    <value>Blue: standard for Linux (comes with the system). Black: added or changed by a person. Grey: will not run.</value>
+  </data>
 </root>
