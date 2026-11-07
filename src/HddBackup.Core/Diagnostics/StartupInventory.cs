@@ -60,9 +60,19 @@ namespace HddBackup.Core.Diagnostics
                 notes.Add(new StartupNote(StartupNoteCode.CronNotEnabled));
             }
 
+            var packages = new PackageOwnership(reader);
             foreach (var e in entries)
             {
                 e.Origin = OriginOf(e);
+                if (e.Origin == EntryOrigin.Standard && packages.Available)
+                {
+                    // A file in /etc that no package lists was put there by a person, whatever its name looks like.
+                    string file = ConfigFileOf(e);
+                    if (file != null && packages.Owns(file) == false)
+                    {
+                        e.Origin = EntryOrigin.Custom;
+                    }
+                }
             }
 
             var sorted = entries
@@ -110,6 +120,23 @@ namespace HddBackup.Core.Diagnostics
                     return e.Source.StartsWith("/var/spool/cron", StringComparison.Ordinal) ? EntryOrigin.Custom : EntryOrigin.Standard;
                 default:
                     return EntryOrigin.Custom;
+            }
+        }
+
+        /// <summary>The file in /etc an entry stands on, when package ownership can tell something about it.</summary>
+        private static string ConfigFileOf(StartupEntry e)
+        {
+            switch (e.Kind)
+            {
+                case StartupKind.BootScript:
+                    return e.Command.StartsWith("/etc/init.d/", StringComparison.Ordinal) ? e.Command : null;
+                case StartupKind.Desktop:
+                    return e.Source.StartsWith("/etc/", StringComparison.Ordinal) ? e.Source : null;
+                case StartupKind.Cron:
+                    string path = e.Evidence.Count > 0 ? e.Evidence[0] : null;
+                    return path != null && path.StartsWith("/etc/", StringComparison.Ordinal) && path != "/etc/crontab" ? path : null;
+                default:
+                    return null;
             }
         }
 

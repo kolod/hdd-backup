@@ -183,6 +183,20 @@ namespace HddBackup.Core.Tests.Diagnostics
             Assert.True(e["Good"].Active);
         }
 
+        [Fact]
+        public void ShellBlocksOfRcLocalAreOneEntryEach()
+        {
+            var b = new LinuxRootBuilder().Executable("/etc/rc.local", "#!/bin/sh -e\n_IP=$(hostname -I) || true\nif [ \"$_IP\" ]; then\n  printf \"My IP is %s\\n\" \"$_IP\"\nfi\n/usr/local/bin/led-on.sh\nexit 0\n");
+
+            var e = Scan(b);
+
+            Assert.Equal(3, e.Count);
+            Assert.Equal("if", e[1].Name);
+            Assert.StartsWith("if [", e[1].Command);
+            Assert.EndsWith("fi", e[1].Command);
+            Assert.DoesNotContain(e, x => x.Name == "fi" || x.Name == "then");
+        }
+
         [Theory]
         [InlineData("app %f", "app")]
         [InlineData("app --x=%u %U", "app --x=")]

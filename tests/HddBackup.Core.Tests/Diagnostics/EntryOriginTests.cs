@@ -49,5 +49,35 @@ namespace HddBackup.Core.Tests.Diagnostics
             Assert.Equal(EntryOrigin.Custom, Find(r, "mine.service").Origin);
             Assert.Equal(EntryOrigin.Custom, Find(r, "tool.service").Origin);
         }
+
+        [Fact]
+        public void WithADpkgDatabaseAFileNoPackageOwnsIsCustom()
+        {
+            var b = new HddBackup.Core.Tests.Fakes.LinuxRootBuilder().BasicLinux();
+            b.Executable("/etc/init.d/cron").Executable("/etc/init.d/bevend.sh");
+            b.Link("/etc/rc2.d/S01cron", "../init.d/cron").Link("/etc/rc2.d/S01bevend.sh", "../init.d/bevend.sh");
+            b.File("/etc/xdg/autostart/a.desktop", "[Desktop Entry]\nName=Owned\nExec=owned-app\n");
+            b.File("/etc/xdg/autostart/b.desktop", "[Desktop Entry]\nName=Handmade\nExec=handmade-app\n");
+            b.Executable("/usr/sbin/cron").File("/etc/cron.d/pkg", "0 1 * * * root /usr/bin/pkgjob\n").File("/etc/cron.d/mine", "0 2 * * * root /usr/bin/minejob\n");
+            b.File("/var/lib/dpkg/info/cron.list", "/etc/init.d/cron\n/etc/cron.d/pkg\n/usr/sbin/cron\n");
+            b.File("/var/lib/dpkg/info/app.list", "/etc/xdg/autostart/a.desktop\n");
+
+            var r = StartupInventory.Run(b.Reader(), new DiagnosticsSource(), CancellationToken.None);
+
+            Assert.Equal(EntryOrigin.Standard, Find(r, "cron").Origin);
+            Assert.Equal(EntryOrigin.Custom, Find(r, "bevend.sh").Origin);
+            Assert.Equal(EntryOrigin.Standard, Find(r, "Owned").Origin);
+            Assert.Equal(EntryOrigin.Custom, Find(r, "Handmade").Origin);
+            Assert.Equal(EntryOrigin.Standard, Find(r, "pkgjob").Origin);
+            Assert.Equal(EntryOrigin.Custom, Find(r, "minejob").Origin);
+        }
+
+        [Fact]
+        public void WithoutADpkgDatabaseTheLocationDecides()
+        {
+            var b = new HddBackup.Core.Tests.Fakes.LinuxRootBuilder().BasicLinux().Executable("/etc/init.d/x").Link("/etc/rc2.d/S01x", "../init.d/x");
+
+            Assert.Equal(EntryOrigin.Standard, Find(StartupInventory.Run(b.Reader(), new DiagnosticsSource(), CancellationToken.None), "x").Origin);
+        }
     }
 }
