@@ -19,6 +19,16 @@ published either; its fix is part of 1.0.0-rc.3.
   at once, with no diff file and no checksum. You can edit the text of a file, and create, delete
   and rename files and folders. A file is always entirely old or entirely new after an
   interruption. Compressed images, file systems that need recovery or have errors are refused.
+- **Repairing SSH access from the SSH check.** With **Edit** on, the wizard's Result page offers
+  **Fix…** for the reasons it can repair (start the SSH service at boot or unmask it, allow or
+  unblock an account, switch key login on, let `root` log in with a key, give an account a login
+  shell, correct the permissions of a key file the server ignores) and **Add a key…**, which adds a
+  public key to an account's `authorized_keys` with the right owner and permissions. Each repair
+  shows exactly what it changes first. On an image the repairs wait for **Save** and can be undone;
+  on a card they are written at once. Password login and root password login are offered only as
+  a second, confirmed choice; passwords are never touched and private keys are refused. The SSH
+  check now also reports key files that the server would ignore (open to other users or owned by
+  someone else) instead of counting their keys.
 - **Tools on the Files tab.** A new **Tools** button next to **Extract…** opens two read-only
   checks of the opened Linux system. Both only read; nothing is written to the image or the card,
   and passwords, key text and private keys are never read into a result.

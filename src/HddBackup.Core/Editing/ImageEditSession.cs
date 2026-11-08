@@ -81,6 +81,44 @@ namespace HddBackup.Core.Editing
         Interrupted
     }
 
+    /// <summary>One repair waiting in the diff file: its number, its name and how many changes it consists of.</summary>
+    public sealed class RepairGroup
+    {
+        internal RepairGroup(int group, RepairTitle title, int changeCount)
+        {
+            Group = group;
+            Title = title;
+            ChangeCount = changeCount;
+        }
+
+        public int Group { get; }
+
+        public RepairTitle Title { get; }
+
+        public int ChangeCount { get; internal set; }
+    }
+
+    public enum UndoStatus
+    {
+        Done,
+        NotFound,
+        Blocked
+    }
+
+    public sealed class UndoResult
+    {
+        public UndoResult(UndoStatus status, string blockedPath)
+        {
+            Status = status;
+            BlockedPath = blockedPath;
+        }
+
+        public UndoStatus Status { get; }
+
+        /// <summary>For Blocked: the path of the later change that depends on the repair.</summary>
+        public string BlockedPath { get; }
+    }
+
     /// <summary>
     /// Edit mode of an image: the waiting changes, the diff file beside the image, Save and Finish save
     /// (research R-8, R-9). The image itself is not written to before <see cref="Save"/>.
@@ -247,6 +285,141 @@ namespace HddBackup.Core.Editing
                 _changes.Remove(change);
                 throw;
             }
+        }
+
+        /// <summary>The repairs waiting in the diff file, oldest first (feature 011).</summary>
+        public IReadOnlyList<RepairGroup> Groups
+        {
+            get
+            {
+                var result = new List<RepairGroup>();
+                foreach (var change in _changes)
+                {
+                    if (change.Group == 0)
+                    {
+                        continue;
+                    }
+
+                    var existing = result.FirstOrDefault(g => g.Group == change.Group);
+                    if (existing == null)
+                    {
+                        result.Add(new RepairGroup(change.Group, change.Title, 1));
+                    }
+                    else
+                    {
+                        existing.ChangeCount++;
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Adds the changes of one repair as a group: all of them or none. They are first built on a scratch editor
+        /// after the changes already waiting, so a repair that cannot be made throws <see cref="EditException"/>
+        /// with the image and the diff file untouched. Returns the group number.
+        /// </summary>
+        public int AddRepair(IReadOnlyList<EditChange> changes, RepairTitle title)
+        {
+            if (State != SessionState.Editing || IsStale)
+            {
+                throw new InvalidOperationException("The session cannot take changes now.");
+            }
+
+            if (changes == null || changes.Count == 0)
+            {
+                throw new ArgumentException("A repair has at least one change.", nameof(changes));
+            }
+
+            int group = _changes.Count == 0 ? 1 : Math.Max(1, _changes.Max(c => c.Group) + 1);
+            var grouped = changes.Select(c => c.InGroup(group, title)).ToList();
+            using (var file = FileBlockDevice.OpenRead(ImagePath))
+            using (var part = new PartitionView(file, _offset, _length))
+            {
+                var editor = new Ext4Editor(part);
+                foreach (var change in _changes.Concat(grouped))
+                {
+                    EditChange.Apply(editor, change);
+                }
+            }
+
+            int before = _changes.Count;
+            _changes.AddRange(grouped);
+            try
+            {
+                Persist();
+            }
+            catch
+            {
+                _changes.RemoveRange(before, grouped.Count);
+                throw;
+            }
+
+            return group;
+        }
+
+        /// <summary>
+        /// Removes the changes of one repair. Refused when a later change (a hand edit or another repair) works on
+        /// something this repair made or changed, because undoing would leave that change without its base.
+        /// </summary>
+        public UndoResult Undo(int group)
+        {
+            int first = _changes.FindIndex(c => c.Group == group);
+            if (first < 0)
+            {
+                return new UndoResult(UndoStatus.NotFound, null);
+            }
+
+            var mine = _changes.Where(c => c.Group == group).ToList();
+            for (int i = first + 1; i < _changes.Count; i++)
+            {
+                var later = _changes[i];
+                if (later.Group == group)
+                {
+                    continue;
+                }
+
+                foreach (var m in mine)
+                {
+                    if (Touches(later, m))
+                    {
+                        return new UndoResult(UndoStatus.Blocked, later.Path);
+                    }
+                }
+            }
+
+            var keep = _changes.ToList();
+            _changes.RemoveAll(c => c.Group == group);
+            try
+            {
+                Persist();
+            }
+            catch
+            {
+                _changes.Clear();
+                _changes.AddRange(keep);
+                throw;
+            }
+
+            return new UndoResult(UndoStatus.Done, null);
+        }
+
+        private static bool Touches(EditChange later, EditChange mine)
+        {
+            return Overlaps(later.Path, mine.Path) || (mine.NewName.Length > 0 && Overlaps(later.Path, EditChange.Join(ParentOf(mine.Path), mine.NewName)))
+                || (later.NewName.Length > 0 && Overlaps(EditChange.Join(ParentOf(later.Path), later.NewName), mine.Path));
+        }
+
+        private static string ParentOf(string path)
+        {
+            EditChange.Split(path, out string parent, out _);
+            return parent;
+        }
+
+        private static bool Overlaps(string a, string b)
+        {
+            return a == b || a.StartsWith(b.TrimEnd('/') + "/", StringComparison.Ordinal) || b.StartsWith(a.TrimEnd('/') + "/", StringComparison.Ordinal);
         }
 
         /// <summary>Replaces all changes (for example after the user undid the last one in the UI).</summary>

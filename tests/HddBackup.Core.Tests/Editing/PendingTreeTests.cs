@@ -2,6 +2,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using HddBackup.Core.Browsing;
+using HddBackup.Core.Diagnostics;
 using HddBackup.Core.Editing;
 using Xunit;
 
@@ -57,6 +58,60 @@ namespace HddBackup.Core.Tests.Editing
                     Assert.Equal("abc", Encoding.UTF8.GetString(buffer, 0, 3));
                     Assert.False(tree.Exists(other));
                     Assert.Equal("changed", Encoding.UTF8.GetString(tree.ReadAll(edited, 100)));
+                }
+            }
+        }
+
+        [Fact]
+        public void ShowsPendingSymlinksAndAttributesToTheDiagnosticReader()
+        {
+            using (var image = EditImage.Copy("edit-ssh-disabled"))
+            {
+                image.Device.Dispose();
+                using (var source = BrowseSource.OpenImage(image.Path))
+                using (var view = source.OpenFileSystem(source.Browsable.First()))
+                {
+                    var changes = new[]
+                    {
+                        EditChange.NewSymlink("/etc/systemd/system/multi-user.target.wants/ssh.service", "/lib/systemd/system/ssh.service"),
+                        EditChange.NewDirectory("/home/pi/.ssh", 0x1C0, 1000, 1000),
+                        EditChange.NewFile("/home/pi/.ssh/authorized_keys", Text("ssh-ed25519 AAAA x\n"), 0x180, 1000, 1000),
+                        EditChange.Attributes("/home/pi", 0x1ED, 4321, null)
+                    };
+                    var tree = new PendingTree(view, changes);
+                    var reader = new SystemReader(tree);
+
+                    Assert.Equal("/lib/systemd/system/ssh.service", reader.ReadLink("/etc/systemd/system/multi-user.target.wants/ssh.service"));
+                    Assert.True(reader.Exists("/etc/systemd/system/multi-user.target.wants/ssh.service"));
+                    var dir = reader.Lookup("/home/pi/.ssh");
+                    Assert.Equal((ushort)0x41C0, dir.Mode);
+                    Assert.Equal(1000u, dir.Uid);
+                    var file = reader.Lookup("/home/pi/.ssh/authorized_keys");
+                    Assert.Equal((ushort)0x8180, file.Mode);
+                    Assert.Equal(PendingState.New, file.Pending);
+                    Assert.Equal(19, file.Size);
+                    var home = reader.Lookup("/home/pi");
+                    Assert.Equal((ushort)0x41ED, home.Mode);
+                    Assert.Equal(4321u, home.Uid);
+                    Assert.Equal(1000u, home.Gid);
+                    Assert.Equal(PendingState.Edited, home.Pending);
+                }
+            }
+        }
+
+        [Fact]
+        public void ANewEntryWithoutAnOwnerTakesTheOwnerOfItsParent()
+        {
+            using (var image = EditImage.Copy("edit-ssh-disabled"))
+            {
+                image.Device.Dispose();
+                using (var source = BrowseSource.OpenImage(image.Path))
+                using (var view = source.OpenFileSystem(source.Browsable.First()))
+                {
+                    var tree = new PendingTree(view, new[] { EditChange.NewFile("/home/pi/note", Text("x")) });
+                    var entry = new SystemReader(tree).Lookup("/home/pi/note");
+                    Assert.Equal(1000u, entry.Uid);
+                    Assert.Equal(1000u, entry.Gid);
                 }
             }
         }

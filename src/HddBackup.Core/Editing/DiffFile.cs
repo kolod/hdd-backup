@@ -97,6 +97,7 @@ namespace HddBackup.Core.Editing
         public const int MaxChanges = 10000;
         public const long MaxTotal = 256L * 1024 * 1024;
         private const string Magic = "HDDDIFF1";
+        private const int Version = 2;
 
         public DiffFile(ImageIdentity identity, IEnumerable<EditChange> changes)
         {
@@ -121,7 +122,7 @@ namespace HddBackup.Core.Editing
             using (var w = new BinaryWriter(ms, Encoding.UTF8, true))
             {
                 w.Write(Encoding.ASCII.GetBytes(Magic));
-                w.Write(1);
+                w.Write(Version);
                 Identity.Write(w);
                 w.Write(Changes.Count);
                 foreach (var c in Changes)
@@ -141,6 +142,33 @@ namespace HddBackup.Core.Editing
                     if (c.Content != null)
                     {
                         w.Write(c.Content);
+                    }
+
+                    // version 2: attributes, link target, repair group
+                    int flags = (c.Mode.HasValue ? 1 : 0) | (c.Uid.HasValue ? 2 : 0) | (c.Gid.HasValue ? 4 : 0) | (c.Title != null ? 8 : 0);
+                    w.Write((byte)flags);
+                    if (c.Mode.HasValue)
+                    {
+                        w.Write(c.Mode.Value);
+                    }
+
+                    if (c.Uid.HasValue)
+                    {
+                        w.Write(c.Uid.Value);
+                    }
+
+                    if (c.Gid.HasValue)
+                    {
+                        w.Write(c.Gid.Value);
+                    }
+
+                    w.Write(c.LinkTarget ?? string.Empty);
+                    w.Write(c.Group);
+                    if (c.Title != null)
+                    {
+                        w.Write((byte)c.Title.Kind);
+                        w.Write(c.Title.Arg1);
+                        w.Write(c.Title.Arg2);
                     }
                 }
             }
@@ -174,7 +202,8 @@ namespace HddBackup.Core.Editing
                         return null;
                     }
 
-                    if (r.ReadInt32() != 1)
+                    int version = r.ReadInt32();
+                    if (version != 1 && version != Version)
                     {
                         status = DiffStatus.Unsupported;
                         return null;
@@ -191,27 +220,69 @@ namespace HddBackup.Core.Editing
                         OriginalStamp original = r.ReadBoolean() ? new OriginalStamp(r.ReadUInt32(), r.ReadInt64(), r.ReadUInt32()) : null;
                         int len = r.ReadInt32();
                         byte[] content = len < 0 ? null : r.ReadBytes(len);
+                        ushort? mode = null;
+                        uint? uid = null;
+                        uint? gid = null;
+                        string linkTarget = string.Empty;
+                        int group = 0;
+                        RepairTitle title = null;
+                        if (version >= 2)
+                        {
+                            int flags = r.ReadByte();
+                            if ((flags & 1) != 0)
+                            {
+                                mode = r.ReadUInt16();
+                            }
+
+                            if ((flags & 2) != 0)
+                            {
+                                uid = r.ReadUInt32();
+                            }
+
+                            if ((flags & 4) != 0)
+                            {
+                                gid = r.ReadUInt32();
+                            }
+
+                            linkTarget = r.ReadString();
+                            group = r.ReadInt32();
+                            if ((flags & 8) != 0)
+                            {
+                                var titleKind = (RepairKind)r.ReadByte();
+                                title = new RepairTitle(titleKind, r.ReadString(), r.ReadString());
+                            }
+                        }
+
+                        EditChange change;
                         switch (kind)
                         {
                             case EditKind.EditContent:
-                                changes.Add(EditChange.Edit(p, content, original));
+                                change = EditChange.Edit(p, content, original);
                                 break;
                             case EditKind.CreateFile:
-                                changes.Add(EditChange.NewFile(p, content));
+                                change = EditChange.NewFile(p, content, mode, uid, gid);
                                 break;
                             case EditKind.CreateDirectory:
-                                changes.Add(EditChange.NewDirectory(p));
+                                change = EditChange.NewDirectory(p, mode, uid, gid);
                                 break;
                             case EditKind.Delete:
-                                changes.Add(EditChange.Remove(p, original));
+                                change = EditChange.Remove(p, original);
                                 break;
                             case EditKind.Rename:
-                                changes.Add(EditChange.Move(p, newName, original));
+                                change = EditChange.Move(p, newName, original);
+                                break;
+                            case EditKind.CreateSymlink:
+                                change = EditChange.NewSymlink(p, linkTarget);
+                                break;
+                            case EditKind.SetAttributes:
+                                change = EditChange.Attributes(p, mode, uid, gid, original);
                                 break;
                             default:
                                 status = DiffStatus.Corrupt;
                                 return null;
                         }
+
+                        changes.Add(group != 0 || title != null ? change.InGroup(group, title) : change);
                     }
 
                     status = DiffStatus.Matches;

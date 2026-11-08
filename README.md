@@ -217,12 +217,27 @@ their own read-only handle; nothing is written, locked or dismounted, and nothin
   "default"), *Accounts* (shell, password state, number of authorized keys and whether the account
   can log in) and *Result*: one of "SSH should work: pi — a password and a key", "will not start
   by itself", "no server installed", "the server is set up but nobody can log in", or "cannot be
-  determined", with the reasons in the order a person would fix them. It only advises; it never
-  changes the image. Network, firewall and `Match` blocks (which depend on who connects from where)
+  determined", with the reasons in the order a person would fix them. Without edit mode it only
+  advises and never changes the image (see *Repairing SSH access* below). Network, firewall and `Match` blocks (which depend on who connects from where)
   are not evaluated; `Match` settings are reported as notes. A Raspberry Pi can also switch SSH on
   at the first boot through a file on the FAT boot partition, which is not read, so the result then
   says "not enabled in the Linux system, may still be switched on at the first boot" rather than
   "SSH is off".
+- **Repairing SSH access.** When **Edit** is on (an image, or a removable card that is not
+  write-protected), the *Result* page of the wizard offers **Fix…** next to each reason that can be
+  repaired, and **Add a key…** (also on the *Accounts* page). Every repair opens a window that lists
+  exactly what will change before anything is queued or written. The repairs are: set the SSH
+  service to start at boot (or remove its mask), allow an account that an `AllowUsers` or
+  `AllowGroups` line leaves out, take it off a `DenyUsers` line, switch key login on, let `root` log
+  in with a key, give an account a login shell, correct the permissions and owner of a key file or
+  folder that the server would ignore, and add a public key (one line, or a `.pub` file) to an
+  account's `authorized_keys`. Switching on password login or root password login is offered only as
+  a second, explicitly confirmed choice, never first. A changed line of a configuration file stays
+  as a comment with the date and the new line follows it; every other line is kept byte for byte.
+  Passwords are never created or changed, and a private key pasted by mistake is refused and
+  cleared. On an image the repairs wait with the other changes until **Save** (each can be undone
+  until then, and the wizard shows the result as it will be after saving); on a card each repair
+  is written at once and cannot be undone.
 - **Startup and scheduled tasks…** lists, in one filterable and searchable table, the systemd
   services, timers and sockets that really start (enabled and reachable from the default target),
   per-user systemd units, `/etc/rc.local` and old init scripts, desktop autostart entries

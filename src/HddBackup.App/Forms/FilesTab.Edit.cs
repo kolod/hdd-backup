@@ -90,11 +90,11 @@ namespace HddBackup.App.Forms
         {
             bool open = _view != null;
             _edit.Visible = !Editing;
-            _edit.Enabled = open && !_planning && !_toolRunning;
+            _edit.Enabled = open && !_planning && !_toolRunning && !_repairBusy;
             _save.Visible = _session != null;
             _discard.Visible = Editing;
-            _save.Enabled = _session != null && _session.Changes.Count > 0;
-            _discard.Enabled = _card != null || (_session != null && _session.Changes.Count > 0);
+            _save.Enabled = _session != null && _session.Changes.Count > 0 && !_repairBusy;
+            _discard.Enabled = (_card != null || (_session != null && _session.Changes.Count > 0)) && !_repairBusy;
             _discard.Text = Strings.Get(_card != null ? "Edit_Done" : "Edit_Discard");
             _tips.SetToolTip(_discard, Strings.Get(_card != null ? "Tooltip_Edit_Done" : "Tooltip_Edit_Discard"));
             var entry = _tree.SelectedNode?.Tag as FsEntry;
@@ -107,11 +107,13 @@ namespace HddBackup.App.Forms
             _menuExtract.Enabled = _menuExtract.Enabled && !Editing;
             _extract.Enabled = _extract.Enabled && !Editing;
             _apply.Visible = Editing && !_viewer.ReadOnly;
-            _apply.Enabled = _apply.Visible && _viewerEditedFrom != null && _viewer.Text != _viewerEditedFrom;
+            _apply.Enabled = _apply.Visible && _viewerEditedFrom != null && _viewer.Text != _viewerEditedFrom && !_repairBusy;
             if (Editing)
             {
                 SetStatus(() => _card != null ? Strings.Get("Edit_EditingCard") : Strings.Format("Edit_Editing", _session.Changes.Count), false);
             }
+
+            NotifyRepairChanged();
         }
 
         private string _viewerEditedFrom;
@@ -318,6 +320,11 @@ namespace HddBackup.App.Forms
 
         private bool Record(EditChange change, string select)
         {
+            if (_repairBusy)
+            {
+                return false; // a repair of the SSH wizard is being written
+            }
+
             if (_card != null)
             {
                 return RecordOnCard(change, select);
@@ -492,6 +499,7 @@ namespace HddBackup.App.Forms
             }
 
             _session?.Discard();
+            _repairHost?.LogOfSession.Discarded();
             LeaveEditMode();
         }
 
@@ -549,9 +557,11 @@ namespace HddBackup.App.Forms
             {
                 case SaveStatus.Saved:
                     text = Strings.Format("Edit_Saved", result.ChangesWritten);
+                    _repairHost?.LogOfSession.Saved();
                     break;
                 case SaveStatus.SavedChecksumStale:
                     text = Strings.Format("Edit_SavedStale", result.Detail);
+                    _repairHost?.LogOfSession.Saved();
                     error = true;
                     break;
                 case SaveStatus.Interrupted:

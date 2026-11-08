@@ -19,7 +19,8 @@ namespace HddBackup.Core.Diagnostics
             IDeviceAccess access,
             DiagnosticsSource source,
             Func<SystemReader, DiagnosticsSource, T> tool,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            Func<IFileTree, IFileTree> overlay = null)
         {
             if (source == null)
             {
@@ -64,7 +65,9 @@ namespace HddBackup.Core.Diagnostics
                     HasUnreadBootPartition = source.HasUnreadBootPartition
                         || browse.Partitions.Any(p => p.Number != partition.Number && p.FileSystem != null && p.FileSystem.StartsWith("FAT", StringComparison.OrdinalIgnoreCase))
                 };
-                return tool(new SystemReader(view, cancellationToken), effective);
+                // an overlay (feature 011) shows the file system as it will be after the waiting changes are saved
+                IFileTree tree = overlay != null ? overlay(view) : view;
+                return tool(new SystemReader(tree, cancellationToken), effective);
             }
             finally
             {

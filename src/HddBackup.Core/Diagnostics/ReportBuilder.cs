@@ -59,6 +59,25 @@ namespace HddBackup.Core.Diagnostics
     {
         private const string Eol = "\r\n";
 
+        /// <summary>The SSH report followed by the repairs of this session (feature 011); nothing is added when there are none.</summary>
+        public static string Ssh(SshReport report, IReportTexts t, DateTime now, IReadOnlyList<Repair.RepairLogEntry> repairs, Repair.IRepairReportTexts repairTexts)
+        {
+            string text = Ssh(report, t, now);
+            if (repairs == null || repairs.Count == 0 || repairTexts == null)
+            {
+                return text;
+            }
+
+            var sb = new StringBuilder(text);
+            sb.Append(Eol).Append(repairTexts.RepairsCaption).Append(Eol);
+            foreach (var entry in repairs)
+            {
+                sb.Append("  ").Append(repairTexts.Repair(entry)).Append(Eol);
+            }
+
+            return sb.ToString();
+        }
+
         public static string Ssh(SshReport report, IReportTexts t, DateTime now)
         {
             if (report == null)

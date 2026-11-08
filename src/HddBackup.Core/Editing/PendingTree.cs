@@ -22,6 +22,10 @@ namespace HddBackup.Core.Editing
             public PendingState State;
             public Dictionary<string, Node> Children;
             public DateTime Modified;
+            public string LinkTarget;
+            public ushort? Mode;
+            public uint? Uid;
+            public uint? Gid;
         }
 
         private readonly IFileTree _base;
@@ -167,19 +171,54 @@ namespace HddBackup.Core.Editing
 
                 case EditKind.CreateFile:
                 case EditKind.CreateDirectory:
+                case EditKind.CreateSymlink:
                 {
                     var parent = Find(parentPath);
                     if (parent != null && parent.IsDirectory)
                     {
+                        Owner(parent, out uint parentUid, out uint parentGid);
                         Children(parent, CancellationToken.None)[name] = new Node
                         {
                             Name = name,
                             IsDirectory = change.Kind == EditKind.CreateDirectory,
                             Content = change.Kind == EditKind.CreateFile ? (change.Content ?? new byte[0]) : null,
+                            LinkTarget = change.Kind == EditKind.CreateSymlink ? change.LinkTarget : null,
                             State = PendingState.New,
                             Modified = _now,
+                            Mode = change.Mode,
+                            Uid = change.Uid ?? parentUid,
+                            Gid = change.Gid ?? parentGid,
                             Children = change.Kind == EditKind.CreateDirectory ? new Dictionary<string, Node>(StringComparer.Ordinal) : null
                         };
+                    }
+
+                    break;
+                }
+
+                case EditKind.SetAttributes:
+                {
+                    var node = Find(change.Path);
+                    if (node != null)
+                    {
+                        if (change.Mode.HasValue)
+                        {
+                            node.Mode = change.Mode;
+                        }
+
+                        if (change.Uid.HasValue)
+                        {
+                            node.Uid = change.Uid;
+                        }
+
+                        if (change.Gid.HasValue)
+                        {
+                            node.Gid = change.Gid;
+                        }
+
+                        if (node.State == PendingState.None)
+                        {
+                            node.State = PendingState.Edited;
+                        }
                     }
 
                     break;
@@ -217,6 +256,18 @@ namespace HddBackup.Core.Editing
 
                     break;
                 }
+            }
+        }
+
+        private void Owner(Node node, out uint uid, out uint gid)
+        {
+            uid = node.Uid ?? 0;
+            gid = node.Gid ?? 0;
+            if (node.Base != null)
+            {
+                _base.Describe(node.Base);
+                uid = node.Uid ?? node.Base.Uid;
+                gid = node.Gid ?? node.Base.Gid;
             }
         }
 
@@ -258,12 +309,12 @@ namespace HddBackup.Core.Editing
                 Name = node.Name,
                 Path = path,
                 Inode = node.Base?.Inode ?? 0,
-                Kind = node.IsDirectory ? FsEntryKind.Directory : node.Base != null ? node.Base.Kind : FsEntryKind.File,
+                Kind = node.IsDirectory ? FsEntryKind.Directory : node.LinkTarget != null ? FsEntryKind.Symlink : node.Base != null ? node.Base.Kind : FsEntryKind.File,
                 Special = node.Base?.Special ?? SpecialKind.None,
-                LinkTarget = node.Base?.LinkTarget,
+                LinkTarget = node.LinkTarget ?? node.Base?.LinkTarget,
                 Pending = node.State
             };
-            if (node.Base == null || node.Content != null)
+            if (node.Base == null || node.Content != null || node.Mode.HasValue || node.Uid.HasValue || node.Gid.HasValue)
             {
                 Fill(entry, node);
             }
@@ -289,8 +340,28 @@ namespace HddBackup.Core.Editing
             }
             else
             {
-                entry.Mode = (ushort)(node.IsDirectory ? 0x41ED : 0x81A4);
+                entry.Mode = (ushort)(node.IsDirectory ? 0x41ED : node.LinkTarget != null ? 0xA1FF : 0x81A4);
                 entry.Modified = node.Modified;
+                if (node.LinkTarget != null)
+                {
+                    entry.LinkTarget = node.LinkTarget;
+                    entry.Size = Encoding.UTF8.GetByteCount(node.LinkTarget);
+                }
+            }
+
+            if (node.Mode.HasValue)
+            {
+                entry.Mode = (ushort)((entry.Mode & 0xF000) | node.Mode.Value);
+            }
+
+            if (node.Uid.HasValue)
+            {
+                entry.Uid = node.Uid.Value;
+            }
+
+            if (node.Gid.HasValue)
+            {
+                entry.Gid = node.Gid.Value;
             }
 
             if (node.Content != null)

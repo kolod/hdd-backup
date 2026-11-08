@@ -31,6 +31,15 @@ namespace HddBackup.Core.Diagnostics
         /// <summary>Valid key lines found in the authorized-keys files.</summary>
         public int KeyCount { get; internal set; }
 
+        /// <summary>The key file the server reads for this account (the first existing one, else the first the settings name); null when unknown.</summary>
+        public string KeyFilePath { get; internal set; }
+
+        /// <summary>Whether the server would accept the key file under StrictModes.</summary>
+        public KeyFileSafety KeyFileSafety { get; internal set; }
+
+        /// <summary>The file or folder that makes <see cref="KeyFileSafety"/> unsafe.</summary>
+        public string KeyFileProblemPath { get; internal set; }
+
         /// <summary>Keys may exist that were not counted (a key command, or an unreadable file).</summary>
         public bool KeysUnknown { get; internal set; }
 
@@ -272,6 +281,7 @@ namespace HddBackup.Core.Diagnostics
                 account.KeysUnknown = true;
             }
 
+            bool existingFound = false;
             foreach (string pattern in settings.AuthorizedKeysFiles.Value)
             {
                 if (pattern.Equals("none", StringComparison.OrdinalIgnoreCase))
@@ -285,9 +295,22 @@ namespace HddBackup.Core.Diagnostics
                     continue;
                 }
 
+                if (account.KeyFilePath == null)
+                {
+                    account.KeyFilePath = path;
+                }
+
                 if (!reader.Exists(path))
                 {
                     continue;
+                }
+
+                if (!existingFound)
+                {
+                    existingFound = true;
+                    account.KeyFilePath = path;
+                    account.KeyFileSafety = KeyFileSafetyCheck.Evaluate(reader, account, path, out string problem);
+                    account.KeyFileProblemPath = problem;
                 }
 
                 string text = reader.ReadText(path);

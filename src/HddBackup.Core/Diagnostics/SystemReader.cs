@@ -209,6 +209,49 @@ namespace HddBackup.Core.Diagnostics
             return result.Text;
         }
 
+        /// <summary>
+        /// The bytes of a regular file (links followed), exactly as stored, up to <paramref name="maxBytes"/>; null when
+        /// it is missing, not a regular file, unreadable or longer than the limit (so a repair never works on a cut file).
+        /// </summary>
+        public byte[] ReadBytes(string path, int maxBytes = DefaultMaxBytes)
+        {
+            _ct.ThrowIfCancellationRequested();
+            var entry = Walk(path, true, out _);
+            if (entry == null || entry.Kind != FsEntryKind.File)
+            {
+                return null;
+            }
+
+            Describe(entry);
+            if (entry.Unreadable != null || entry.NotViewable != null || entry.Size > maxBytes)
+            {
+                return null;
+            }
+
+            var buffer = new byte[entry.Size];
+            int got = 0;
+            try
+            {
+                while (got < buffer.Length)
+                {
+                    _ct.ThrowIfCancellationRequested();
+                    int n = _tree.ReadRange(entry, got, buffer, got, Math.Min(buffer.Length - got, 64 * 1024));
+                    if (n <= 0)
+                    {
+                        return null;
+                    }
+
+                    got += n;
+                }
+            }
+            catch (ImagingException ex) when (ex.Code == ErrorCode.CorruptImage)
+            {
+                return null;
+            }
+
+            return buffer;
+        }
+
         /// <summary>The lines of a text file (empty when it cannot be read). A trailing line break does not add an empty line.</summary>
         public IReadOnlyList<string> ReadLines(string path, int maxBytes = DefaultMaxBytes)
         {

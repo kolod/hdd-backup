@@ -1612,4 +1612,283 @@ Linux (ext4) パーティションの使用量: {1}
   <data name="Edit_CardFailed" xml:space="preserve">
     <value>変更は完了しませんでした: {0} ファイルは完全に古いか完全に新しい状態です。不安な場合は Linux で e2fsck を実行してください。</value>
   </data>
+  <data name="Ssh_R_KeyFileUnsafe" xml:space="preserve">
+    <value>サーバーがキーファイルを無視します（経路上のファイルまたはフォルダーが他者に開放されているか、所有者が正しくありません）</value>
+  </data>
+  <data name="Ssh_F_AccountKeyFileUnsafe" xml:space="preserve">
+    <value>{1} が他のユーザーに開放されているか所有者が正しくないため、サーバーは {0} のキーを無視します。</value>
+  </data>
+  <data name="Repair_Hint_EditOff" xml:space="preserve">
+    <value>修復するには、［ファイル］タブで編集を有効にしてください（ext4 イメージと、書き込み禁止でないリムーバブルカードで使えます）。</value>
+  </data>
+  <data name="Repair_Fix" xml:space="preserve">
+    <value>修復…</value>
+  </data>
+  <data name="Repair_AddKey" xml:space="preserve">
+    <value>鍵を追加…</value>
+  </data>
+  <data name="Repair_Waiting" xml:space="preserve">
+    <value>待機中の修復（{0} 件）。上の結果は［保存］後の状態で表示しています:</value>
+  </data>
+  <data name="Repair_Undo" xml:space="preserve">
+    <value>元に戻す</value>
+  </data>
+  <data name="Repair_VerdictAfter" xml:space="preserve">
+    <value>（待機中の修復の後）</value>
+  </data>
+  <data name="Repair_Busy" xml:space="preserve">
+    <value>処理中…</value>
+  </data>
+  <data name="Repair_Applied_Image" xml:space="preserve">
+    <value>待機中: {0}。［保存］で反映されます。</value>
+  </data>
+  <data name="Repair_Applied_Card" xml:space="preserve">
+    <value>カードに書き込みました: {0}。</value>
+  </data>
+  <data name="Repair_Failed" xml:space="preserve">
+    <value>修復は行われませんでした: {0}</value>
+  </data>
+  <data name="Repair_UndoBlocked" xml:space="preserve">
+    <value>この修復は元に戻せません。後続の変更（{0}）がこれに依存しています。</value>
+  </data>
+  <data name="Repair_ReportCaption" xml:space="preserve">
+    <value>このセッションでの修復</value>
+  </data>
+  <data name="Repair_Report_Waiting" xml:space="preserve">
+    <value>［保存］待ち: {0}</value>
+  </data>
+  <data name="Repair_Report_Saved" xml:space="preserve">
+    <value>保存済み: {0}</value>
+  </data>
+  <data name="Repair_Report_Written" xml:space="preserve">
+    <value>カードに書き込み済み: {0}</value>
+  </data>
+  <data name="Repair_Title_EnableServer" xml:space="preserve">
+    <value>{0} を起動時に開始するよう設定</value>
+  </data>
+  <data name="Repair_Title_UnmaskServer" xml:space="preserve">
+    <value>{0} のマスクを解除し、起動時に開始するよう設定</value>
+  </data>
+  <data name="Repair_Title_AllowUser" xml:space="preserve">
+    <value>{0} のログインを許可（AllowUsers の一覧に追加）</value>
+  </data>
+  <data name="Repair_Title_UnblockUser" xml:space="preserve">
+    <value>{0} を DenyUsers の一覧から削除</value>
+  </data>
+  <data name="Repair_Title_AllowGroup" xml:space="preserve">
+    <value>{0} のグループ {1} のログインを許可（AllowGroups の一覧に追加）</value>
+  </data>
+  <data name="Repair_Title_EnableKeyAuth" xml:space="preserve">
+    <value>鍵によるログインを有効にする</value>
+  </data>
+  <data name="Repair_Title_RootKeysOnly" xml:space="preserve">
+    <value>root が鍵だけでログインできるようにする</value>
+  </data>
+  <data name="Repair_Title_RootPassword" xml:space="preserve">
+    <value>root がパスワードでもログインできるようにする</value>
+  </data>
+  <data name="Repair_Title_EnablePasswordAuth" xml:space="preserve">
+    <value>パスワードによるログインを有効にする</value>
+  </data>
+  <data name="Repair_Title_FixShell" xml:space="preserve">
+    <value>{0} のログインシェルを {1} にする</value>
+  </data>
+  <data name="Repair_Title_FixKeyFileModes" xml:space="preserve">
+    <value>{0} の鍵ファイルのアクセス権を修正</value>
+  </data>
+  <data name="Repair_Title_AddKey" xml:space="preserve">
+    <value>{0} に鍵 {1} を追加</value>
+  </data>
+  <data name="Repair_Why_EnableServer" xml:space="preserve">
+    <value>SSH サーバーはインストールされていますが、起動時に開始されません。「systemctl enable」が作るリンクを作成します。</value>
+  </data>
+  <data name="Repair_Why_UnmaskServer" xml:space="preserve">
+    <value>SSH サービスがマスクされており、起動できません。マスクを削除し、有効化するリンクを作成します。</value>
+  </data>
+  <data name="Repair_Why_AllowUser" xml:space="preserve">
+    <value>サーバーは AllowUsers の一覧にあるユーザーだけを受け付けますが、このアカウントは含まれていません。アカウントの行を追加します。既存の行はそのままです。</value>
+  </data>
+  <data name="Repair_Why_UnblockUser" xml:space="preserve">
+    <value>このアカウントは DenyUsers の一覧にあります。行からその名前を削除します。他の名前はそのままです。</value>
+  </data>
+  <data name="Repair_Why_AllowGroup" xml:space="preserve">
+    <value>サーバーは AllowGroups の一覧にあるグループだけを受け付けますが、このアカウントのグループはどれも含まれていません。アカウント自身のグループの行を追加します。</value>
+  </data>
+  <data name="Repair_Why_EnableKeyAuth" xml:space="preserve">
+    <value>サーバー設定で鍵によるログインが無効です。行を有効にする行に置き換え、元の行はコメントとして残します。</value>
+  </data>
+  <data name="Repair_Why_RootKeysOnly" xml:space="preserve">
+    <value>サーバーは root のログインを許可していません。root が鍵でログインできるようにします（パスワードでは不可）。</value>
+  </data>
+  <data name="Repair_Why_RootPassword" xml:space="preserve">
+    <value>root がパスワードでログインできるようになります。</value>
+  </data>
+  <data name="Repair_Why_EnablePasswordAuth" xml:space="preserve">
+    <value>サーバー設定でパスワードによるログインが無効です。行を有効にする行に置き換えます。</value>
+  </data>
+  <data name="Repair_Why_FixShell" xml:space="preserve">
+    <value>アカウントのログインシェルではログインできません。/etc/passwd のこのアカウントのシェル欄だけを変更します。</value>
+  </data>
+  <data name="Repair_Why_FixKeyFileModes" xml:space="preserve">
+    <value>サーバーは、他者が書き込める、または他人所有のファイルにある鍵を無視します。アクセス権と所有者だけを変更し、鍵には触れません。</value>
+  </data>
+  <data name="Repair_Why_AddKey" xml:space="preserve">
+    <value>このアカウントでログインできる鍵の一覧に鍵を追加します。既存の鍵はそのままです。</value>
+  </data>
+  <data name="Repair_Risk_RootPassword" xml:space="preserve">
+    <value>リスク: root のパスワードを推測されるとシステムを乗っ取られます。鍵の使用をお勧めします。</value>
+  </data>
+  <data name="Repair_Risk_EnablePasswordAuth" xml:space="preserve">
+    <value>リスク: パスワードはネットワーク経由で推測される恐れがあります。鍵のほうが安全です。信頼できるネットワークでのみ使用してください。</value>
+  </data>
+  <data name="Repair_Risk_Confirm" xml:space="preserve">
+    <value>リスクを理解しました</value>
+  </data>
+  <data name="Repair_Change_CreateLink" xml:space="preserve">
+    <value>リンク {0} → {2} を作成</value>
+  </data>
+  <data name="Repair_Change_RemoveLink" xml:space="preserve">
+    <value>リンク {0} を削除（{1} を指しています）</value>
+  </data>
+  <data name="Repair_Change_Edit" xml:space="preserve">
+    <value>{0} を変更: {1} → {2}</value>
+  </data>
+  <data name="Repair_Change_EditAdd" xml:space="preserve">
+    <value>{0} を変更: {2}</value>
+  </data>
+  <data name="Repair_Change_CreateFolder" xml:space="preserve">
+    <value>フォルダー {0} を作成</value>
+  </data>
+  <data name="Repair_Change_CreateFolderAs" xml:space="preserve">
+    <value>フォルダー {0} を作成（アクセス権と所有者: {2}）</value>
+  </data>
+  <data name="Repair_Change_CreateFile" xml:space="preserve">
+    <value>ファイル {0} を作成</value>
+  </data>
+  <data name="Repair_Change_CreateFileAs" xml:space="preserve">
+    <value>ファイル {0} を作成（アクセス権と所有者: {2}）</value>
+  </data>
+  <data name="Repair_Change_SetModeOwner" xml:space="preserve">
+    <value>{0} のアクセス権と所有者を変更: {1} → {2}</value>
+  </data>
+  <data name="Repair_Change_ChangeShell" xml:space="preserve">
+    <value>{0} 内のログインシェルを変更: {1} → {2}</value>
+  </data>
+  <data name="Repair_Change_AppendKey" xml:space="preserve">
+    <value>鍵 {2} を {0} に追加</value>
+  </data>
+  <data name="Repair_Refused_NoInstallSection" xml:space="preserve">
+    <value>サービスに [Install] セクションがないため、自動では有効にできません。</value>
+  </data>
+  <data name="Repair_Refused_ListedInMatch" xml:space="preserve">
+    <value>制限が Match ブロック内にあるため、自動では修復されません。</value>
+  </data>
+  <data name="Repair_Refused_KeysFromCommand" xml:space="preserve">
+    <value>サーバーは鍵をコマンドから取得するため、ファイルに追加した鍵は使われません。</value>
+  </data>
+  <data name="Repair_Refused_NoHome" xml:space="preserve">
+    <value>このファイルシステムにアカウントのホームフォルダーがありません。</value>
+  </data>
+  <data name="Repair_Refused_NoSuitableShell" xml:space="preserve">
+    <value>このシステムにはログインシェル（bash または sh）がありません。</value>
+  </data>
+  <data name="Repair_Refused_OutsideFileSystem" xml:space="preserve">
+    <value>鍵ファイルがこのファイルシステムの外を指すリンクであるか、ホームフォルダーの外にフォルダーを作る必要があります。</value>
+  </data>
+  <data name="Repair_Refused_Duplicate" xml:space="preserve">
+    <value>この鍵はすでにアカウントに登録されています。</value>
+  </data>
+  <data name="Repair_Refused_NoGroupName" xml:space="preserve">
+    <value>アカウントのグループに /etc/group で使える名前がありません。</value>
+  </data>
+  <data name="Repair_Refused_NotRepairable" xml:space="preserve">
+    <value>これは自動では修復できません。</value>
+  </data>
+  <data name="Repair_Refused_Unreadable" xml:space="preserve">
+    <value>修復に必要なファイルを読み取れません。</value>
+  </data>
+  <data name="Repair_Refused_LinkTooLong" xml:space="preserve">
+    <value>リンク先がこの種のリンクには長すぎます。</value>
+  </data>
+  <data name="Repair_Refused_AlreadyThere" xml:space="preserve">
+    <value>すでに設定済みです。変更する内容はありません。</value>
+  </data>
+  <data name="Repair_KeyRefused_Empty" xml:space="preserve">
+    <value>公開鍵（1 行）を貼り付けるか、.pub ファイルを読み込んでください。</value>
+  </data>
+  <data name="Repair_KeyRefused_PrivateKey" xml:space="preserve">
+    <value>これは秘密鍵です。絶対に共有せず、代わりに公開鍵（.pub ファイル）を貼り付けてください。</value>
+  </data>
+  <data name="Repair_KeyRefused_Certificate" xml:space="preserve">
+    <value>これは証明書であり、公開鍵ではありません。</value>
+  </data>
+  <data name="Repair_KeyRefused_Several" xml:space="preserve">
+    <value>一度に追加できる鍵は 1 つです。余分な行を削除してください。</value>
+  </data>
+  <data name="Repair_KeyRefused_UnknownType" xml:space="preserve">
+    <value>公開鍵に見えません（ssh-ed25519、ssh-rsa、ecdsa-… などで始まる必要があります）。</value>
+  </data>
+  <data name="Repair_KeyRefused_BadEncoding" xml:space="preserve">
+    <value>鍵のデータが壊れているか途中で切れています。行全体をもう一度コピーしてください。</value>
+  </data>
+  <data name="Repair_KeyRefused_TypeMismatch" xml:space="preserve">
+    <value>鍵の種類とデータが一致しません。行全体をもう一度コピーしてください。</value>
+  </data>
+  <data name="Repair_KeyRefused_TooLong" xml:space="preserve">
+    <value>公開鍵としてはテキストが長すぎます。</value>
+  </data>
+  <data name="Repair_Confirm_Title" xml:space="preserve">
+    <value>修復: {0}</value>
+  </data>
+  <data name="Repair_Confirm_Intro" xml:space="preserve">
+    <value>変更される内容:</value>
+  </data>
+  <data name="Repair_Confirm_Card" xml:space="preserve">
+    <value>カードにすぐ書き込まれ、元に戻せません。</value>
+  </data>
+  <data name="Repair_Confirm_Image" xml:space="preserve">
+    <value>［保存］まで待機します。それまでは元に戻せます。</value>
+  </data>
+  <data name="Repair_Confirm_Apply" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="Repair_Confirm_Others" xml:space="preserve">
+    <value>または別の方法を選択:</value>
+  </data>
+  <data name="Repair_Key_Title" xml:space="preserve">
+    <value>鍵の追加</value>
+  </data>
+  <data name="Repair_Key_Account" xml:space="preserve">
+    <value>アカウント:</value>
+  </data>
+  <data name="Repair_Key_Box" xml:space="preserve">
+    <value>公開鍵（1 行、または .pub ファイルを読み込み）:</value>
+  </data>
+  <data name="Repair_Key_Load" xml:space="preserve">
+    <value>読み込み…</value>
+  </data>
+  <data name="Repair_Key_Facts" xml:space="preserve">
+    <value>種類: {0}    フィンガープリント: {1}    コメント: {2}</value>
+  </data>
+  <data name="Repair_Key_WarnLegacy" xml:space="preserve">
+    <value>この古い鍵の種類（DSA）は現在のサーバーでは無視されます。</value>
+  </data>
+  <data name="Repair_Key_WarnOptions" xml:space="preserve">
+    <value>行の先頭にこの鍵を制限するオプション（from=、command=、no-pty …）があります。</value>
+  </data>
+  <data name="Repair_Key_Target" xml:space="preserve">
+    <value>追加先: {0}</value>
+  </data>
+  <data name="Repair_Key_Add" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="Repair_Key_LoadFilter" xml:space="preserve">
+    <value>公開鍵 (*.pub)|*.pub|すべてのファイル (*.*)|*.*</value>
+  </data>
+  <data name="Repair_Key_LoadFailed" xml:space="preserve">
+    <value>ファイルを公開鍵として読み取れませんでした: {0}</value>
+  </data>
+  <data name="Repair_Key_NoAccounts" xml:space="preserve">
+    <value>このシステムにホームフォルダーを持つアカウントはありません。</value>
+  </data>
 </root>
