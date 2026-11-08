@@ -99,7 +99,7 @@ namespace HddBackup.App.Forms
             root.Controls.Add(below, 0, 3);
 
             _close.Text = Strings.Get("Common_Close");
-            _close.DialogResult = DialogResult.Cancel;
+            _close.Click += (s, e) => Close();
             var buttons = Ui.Flow(rightToLeft: true);
             buttons.Dock = DockStyle.Fill;
             buttons.Margin = new Padding(0, 4, 0, 0);
