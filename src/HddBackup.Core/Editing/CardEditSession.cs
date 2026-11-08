@@ -70,13 +70,28 @@ namespace HddBackup.Core.Editing
         /// </summary>
         public SaveResult Apply(EditChange change, Action<long, long> progress, System.Threading.CancellationToken ct)
         {
+            return Apply(new[] { change }, progress, ct);
+        }
+
+        /// <summary>
+        /// Builds all <paramref name="changes"/> one after the other on one editor (each sees the writes of the
+        /// ones before), checks the file system as it would be afterwards once and writes the combined, ordered
+        /// write set. If any change cannot be made nothing is written (feature 011, research R-9).
+        /// </summary>
+        public SaveResult Apply(System.Collections.Generic.IReadOnlyList<EditChange> changes, Action<long, long> progress, System.Threading.CancellationToken ct)
+        {
             bool writing = false;
             try
             {
                 using (var disk = _access.OpenForPartitionWrite(_device, _offset, _length))
                 {
                     var editor = new Ext4Editor(disk);
-                    EditChange.Apply(editor, change);
+                    foreach (var change in changes)
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        EditChange.Apply(editor, change);
+                    }
+
                     var set = editor.Writes;
                     var findings = EditPreflight.Check(set, disk);
                     if (findings.Count > 0)
@@ -88,7 +103,7 @@ namespace HddBackup.Core.Editing
                     writing = true;
                     long total = Math.Max(1, set.TotalBytes);
                     set.ApplyTo(disk, done => progress?.Invoke(done, total), ct);
-                    return new SaveResult { Status = SaveStatus.Saved, ChangesWritten = 1 };
+                    return new SaveResult { Status = SaveStatus.Saved, ChangesWritten = changes.Count };
                 }
             }
             catch (EditException ex)

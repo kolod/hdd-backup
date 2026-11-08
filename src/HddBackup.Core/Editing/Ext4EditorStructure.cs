@@ -40,7 +40,7 @@ namespace HddBackup.Core.Editing
 
         // ------------------------------------------------------------------------- creating
 
-        public void CreateFile(string parentPath, string name, byte[] content)
+        public void CreateFile(string parentPath, string name, byte[] content, EntryAttributes attributes = default(EntryAttributes))
         {
             CheckName(name);
             var parent = ResolveDirectory(parentPath);
@@ -63,7 +63,7 @@ namespace HddBackup.Core.Editing
             }
 
             long leaf = extents.Count > 4 ? _alloc.AllocateOneBlock(goal) : 0;
-            var inode = NewInode(ino, FileModeDefault, parent);
+            var inode = NewInode(ino, FileModeDefault, parent, attributes);
             _io.Phase = WritePhase.Data;
             long pos = 0;
             foreach (var e in extents)
@@ -90,7 +90,73 @@ namespace HddBackup.Core.Editing
             _alloc.Commit(WritePhase.Counters);
         }
 
-        public void CreateDirectory(string parentPath, string name)
+        /// <summary>
+        /// Creates a fast symbolic link (the target lives in the inode, 1 to 59 bytes). Writes: inode allocation,
+        /// the inode, then the directory entry, so an interruption leaves at most an unreferenced inode.
+        /// </summary>
+        public void CreateSymlink(string parentPath, string name, string target)
+        {
+            CheckName(name);
+            byte[] bytes = Encoding.UTF8.GetBytes(target ?? string.Empty);
+            if (bytes.Length == 0 || bytes.Length >= Ext4Inode.BlockArraySize || Array.IndexOf(bytes, (byte)0) >= 0)
+            {
+                throw new EditException(bytes.Length == 0 ? EditError.BadValue : EditError.TooLong, "link target");
+            }
+
+            var parent = ResolveDirectory(parentPath);
+            RequireNoEntry(parent, name);
+            int goal = _alloc.GroupOfInode(parent.Number);
+            uint ino = _alloc.AllocateInode(goal, false);
+            var inode = NewInode(ino, 0xA1FF, parent);
+            inode.Flags &= ~Ext4Inode.FlagExtents;
+            var array = new byte[Ext4Inode.BlockArraySize];
+            Buffer.BlockCopy(bytes, 0, array, 0, bytes.Length);
+            inode.SetBlockArray(array);
+            inode.Size = bytes.Length;
+            inode.LinksCount = 1;
+            inode.BlocksRaw = 0;
+            _io.Phase = WritePhase.Data;
+            _alloc.Commit(WritePhase.Allocation);
+            StoreInode(inode, WritePhase.Inode);
+            AddEntry(parent, name, ino, 7);
+            _alloc.Commit(WritePhase.Counters);
+        }
+
+        /// <summary>
+        /// Changes permission bits and/or owner of an existing entry: one inode write (and the checksum). The type
+        /// bits, size, content and modification time stay; the change time is set.
+        /// </summary>
+        public void SetAttributes(string path, EntryAttributes attributes, OriginalStamp original = null)
+        {
+            if (attributes.Mode.HasValue && attributes.Mode.Value > 0xFFF)
+            {
+                throw new EditException(EditError.BadValue, "mode");
+            }
+
+            var inode = Resolve(path);
+            CheckOriginal(inode, original, path);
+            if (attributes.Mode.HasValue)
+            {
+                inode.Mode = (ushort)((inode.Mode & Ext4Inode.TypeMask) | attributes.Mode.Value);
+            }
+
+            if (attributes.Uid.HasValue)
+            {
+                BinaryHelpers.PutU16(inode.Raw, 0x02, (ushort)attributes.Uid.Value);
+                BinaryHelpers.PutU16(inode.Raw, 0x78, (ushort)(attributes.Uid.Value >> 16));
+            }
+
+            if (attributes.Gid.HasValue)
+            {
+                BinaryHelpers.PutU16(inode.Raw, 0x18, (ushort)attributes.Gid.Value);
+                BinaryHelpers.PutU16(inode.Raw, 0x7A, (ushort)(attributes.Gid.Value >> 16));
+            }
+
+            SetTimes(inode, ctime: true, mtime: false);
+            StoreInode(inode, WritePhase.Inode);
+        }
+
+        public void CreateDirectory(string parentPath, string name, EntryAttributes attributes = default(EntryAttributes))
         {
             CheckName(name);
             var parent = ResolveDirectory(parentPath);
@@ -98,7 +164,7 @@ namespace HddBackup.Core.Editing
             int goal = _alloc.GroupOfInode(parent.Number);
             uint ino = _alloc.AllocateInode(goal, true);
             long block = _alloc.AllocateOneBlock(goal);
-            var inode = NewInode(ino, DirModeDefault, parent);
+            var inode = NewInode(ino, DirModeDefault, parent, attributes);
 
             var data = new byte[_bs];
             int limit = DirLimit;
@@ -558,15 +624,27 @@ namespace HddBackup.Core.Editing
 
         // ------------------------------------------------------------------------- new inodes and extent rewrites
 
-        private Ext4Inode NewInode(uint number, int mode, Ext4Inode parent)
+        private Ext4Inode NewInode(uint number, int mode, Ext4Inode parent, EntryAttributes attributes = default(EntryAttributes))
         {
             var raw = new byte[_sb.InodeSize];
             var inode = new Ext4Inode(number, raw);
+            if (attributes.Mode.HasValue)
+            {
+                if (attributes.Mode.Value > 0xFFF)
+                {
+                    throw new EditException(EditError.BadValue, "mode");
+                }
+
+                mode = (mode & Ext4Inode.TypeMask) | attributes.Mode.Value;
+            }
+
             inode.Mode = (ushort)mode;
-            BinaryHelpers.PutU16(raw, 0x02, (ushort)parent.Uid);
-            BinaryHelpers.PutU16(raw, 0x78, (ushort)(parent.Uid >> 16));
-            BinaryHelpers.PutU16(raw, 0x18, (ushort)parent.Gid);
-            BinaryHelpers.PutU16(raw, 0x7A, (ushort)(parent.Gid >> 16));
+            uint uid = attributes.Uid ?? parent.Uid;
+            uint gid = attributes.Gid ?? parent.Gid;
+            BinaryHelpers.PutU16(raw, 0x02, (ushort)uid);
+            BinaryHelpers.PutU16(raw, 0x78, (ushort)(uid >> 16));
+            BinaryHelpers.PutU16(raw, 0x18, (ushort)gid);
+            BinaryHelpers.PutU16(raw, 0x7A, (ushort)(gid >> 16));
             uint now = _alloc.Now;
             BinaryHelpers.PutU32(raw, 0x08, now);
             BinaryHelpers.PutU32(raw, 0x0C, now);

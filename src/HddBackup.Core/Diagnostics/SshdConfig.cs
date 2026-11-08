@@ -13,6 +13,23 @@ namespace HddBackup.Core.Diagnostics
         No
     }
 
+    /// <summary>One word of an AllowUsers, DenyUsers, AllowGroups or DenyGroups line and the place it was written.</summary>
+    public sealed class ListToken
+    {
+        public ListToken(string token, string file, int line)
+        {
+            Token = token;
+            File = file;
+            Line = line;
+        }
+
+        public string Token { get; }
+
+        public string File { get; }
+
+        public int Line { get; }
+    }
+
     /// <summary>
     /// The effective, unconditional view of the OpenSSH server configuration (research R-5): the value
     /// each keyword has when no <c>Match</c> block applies, with the place it comes from.
@@ -35,6 +52,17 @@ namespace HddBackup.Core.Diagnostics
         public SettingValue<bool> PubkeyAuthentication { get; internal set; }
 
         public SettingValue<bool> PermitEmptyPasswords { get; internal set; }
+
+        internal IReadOnlyDictionary<string, List<ListToken>> ListTokenMap { get; set; }
+
+        /// <summary>Every word of the list keyword (lower case, for example <c>denyusers</c>) with its file and line, in reading order.</summary>
+        public IReadOnlyList<ListToken> ListTokens(string keyword)
+        {
+            return ListTokenMap != null && ListTokenMap.TryGetValue(keyword, out var list) ? list : (IReadOnlyList<ListToken>)Array.Empty<ListToken>();
+        }
+
+        /// <summary>The server ignores key files whose file, folder or home are writable by others (default yes).</summary>
+        public SettingValue<bool> StrictModes { get; internal set; }
 
         /// <summary>Where keys are looked up; tokens (<c>%h</c>, <c>%u</c>) are not expanded here.</summary>
         public SettingValue<IReadOnlyList<string>> AuthorizedKeysFiles { get; internal set; }
@@ -274,6 +302,7 @@ namespace HddBackup.Core.Diagnostics
             private readonly List<SettingValue<int>> _ports = new List<SettingValue<int>>();
             private readonly Dictionary<string, List<string>> _lists = new Dictionary<string, List<string>>(StringComparer.Ordinal);
             private readonly Dictionary<string, Origin> _listOrigin = new Dictionary<string, Origin>(StringComparer.Ordinal);
+            private readonly Dictionary<string, List<ListToken>> _listTokens = new Dictionary<string, List<ListToken>>(StringComparer.Ordinal);
             private readonly Dictionary<string, Origin> _origin = new Dictionary<string, Origin>(StringComparer.Ordinal);
             private readonly Dictionary<string, string> _single = new Dictionary<string, string>(StringComparer.Ordinal);
             private List<IReadOnlyList<string>> _methods;
@@ -327,6 +356,17 @@ namespace HddBackup.Core.Diagnostics
                         }
 
                         list.AddRange(args);
+                        if (!_listTokens.TryGetValue(keyword, out var tokens))
+                        {
+                            tokens = new List<ListToken>();
+                            _listTokens[keyword] = tokens;
+                        }
+
+                        foreach (string a in args)
+                        {
+                            tokens.Add(new ListToken(a, file, line));
+                        }
+
                         break;
                     case "authorizedkeysfile":
                         if (_keysFiles == null)
@@ -368,6 +408,7 @@ namespace HddBackup.Core.Diagnostics
                     case "usepam":
                     case "pubkeyauthentication":
                     case "permitemptypasswords":
+                    case "strictmodes":
                         if (_seen.Add(keyword) && args.Count > 0)
                         {
                             _single[keyword] = args[0].ToLowerInvariant();
@@ -390,6 +431,7 @@ namespace HddBackup.Core.Diagnostics
                     UsePam = Flag("usepam", false),
                     PubkeyAuthentication = Flag("pubkeyauthentication", true),
                     PermitEmptyPasswords = Flag("permitemptypasswords", false),
+                    StrictModes = Flag("strictmodes", true),
                     AuthorizedKeysFiles = new SettingValue<IReadOnlyList<string>>(
                         _keysFiles ?? new List<string> { ".ssh/authorized_keys", ".ssh/authorized_keys2" },
                         _keysFiles == null ? null : _origin["authorizedkeysfile"].File,
@@ -401,7 +443,8 @@ namespace HddBackup.Core.Diagnostics
                     DenyGroups = List("denygroups"),
                     AuthenticationMethods = _methods ?? new List<IReadOnlyList<string>>(),
                     HasAuthorizedKeysCommand = _keysCommand,
-                    ConditionalKeywords = _conditional.OrderBy(x => x, StringComparer.Ordinal).ToList()
+                    ConditionalKeywords = _conditional.OrderBy(x => x, StringComparer.Ordinal).ToList(),
+                    ListTokenMap = _listTokens
                 };
             }
 

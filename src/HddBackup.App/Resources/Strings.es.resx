@@ -1612,4 +1612,283 @@ Cada cambio se escribe en la tarjeta de inmediato. No hay archivo diff ni suma d
   <data name="Edit_CardFailed" xml:space="preserve">
     <value>El cambio no se completó: {0} El archivo está entero antiguo o entero nuevo; ante la duda, ejecute e2fsck en Linux.</value>
   </data>
+  <data name="Ssh_R_KeyFileUnsafe" xml:space="preserve">
+    <value>el servidor ignora su archivo de claves (un archivo o carpeta del camino está abierto a otros o tiene un propietario incorrecto)</value>
+  </data>
+  <data name="Ssh_F_AccountKeyFileUnsafe" xml:space="preserve">
+    <value>El servidor ignora las claves de {0} porque {1} está abierto a otros usuarios o tiene un propietario incorrecto.</value>
+  </data>
+  <data name="Repair_Hint_EditOff" xml:space="preserve">
+    <value>Para reparar, active Editar en la pestaña Archivos (funciona con imágenes ext4 y con tarjetas extraíbles sin protección contra escritura).</value>
+  </data>
+  <data name="Repair_Fix" xml:space="preserve">
+    <value>Corregir…</value>
+  </data>
+  <data name="Repair_AddKey" xml:space="preserve">
+    <value>Añadir una clave…</value>
+  </data>
+  <data name="Repair_Waiting" xml:space="preserve">
+    <value>Reparaciones pendientes ({0}). El resultado de arriba se muestra como quedará al pulsar Guardar:</value>
+  </data>
+  <data name="Repair_Undo" xml:space="preserve">
+    <value>Deshacer</value>
+  </data>
+  <data name="Repair_VerdictAfter" xml:space="preserve">
+    <value> (tras las reparaciones pendientes)</value>
+  </data>
+  <data name="Repair_Busy" xml:space="preserve">
+    <value>Trabajando…</value>
+  </data>
+  <data name="Repair_Applied_Image" xml:space="preserve">
+    <value>En cola: {0}. Surte efecto al pulsar Guardar.</value>
+  </data>
+  <data name="Repair_Applied_Card" xml:space="preserve">
+    <value>Escrito en la tarjeta: {0}.</value>
+  </data>
+  <data name="Repair_Failed" xml:space="preserve">
+    <value>No se hizo la reparación: {0}</value>
+  </data>
+  <data name="Repair_UndoBlocked" xml:space="preserve">
+    <value>No se puede deshacer esta reparación porque depende de ella un cambio posterior ({0}).</value>
+  </data>
+  <data name="Repair_ReportCaption" xml:space="preserve">
+    <value>Reparaciones de esta sesión</value>
+  </data>
+  <data name="Repair_Report_Waiting" xml:space="preserve">
+    <value>pendiente de Guardar: {0}</value>
+  </data>
+  <data name="Repair_Report_Saved" xml:space="preserve">
+    <value>guardado: {0}</value>
+  </data>
+  <data name="Repair_Report_Written" xml:space="preserve">
+    <value>escrito en la tarjeta: {0}</value>
+  </data>
+  <data name="Repair_Title_EnableServer" xml:space="preserve">
+    <value>Hacer que {0} arranque con el sistema</value>
+  </data>
+  <data name="Repair_Title_UnmaskServer" xml:space="preserve">
+    <value>Desenmascarar {0} y hacer que arranque con el sistema</value>
+  </data>
+  <data name="Repair_Title_AllowUser" xml:space="preserve">
+    <value>Permitir el acceso de {0} (añadir a la lista AllowUsers)</value>
+  </data>
+  <data name="Repair_Title_UnblockUser" xml:space="preserve">
+    <value>Quitar a {0} de la lista DenyUsers</value>
+  </data>
+  <data name="Repair_Title_AllowGroup" xml:space="preserve">
+    <value>Permitir el acceso al grupo {1} de {0} (añadir a la lista AllowGroups)</value>
+  </data>
+  <data name="Repair_Title_EnableKeyAuth" xml:space="preserve">
+    <value>Activar el acceso con clave</value>
+  </data>
+  <data name="Repair_Title_RootKeysOnly" xml:space="preserve">
+    <value>Permitir que root entre solo con clave</value>
+  </data>
+  <data name="Repair_Title_RootPassword" xml:space="preserve">
+    <value>Permitir que root entre también con contraseña</value>
+  </data>
+  <data name="Repair_Title_EnablePasswordAuth" xml:space="preserve">
+    <value>Activar el acceso con contraseña</value>
+  </data>
+  <data name="Repair_Title_FixShell" xml:space="preserve">
+    <value>Dar a {0} el intérprete de acceso {1}</value>
+  </data>
+  <data name="Repair_Title_FixKeyFileModes" xml:space="preserve">
+    <value>Corregir los permisos de los archivos de claves de {0}</value>
+  </data>
+  <data name="Repair_Title_AddKey" xml:space="preserve">
+    <value>Añadir la clave {1} para {0}</value>
+  </data>
+  <data name="Repair_Why_EnableServer" xml:space="preserve">
+    <value>El servidor SSH está instalado pero nada lo inicia al arrancar. Se crean los enlaces que crearía «systemctl enable».</value>
+  </data>
+  <data name="Repair_Why_UnmaskServer" xml:space="preserve">
+    <value>El servicio SSH está enmascarado y nunca puede iniciarse. Se quita la máscara y se crean los enlaces que lo activan.</value>
+  </data>
+  <data name="Repair_Why_AllowUser" xml:space="preserve">
+    <value>El servidor solo admite a los usuarios de la lista AllowUsers y esta cuenta no está. Se añade una línea con la cuenta; las existentes se conservan.</value>
+  </data>
+  <data name="Repair_Why_UnblockUser" xml:space="preserve">
+    <value>Esta cuenta está en la lista DenyUsers. Se quita su nombre de la línea; los demás nombres se conservan.</value>
+  </data>
+  <data name="Repair_Why_AllowGroup" xml:space="preserve">
+    <value>El servidor solo admite los grupos de la lista AllowGroups y ningún grupo de esta cuenta está en ella. Se añade una línea con el grupo propio de la cuenta.</value>
+  </data>
+  <data name="Repair_Why_EnableKeyAuth" xml:space="preserve">
+    <value>El acceso con clave está desactivado en la configuración del servidor. La línea se sustituye por una que lo activa; la antigua queda como comentario.</value>
+  </data>
+  <data name="Repair_Why_RootKeysOnly" xml:space="preserve">
+    <value>El servidor no deja entrar a root. Esto permite que root entre con clave (nunca con contraseña).</value>
+  </data>
+  <data name="Repair_Why_RootPassword" xml:space="preserve">
+    <value>Esto permite que root entre con contraseña.</value>
+  </data>
+  <data name="Repair_Why_EnablePasswordAuth" xml:space="preserve">
+    <value>El acceso con contraseña está desactivado en la configuración del servidor. La línea se sustituye por una que lo activa.</value>
+  </data>
+  <data name="Repair_Why_FixShell" xml:space="preserve">
+    <value>El intérprete de acceso de la cuenta no permite entrar. Solo cambia el campo del intérprete de esta cuenta en /etc/passwd.</value>
+  </data>
+  <data name="Repair_Why_FixKeyFileModes" xml:space="preserve">
+    <value>El servidor ignora las claves en archivos en los que otros pueden escribir o que son de otra persona. Solo cambian los permisos y el propietario; las claves no se tocan.</value>
+  </data>
+  <data name="Repair_Why_AddKey" xml:space="preserve">
+    <value>La clave se añade a la lista de claves que pueden entrar como esta cuenta. Las claves existentes se conservan.</value>
+  </data>
+  <data name="Repair_Risk_RootPassword" xml:space="preserve">
+    <value>Riesgo: quien adivine la contraseña de root puede tomar el sistema. Es mejor usar una clave.</value>
+  </data>
+  <data name="Repair_Risk_EnablePasswordAuth" xml:space="preserve">
+    <value>Riesgo: las contraseñas pueden adivinarse por la red. Una clave es más segura; úselo solo en una red de confianza.</value>
+  </data>
+  <data name="Repair_Risk_Confirm" xml:space="preserve">
+    <value>Entiendo el riesgo</value>
+  </data>
+  <data name="Repair_Change_CreateLink" xml:space="preserve">
+    <value>Crear el enlace {0} → {2}</value>
+  </data>
+  <data name="Repair_Change_RemoveLink" xml:space="preserve">
+    <value>Quitar el enlace {0} (apunta a {1})</value>
+  </data>
+  <data name="Repair_Change_Edit" xml:space="preserve">
+    <value>Cambiar {0}: {1} → {2}</value>
+  </data>
+  <data name="Repair_Change_EditAdd" xml:space="preserve">
+    <value>Cambiar {0}: {2}</value>
+  </data>
+  <data name="Repair_Change_CreateFolder" xml:space="preserve">
+    <value>Crear la carpeta {0}</value>
+  </data>
+  <data name="Repair_Change_CreateFolderAs" xml:space="preserve">
+    <value>Crear la carpeta {0} (permisos y propietario: {2})</value>
+  </data>
+  <data name="Repair_Change_CreateFile" xml:space="preserve">
+    <value>Crear el archivo {0}</value>
+  </data>
+  <data name="Repair_Change_CreateFileAs" xml:space="preserve">
+    <value>Crear el archivo {0} (permisos y propietario: {2})</value>
+  </data>
+  <data name="Repair_Change_SetModeOwner" xml:space="preserve">
+    <value>Cambiar permisos y propietario de {0}: {1} → {2}</value>
+  </data>
+  <data name="Repair_Change_ChangeShell" xml:space="preserve">
+    <value>En {0}, cambiar el intérprete de acceso: {1} → {2}</value>
+  </data>
+  <data name="Repair_Change_AppendKey" xml:space="preserve">
+    <value>Añadir la clave {2} a {0}</value>
+  </data>
+  <data name="Repair_Refused_NoInstallSection" xml:space="preserve">
+    <value>El servicio no tiene sección [Install], así que no se puede activar automáticamente.</value>
+  </data>
+  <data name="Repair_Refused_ListedInMatch" xml:space="preserve">
+    <value>La restricción está dentro de un bloque Match; no se repara automáticamente.</value>
+  </data>
+  <data name="Repair_Refused_KeysFromCommand" xml:space="preserve">
+    <value>El servidor obtiene las claves de un comando, así que una clave añadida a un archivo no se usaría.</value>
+  </data>
+  <data name="Repair_Refused_NoHome" xml:space="preserve">
+    <value>La cuenta no tiene carpeta personal en este sistema de archivos.</value>
+  </data>
+  <data name="Repair_Refused_NoSuitableShell" xml:space="preserve">
+    <value>No hay ningún intérprete de acceso (bash o sh) instalado en este sistema.</value>
+  </data>
+  <data name="Repair_Refused_OutsideFileSystem" xml:space="preserve">
+    <value>El archivo de claves es un enlace que sale de este sistema de archivos, o su carpeta tendría que crearse fuera de la carpeta personal.</value>
+  </data>
+  <data name="Repair_Refused_Duplicate" xml:space="preserve">
+    <value>Esta clave ya está instalada para la cuenta.</value>
+  </data>
+  <data name="Repair_Refused_NoGroupName" xml:space="preserve">
+    <value>El grupo de la cuenta no tiene un nombre utilizable en /etc/group.</value>
+  </data>
+  <data name="Repair_Refused_NotRepairable" xml:space="preserve">
+    <value>Esto no se puede reparar automáticamente.</value>
+  </data>
+  <data name="Repair_Refused_Unreadable" xml:space="preserve">
+    <value>No se puede leer un archivo necesario para la reparación.</value>
+  </data>
+  <data name="Repair_Refused_LinkTooLong" xml:space="preserve">
+    <value>El destino del enlace es demasiado largo para este tipo de enlace.</value>
+  </data>
+  <data name="Repair_Refused_AlreadyThere" xml:space="preserve">
+    <value>Ya está en su sitio; nada que cambiar.</value>
+  </data>
+  <data name="Repair_KeyRefused_Empty" xml:space="preserve">
+    <value>Pegue una clave pública (una línea) o cargue un archivo .pub.</value>
+  </data>
+  <data name="Repair_KeyRefused_PrivateKey" xml:space="preserve">
+    <value>Esta es una clave privada. No la comparta nunca: pegue en su lugar la clave pública (el archivo .pub).</value>
+  </data>
+  <data name="Repair_KeyRefused_Certificate" xml:space="preserve">
+    <value>Esto es un certificado, no una clave pública.</value>
+  </data>
+  <data name="Repair_KeyRefused_Several" xml:space="preserve">
+    <value>Solo una clave cada vez: quite las líneas sobrantes.</value>
+  </data>
+  <data name="Repair_KeyRefused_UnknownType" xml:space="preserve">
+    <value>Esto no parece una clave pública (debería empezar por ssh-ed25519, ssh-rsa o ecdsa-…).</value>
+  </data>
+  <data name="Repair_KeyRefused_BadEncoding" xml:space="preserve">
+    <value>Los datos de la clave están dañados o cortados; copie la línea completa otra vez.</value>
+  </data>
+  <data name="Repair_KeyRefused_TypeMismatch" xml:space="preserve">
+    <value>El tipo de clave y los datos no coinciden; copie la línea completa otra vez.</value>
+  </data>
+  <data name="Repair_KeyRefused_TooLong" xml:space="preserve">
+    <value>El texto es demasiado largo para una clave pública.</value>
+  </data>
+  <data name="Repair_Confirm_Title" xml:space="preserve">
+    <value>Corregir: {0}</value>
+  </data>
+  <data name="Repair_Confirm_Intro" xml:space="preserve">
+    <value>Se cambiará:</value>
+  </data>
+  <data name="Repair_Confirm_Card" xml:space="preserve">
+    <value>Se escribe en la tarjeta de inmediato y no se puede deshacer.</value>
+  </data>
+  <data name="Repair_Confirm_Image" xml:space="preserve">
+    <value>Espera a Guardar; hasta entonces puede deshacerlo.</value>
+  </data>
+  <data name="Repair_Confirm_Apply" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="Repair_Confirm_Others" xml:space="preserve">
+    <value>O elija otra forma:</value>
+  </data>
+  <data name="Repair_Key_Title" xml:space="preserve">
+    <value>Añadir una clave</value>
+  </data>
+  <data name="Repair_Key_Account" xml:space="preserve">
+    <value>Cuenta:</value>
+  </data>
+  <data name="Repair_Key_Box" xml:space="preserve">
+    <value>Clave pública (una línea o cargue un archivo .pub):</value>
+  </data>
+  <data name="Repair_Key_Load" xml:space="preserve">
+    <value>Cargar…</value>
+  </data>
+  <data name="Repair_Key_Facts" xml:space="preserve">
+    <value>Tipo: {0}    Huella: {1}    Comentario: {2}</value>
+  </data>
+  <data name="Repair_Key_WarnLegacy" xml:space="preserve">
+    <value>Este tipo de clave antiguo (DSA) lo ignoran los servidores actuales.</value>
+  </data>
+  <data name="Repair_Key_WarnOptions" xml:space="preserve">
+    <value>La línea empieza con opciones (from=, command=, no-pty …) que restringen esta clave.</value>
+  </data>
+  <data name="Repair_Key_Target" xml:space="preserve">
+    <value>Se añadirá a: {0}</value>
+  </data>
+  <data name="Repair_Key_Add" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="Repair_Key_LoadFilter" xml:space="preserve">
+    <value>Claves públicas (*.pub)|*.pub|Todos los archivos (*.*)|*.*</value>
+  </data>
+  <data name="Repair_Key_LoadFailed" xml:space="preserve">
+    <value>No se pudo leer el archivo como clave pública: {0}</value>
+  </data>
+  <data name="Repair_Key_NoAccounts" xml:space="preserve">
+    <value>No hay ninguna cuenta con carpeta personal en este sistema.</value>
+  </data>
 </root>

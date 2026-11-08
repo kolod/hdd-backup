@@ -2,17 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using HddBackup.App.Localization;
 using HddBackup.App.Settings;
 using HddBackup.Core.Diagnostics;
+using HddBackup.Core.Editing;
+using HddBackup.Core.Repair;
 using HddBackup.Core.Shrinking;
 
 namespace HddBackup.App.Forms
 {
     /// <summary>
-    /// The SSH check: Server, Settings, Accounts, Result. It only shows what <see cref="SshCheck"/> found;
-    /// nothing here changes the image, and advice is words, not actions (contracts/ui.md).
+    /// The SSH check: Server, Settings, Accounts, Result. It shows what <see cref="SshCheck"/> found. When the Files tab is in
+    /// edit mode (feature 011) the Result and Accounts pages also offer repairs: <b>Fix…</b> for the reasons that can be repaired
+    /// and <b>Add a key…</b>; every repair goes through the host (the edit session of the Files tab), and the check is run again
+    /// on the file system as it will be after the waiting repairs are saved.
     /// </summary>
     internal sealed class SshWizardDialog : Form
     {
@@ -21,7 +26,9 @@ namespace HddBackup.App.Forms
         private static readonly Color Amber = Color.FromArgb(0x9A, 0x6A, 0x00);
         private static readonly Color Blue = Color.FromArgb(0x2B, 0x5C, 0x9E);
 
-        private readonly SshReport _report;
+        private SshReport _report;
+        private IReadOnlyList<RepairOffer> _offers;
+        private readonly ISshRepairHost _host;
         private readonly Label[] _steps = new Label[4];
         private readonly Panel[] _pages = new Panel[4];
         private readonly Button _back = Ui.Button();
@@ -38,7 +45,7 @@ namespace HddBackup.App.Forms
             MultiSelect = false
         };
         private readonly NoteListPanel _server = new NoteListPanel();
-        private readonly NoteListPanel _keyNotes = new NoteListPanel { Dock = DockStyle.Bottom, Height = 130 };
+        private readonly NoteListPanel _keyNotes = new NoteListPanel { Dock = DockStyle.Bottom, Height = 170 };
         private readonly NoteListPanel _settings = new NoteListPanel();
         private readonly Panel _verdictBanner = new Panel { Dock = DockStyle.Top, AutoSize = true, Padding = new Padding(12) };
         private readonly Label _verdictText = new Label { AutoSize = true, UseMnemonic = false };
@@ -46,18 +53,28 @@ namespace HddBackup.App.Forms
         private readonly NoteListPanel _why = new NoteListPanel { Dock = DockStyle.Fill };
         private readonly Label _noteCaption = new Label { AutoSize = true, UseMnemonic = false, Margin = new Padding(0, 12, 0, 4) };
         private readonly NoteListPanel _notes = new NoteListPanel { Dock = DockStyle.Fill };
+        private readonly Label _repairHint = new Label { AutoSize = true, UseMnemonic = false, ForeColor = SystemColors.GrayText, Margin = new Padding(0, 8, 0, 0) };
+        private readonly Label _repairStatus = new Label { AutoSize = true, UseMnemonic = false, Margin = new Padding(0, 8, 0, 0) };
+        private readonly Label _waitingCaption = new Label { AutoSize = true, UseMnemonic = false, Margin = new Padding(0, 10, 0, 4) };
+        private readonly NoteListPanel _waiting = new NoteListPanel { Dock = DockStyle.Top, Height = 96 };
         private readonly Label _warning = new Label { AutoSize = true, UseMnemonic = false, ForeColor = Color.DarkRed, Margin = new Padding(0, 0, 0, 6) };
         private readonly Label _title = new Label { AutoSize = true, UseMnemonic = false };
         private readonly Button _copy = Ui.Button();
         private readonly Button _save = Ui.Button();
+        private readonly Button _addKey = Ui.Button();
         private readonly Label _reportStatus = new Label { AutoSize = true, UseMnemonic = false, Margin = new Padding(8, 8, 0, 0) };
         private readonly PortableSettings _portable;
         private int _step;
+        private bool _busy;
+        private bool _stale;
 
-        public SshWizardDialog(SshReport report, PortableSettings settings = null)
+        public SshWizardDialog(RepairView view, PortableSettings settings = null, ISshRepairHost host = null)
         {
-            _report = report;
+            _report = view.Report;
+            _offers = view.Offers;
+            _host = host;
             _portable = settings;
+            var report = _report;
             Text = Strings.Format("Ssh_Title", report.Source?.DisplayName ?? string.Empty);
             Icon = AppIcon.Icon;
             Font = UiFont.For(LanguageService.Current);
@@ -102,18 +119,18 @@ namespace HddBackup.App.Forms
 
             root.Controls.Add(stepRow, 0, 1);
 
-            var host = new Panel { Dock = DockStyle.Fill };
+            var host2 = new Panel { Dock = DockStyle.Fill };
             for (int i = 0; i < 4; i++)
             {
                 _pages[i] = new Panel { Dock = DockStyle.Fill, Visible = false };
-                host.Controls.Add(_pages[i]);
+                host2.Controls.Add(_pages[i]);
             }
 
             _pages[0].Controls.Add(_server);
             _pages[1].Controls.Add(_settings);
             BuildAccountsPage(_pages[2]);
             BuildResultPage(_pages[3]);
-            root.Controls.Add(host, 0, 2);
+            root.Controls.Add(host2, 0, 2);
 
             _back.Text = Strings.Get("Ssh_Back");
             _next.Text = Strings.Get("Ssh_Next");
@@ -131,6 +148,12 @@ namespace HddBackup.App.Forms
 
             Controls.Add(root);
             CancelButton = _close;
+
+            if (_host != null)
+            {
+                _host.Changed += OnHostChanged;
+                FormClosed += (s, e) => _host.Changed -= OnHostChanged;
+            }
 
             Fill();
             Go(report.Verdict.Code == VerdictCode.NotALinuxRoot ? 3 : 0);
@@ -157,24 +180,42 @@ namespace HddBackup.App.Forms
         {
             _verdictText.Font = new Font(Font.FontFamily, Font.Size + 3, FontStyle.Bold);
             _verdictBanner.Controls.Add(_verdictText);
-            var body = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 4 };
+            var body = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 5 };
             body.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            body.RowStyles.Add(new RowStyle(SizeType.Percent, 60));
+            body.RowStyles.Add(new RowStyle(SizeType.Percent, 55));
             body.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            body.RowStyles.Add(new RowStyle(SizeType.Percent, 40));
+            body.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            body.RowStyles.Add(new RowStyle(SizeType.Percent, 45));
             _whyCaption.Font = new Font(Font, FontStyle.Bold);
             _noteCaption.Font = new Font(Font, FontStyle.Bold);
+            _waitingCaption.Font = new Font(Font, FontStyle.Bold);
             _whyCaption.Text = Strings.Get("Ssh_Why");
             _noteCaption.Text = Strings.Get("Ssh_CouldNotCheck");
+            _repairHint.Text = Strings.Get("Repair_Hint_EditOff");
+            _repairHint.MaximumSize = new Size(760, 0);
+            _repairStatus.MaximumSize = new Size(760, 0);
+            _waitingCaption.MaximumSize = new Size(760, 0);
+
+            var repairBlock = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Dock = DockStyle.Top, Margin = new Padding(0) };
+            repairBlock.Controls.Add(_repairHint);
+            repairBlock.Controls.Add(_repairStatus);
+            repairBlock.Controls.Add(_waitingCaption);
+            repairBlock.Controls.Add(_waiting);
+            var noteBlock = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Dock = DockStyle.Top, Margin = new Padding(0) };
+            noteBlock.Controls.Add(_noteCaption);
+
             body.Controls.Add(_whyCaption, 0, 0);
             body.Controls.Add(_why, 0, 1);
-            body.Controls.Add(_noteCaption, 0, 2);
-            body.Controls.Add(_notes, 0, 3);
+            body.Controls.Add(repairBlock, 0, 2);
+            body.Controls.Add(noteBlock, 0, 3);
+            body.Controls.Add(_notes, 0, 4);
             page.Controls.Add(body);
             page.Controls.Add(_verdictBanner);
 
             _copy.Text = Strings.Get("Report_Copy");
             _save.Text = Strings.Get("Report_Save");
+            _addKey.Text = Strings.Get("Repair_AddKey");
+            _addKey.Click += (s, e) => AddKey(null);
             _copy.Click += (s, e) => ShowReportStatus(ReportActions.Copy(ReportText(), out bool ok), ok);
             _save.Click += (s, e) =>
             {
@@ -185,11 +226,12 @@ namespace HddBackup.App.Forms
                 }
             };
             var actions = new FlowLayoutPanel { Dock = DockStyle.Bottom, AutoSize = true, WrapContents = true, Margin = new Padding(0, 6, 0, 0) };
-            actions.Controls.AddRange(new Control[] { _copy, _save, _reportStatus });
+            actions.Controls.AddRange(new Control[] { _addKey, _copy, _save, _reportStatus });
             page.Controls.Add(actions);
         }
 
-        private string ReportText() => ReportBuilder.Ssh(_report, new ReportTexts(), DateTime.Now);
+        private string ReportText() =>
+            ReportBuilder.Ssh(_report, new ReportTexts(), DateTime.Now, _host?.Log, new RepairReportTexts());
 
         private void ShowReportStatus(string message, bool ok)
         {
@@ -210,22 +252,24 @@ namespace HddBackup.App.Forms
 
         private void Fill()
         {
-            _server.SetItems(_report.Findings.Where(f => f.Page == 1).Select(ToItem));
-            _settings.SetItems(_report.Findings.Where(f => f.Page == 2).Select(ToItem));
+            _server.SetItems(_report.Findings.Where(f => f.Page == 1).Select(f => ToItem(f)));
+            _settings.SetItems(_report.Findings.Where(f => f.Page == 2).Select(f => ToItem(f)));
             _keyNotes.SetItems(_report.Findings
-                .Where(f => f.Code == FindingCode.AccountKeys || f.Code == FindingCode.AccountNoKeys || f.Code == FindingCode.AccountKeysUnknown)
-                .Select(ToItem));
+                .Where(f => f.Code == FindingCode.AccountKeys || f.Code == FindingCode.AccountNoKeys || f.Code == FindingCode.AccountKeysUnknown || f.Code == FindingCode.AccountKeyFileUnsafe)
+                .Select(f => ToItem(f)));
             FillAccounts();
             FillResult();
+            ShowRepairUi();
         }
 
-        private static NoteItem ToItem(Finding f)
+        private NoteItem ToItem(Finding f)
         {
             return new NoteItem(
                 DiagnosticTexts.Glyph(f.Status),
                 StatusColor(f.Status),
                 DiagnosticTexts.Finding(f),
-                DiagnosticTexts.EvidenceText(f.Evidence));
+                DiagnosticTexts.EvidenceText(f.Evidence),
+                ActionsFor(f));
         }
 
         private static Color StatusColor(FindingStatus status)
@@ -312,16 +356,17 @@ namespace HddBackup.App.Forms
                     break;
             }
 
+            bool waiting = _host != null && _host.CanRepair && _host.Waiting.Count > 0;
             _verdictBanner.BackColor = back;
             _verdictText.ForeColor = fore;
-            _verdictText.Text = glyph + "  " + _verdictText.Text;
+            _verdictText.Text = glyph + "  " + _verdictText.Text + (waiting ? Strings.Get("Repair_VerdictAfter") : string.Empty);
             _verdictText.MaximumSize = new Size(Math.Max(300, ClientSize.Width - 80), 0);
 
-            var why = v.Reasons.Select(ToItem).ToList();
+            var why = v.Reasons.Select(f => ToItem(f)).ToList();
             _whyCaption.Visible = _why.Visible = why.Count > 0;
             _why.SetItems(why);
 
-            var notes = v.Notes.Select(ToItem).ToList();
+            var notes = v.Notes.Select(f => ToItem(f)).ToList();
             var read = _report.ReadNotes;
             if (read != null)
             {
@@ -331,6 +376,256 @@ namespace HddBackup.App.Forms
 
             _noteCaption.Visible = _notes.Visible = notes.Count > 0;
             _notes.SetItems(notes);
+        }
+
+        // ------------------------------------------------------------------------- repairs (feature 011)
+
+        private bool CanRepair => _host != null && _host.CanRepair && _report.Verdict.Code != VerdictCode.NotALinuxRoot;
+
+        /// <summary>The offer that answers a finding: the server findings by code, the account findings by account and reason.</summary>
+        private static bool Matches(RepairOffer offer, Finding f)
+        {
+            if (offer.Account.Length == 0)
+            {
+                return f.Code == offer.Finding;
+            }
+
+            if (f.Args.Count == 0 || f.Args[0] != offer.Account)
+            {
+                return false;
+            }
+
+            return (f.Code == FindingCode.AccountCannot && f.Reason == offer.Reason)
+                || (f.Code == FindingCode.AccountKeyFileUnsafe && offer.Reason == LoginReason.KeyFileUnsafe);
+        }
+
+        private IReadOnlyList<NoteAction> ActionsFor(Finding f)
+        {
+            if (!CanRepair || _busy)
+            {
+                return Array.Empty<NoteAction>();
+            }
+
+            var list = new List<NoteAction>();
+            foreach (var offer in _offers.Where(o => Matches(o, f)))
+            {
+                var plan = offer.Plan;
+                NoteAction fix = null;
+                if (plan != null)
+                {
+                    fix = new NoteAction(Strings.Get("Repair_Fix"), () => ConfirmAndApply(plan), plan.CanApply, plan.CanApply ? null : RepairTexts.Refusal(plan.Unavailable));
+                }
+
+                NoteAction key = offer.OffersKey ? new NoteAction(Strings.Get("Repair_AddKey"), () => AddKey(offer.Account)) : null;
+
+                // a repair that makes the system easier to get into never comes before the safe way, a key
+                if (key != null && (plan == null || plan.Risk != RepairRisk.None))
+                {
+                    list.Add(key);
+                    if (fix != null)
+                    {
+                        list.Add(fix);
+                    }
+                }
+                else
+                {
+                    if (fix != null)
+                    {
+                        list.Add(fix);
+                    }
+
+                    if (key != null)
+                    {
+                        list.Add(key);
+                    }
+                }
+            }
+
+            if ((f.Code == FindingCode.AccountKeys || f.Code == FindingCode.AccountNoKeys) && f.Args.Count > 0 && !list.Any(a => a.Text == Strings.Get("Repair_AddKey")))
+            {
+                string account = f.Args[0];
+                list.Add(new NoteAction(Strings.Get("Repair_AddKey"), () => AddKey(account)));
+            }
+
+            return list;
+        }
+
+        private void OnHostChanged(object sender, EventArgs e)
+        {
+            if (IsDisposed || !IsHandleCreated)
+            {
+                return;
+            }
+
+            if (_busy)
+            {
+                _stale = true;
+                return;
+            }
+
+            BeginInvoke((Action)(async () => await RefreshAsync()));
+        }
+
+        /// <summary>Runs the check again on the file system as it will be, and shows the result.</summary>
+        private async Task RefreshAsync()
+        {
+            if (_host == null || IsDisposed || _busy)
+            {
+                return;
+            }
+
+            _busy = true;
+            ShowRepairUi();
+            RepairView view = null;
+            try
+            {
+                view = await _host.ReadAsync();
+            }
+            finally
+            {
+                _busy = false;
+            }
+
+            if (IsDisposed)
+            {
+                return;
+            }
+
+            bool again = _stale; // the host changed again while the check was running
+            _stale = false;
+            if (view != null)
+            {
+                _report = view.Report;
+                _offers = view.Offers;
+                Fill();
+            }
+            else
+            {
+                ShowRepairUi();
+            }
+
+            if (again)
+            {
+                await RefreshAsync();
+            }
+        }
+
+        private void ConfirmAndApply(RepairPlan plan)
+        {
+            if (_busy || !CanRepair)
+            {
+                return;
+            }
+
+            using (var dialog = new RepairConfirmDialog(plan, _host.IsCard))
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    ApplyPlan(dialog.ChosenPlan);
+                }
+            }
+        }
+
+        private void AddKey(string account)
+        {
+            if (_busy || !CanRepair)
+            {
+                return;
+            }
+
+            var candidates = _report.Accounts.Where(a => a.Home.Length > 0 && (!a.IsSystemAccount || a.Name == "root")).ToList();
+            string preselect = account;
+            if (preselect == null)
+            {
+                var people = candidates.Where(a => a.Name != "root").ToList();
+                preselect = people.Count == 1 ? people[0].Name : null;
+            }
+
+            using (var dialog = new AddKeyDialog(candidates, preselect, (name, key) => _host.PlanAddKeyAsync(name, key), _host.IsCard))
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK && dialog.Plan != null)
+                {
+                    ApplyPlan(dialog.Plan);
+                }
+            }
+        }
+
+        private async void ApplyPlan(RepairPlan plan)
+        {
+            _busy = true;
+            SetRepairStatus(Strings.Get("Repair_Busy"), false);
+            ShowRepairUi();
+            RepairApplyResult result;
+            try
+            {
+                result = await _host.ApplyAsync(plan);
+            }
+            finally
+            {
+                _busy = false;
+                _stale = false; // the host's own changes during the repair are covered by the refresh below
+            }
+
+            if (IsDisposed)
+            {
+                return;
+            }
+
+            SetRepairStatus(result.Message, !result.Ok);
+            await RefreshAsync();
+        }
+
+        private void UndoRepair(int group)
+        {
+            if (_busy || _host == null)
+            {
+                return;
+            }
+
+            var result = _host.Undo(group);
+            if (result.Status == UndoStatus.Blocked)
+            {
+                MessageBox.Show(this, Strings.Format("Repair_UndoBlocked", result.BlockedPath), Strings.Get("Repair_Undo"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (result.Status == UndoStatus.Done)
+            {
+                SetRepairStatus(string.Empty, false);
+            }
+        }
+
+        private void SetRepairStatus(string text, bool error)
+        {
+            _repairStatus.Text = text;
+            _repairStatus.ForeColor = error ? Color.DarkRed : SystemColors.ControlText;
+            _repairStatus.Visible = text.Length > 0;
+        }
+
+        /// <summary>Shows or hides the repair controls for the state of the host.</summary>
+        private void ShowRepairUi()
+        {
+            bool hostPresent = _host != null && _report.Verdict.Code != VerdictCode.NotALinuxRoot;
+            bool can = CanRepair;
+            _repairHint.Visible = hostPresent && !can;
+            _addKey.Visible = can;
+            _addKey.Enabled = !_busy;
+            if (!can)
+            {
+                SetRepairStatus(string.Empty, false);
+            }
+
+            var groups = can ? _host.Waiting : (IReadOnlyList<RepairGroup>)Array.Empty<RepairGroup>();
+            bool showWaiting = groups.Count > 0 && !_host.IsCard;
+            _waitingCaption.Visible = _waiting.Visible = showWaiting;
+            if (showWaiting)
+            {
+                _waitingCaption.Text = Strings.Format("Repair_Waiting", groups.Count);
+                _waiting.SetItems(groups.Select(g => new NoteItem(
+                    DiagnosticTexts.Glyph(FindingStatus.Info),
+                    Blue,
+                    g.Title == null ? string.Empty : RepairTexts.Title(g.Title),
+                    null,
+                    new[] { new NoteAction(Strings.Get("Repair_Undo"), () => UndoRepair(g.Group), !_busy) })));
+            }
         }
 
         protected override void OnResize(EventArgs e)
@@ -355,6 +650,7 @@ namespace HddBackup.App.Forms
             _next.Enabled = !notLinux && _step < 3;
             _back.Visible = _next.Visible = !notLinux;
             AcceptButton = _next.Enabled ? _next : _close;
+            ShowRepairUi();
         }
     }
 }

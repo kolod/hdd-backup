@@ -154,6 +154,112 @@ namespace HddBackup.Core.Tests.Editing
             Assert.Equal(card.Original, card.Disk.Data);
         }
 
+        private static EditChange[] Repair() => new[]
+        {
+            EditChange.NewDirectory("/home/pi/.ssh", 0x1C0, 1000, 1000),
+            EditChange.NewFile("/home/pi/.ssh/authorized_keys", Text("ssh-ed25519 AAAA pi"), 0x180, 1000, 1000),
+            EditChange.NewSymlink("/etc/linked", "/etc/hostname"),
+            EditChange.Attributes("/home/pi", 0x1ED, null, null)
+        };
+
+        [Fact]
+        public void ARepairOfSeveralChangesIsWrittenAsOneSetInsideThePartition()
+        {
+            var card = MakeCard();
+            using (var session = CardEditSession.Open(card.Access, card.Info, card.Partition))
+            {
+                var result = session.Apply(Repair(), null, CancellationToken.None);
+                Assert.Equal(SaveStatus.Saved, result.Status);
+                Assert.Equal(4, result.ChangesWritten);
+            }
+
+            Assert.Equal(1, card.Access.PartitionWriteOpens);
+            using (var fs = Fs(card))
+            {
+                EditAssert.CheckerClean(fs, "card after repair");
+                var tree = EditAssert.Snapshot(fs);
+                Assert.Equal((ushort)0x8180, tree["/home/pi/.ssh/authorized_keys"].Mode);
+                Assert.Equal(1000u, tree["/home/pi/.ssh/authorized_keys"].Uid);
+                Assert.Equal("/etc/hostname", tree["/etc/linked"].Content);
+                Assert.Equal((ushort)0x41ED, tree["/home/pi"].Mode);
+            }
+
+            for (int i = 0; i < Prefix; i++)
+            {
+                if (card.Disk.Data[i] != card.Original[i])
+                {
+                    Assert.Fail("the area in front of the partition changed at " + i);
+                }
+            }
+
+            for (int i = Prefix + (int)card.Partition.Length; i < card.Disk.Data.Length; i++)
+            {
+                if (card.Disk.Data[i] != card.Original[i])
+                {
+                    Assert.Fail("the area behind the partition changed at " + i);
+                }
+            }
+        }
+
+        [Fact]
+        public void ARepairWithOneChangeThatCannotBeMadeWritesNothing()
+        {
+            var card = MakeCard();
+            var changes = new[]
+            {
+                EditChange.NewDirectory("/home/pi/.ssh", 0x1C0, 1000, 1000),
+                EditChange.NewFile("/nowhere/at/all", Text("x"))
+            };
+            using (var session = CardEditSession.Open(card.Access, card.Info, card.Partition))
+            {
+                var result = session.Apply(changes, null, CancellationToken.None);
+                Assert.Equal(SaveStatus.Refused, result.Status);
+                Assert.Equal(EditError.NotFound, result.Error);
+            }
+
+            Assert.Equal(0, card.Disk.WriteCalls);
+            Assert.Equal(card.Original, card.Disk.Data);
+        }
+
+        [Fact]
+        public void AnInterruptionAtAnyWriteOfARepairLeavesAReadableFileSystemWithWholeEntriesOnly()
+        {
+            var probe = MakeCard();
+            using (var session = CardEditSession.Open(probe.Access, probe.Info, probe.Partition))
+            {
+                Assert.Equal(SaveStatus.Saved, session.Apply(Repair(), null, CancellationToken.None).Status);
+            }
+
+            int total = probe.Disk.WriteCalls;
+            Assert.True(total > 3);
+            for (int k = 0; k < total; k++)
+            {
+                var card = MakeCard();
+                card.Disk.FailAfter = k;
+                using (var session = CardEditSession.Open(card.Access, card.Info, card.Partition))
+                {
+                    Assert.Equal(SaveStatus.Interrupted, session.Apply(Repair(), null, CancellationToken.None).Status);
+                }
+
+                card.Disk.FailAfter = int.MaxValue;
+                using (var fs = Fs(card))
+                {
+                    var tree = EditAssert.Snapshot(fs);
+                    Assert.True(tree.Count > 1, "unreadable after the failure at write " + k);
+                    if (tree.TryGetValue("/home/pi/.ssh/authorized_keys", out var key))
+                    {
+                        Assert.Equal(19, key.Size);
+                        Assert.Equal((ushort)0x8180, key.Mode);
+                    }
+
+                    if (tree.TryGetValue("/etc/linked", out var link))
+                    {
+                        Assert.Equal("/etc/hostname", link.Content);
+                    }
+                }
+            }
+        }
+
         [Fact]
         public void AnInterruptionAtAnyWriteLeavesTheFileEntirelyOldOrEntirelyNew()
         {

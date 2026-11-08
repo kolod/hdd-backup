@@ -41,6 +41,27 @@ for img in "$DIR"/saved-*.img; do
         printf 'editing/%s\tFAILED\te2fsck reported problems\n' "$scenario" >> "$RESULTS"
         continue
     fi
+    attrs=$DIR/$name.attrs.tsv
+    if [ -f "$attrs" ] && [[ $scenario == ssh-* ]]; then
+        # feature 011: modes, owners and link targets of every entry, from the real debugfs
+        cut -f1 "$attrs" | sed 's|^|stat |' > "$WORK/$scenario.cmds"
+        debugfs -f "$WORK/$scenario.cmds" "$fs" 2>/dev/null | awk '
+            function flush() {
+                if (path != "") { printf "%s\t%s\t%s\t%s\t%s\n", path, mode, uid, gid, (link == "" ? "-" : link) }
+                path = ""; link = ""; mode = ""; uid = ""; gid = ""
+            }
+            /^debugfs: stat / { flush(); path = substr($0, 15) }
+            /Mode: / { for (i = 1; i <= NF; i++) { if ($i == "Mode:") { mode = $(i + 1) } } sub(/^0+/, "", mode) }
+            /^User:/ { uid = $2; gid = $4 }
+            /Fast link dest:/ { match($0, /"[^"]*"/); link = substr($0, RSTART + 1, RLENGTH - 2) }
+            END { flush() }' | LC_ALL=C sort > "$WORK/$scenario.attrs.actual"
+        LC_ALL=C sort "$attrs" | awk -F'\t' '{ m = $2; sub(/^0+/, "", m); printf "%s\t%s\t%s\t%s\t%s\n", $1, m, $3, $4, $5 }' > "$WORK/$scenario.attrs.expected"
+        if ! diff "$WORK/$scenario.attrs.expected" "$WORK/$scenario.attrs.actual" > "$WORK/$scenario.attrs.diff" 2>&1; then
+            echo "--- editing/$scenario: modes/owners/links differ (<: expected, >: image)"; head -20 "$WORK/$scenario.attrs.diff"
+            printf 'editing/%s\tFAILED\tmodes, owners or links differ\n' "$scenario" >> "$RESULTS"
+            continue
+        fi
+    fi
     expected=$DIR/$name.tree.tsv
     if [ -f "$expected" ]; then
         rm -rf "$WORK/$scenario.dump"; mkdir "$WORK/$scenario.dump"

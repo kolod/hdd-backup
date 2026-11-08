@@ -20,6 +20,8 @@ namespace HddBackup.Core.Editing
         Protected,
         NotEditable,
         TooLarge,
+        TooLong,
+        BadValue,
         Internal
     }
 

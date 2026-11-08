@@ -93,7 +93,8 @@ namespace HddBackup.Core.Diagnostics
         AccountKeysUnknown,
         NoRegularAccount,
         ShadowUnreadable,
-        ConfigMissing
+        ConfigMissing,
+        AccountKeyFileUnsafe
     }
 
     public enum VerdictCode
@@ -138,7 +139,8 @@ namespace HddBackup.Core.Diagnostics
         KeyAuthOffNoPassword,
         EmptyPasswordRefused,
         LockedRefused,
-        MethodsNeedBoth
+        MethodsNeedBoth,
+        KeyFileUnsafe
     }
 
     public enum ScheduleClass

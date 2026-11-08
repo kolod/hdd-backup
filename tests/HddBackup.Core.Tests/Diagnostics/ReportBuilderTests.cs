@@ -14,7 +14,7 @@ namespace HddBackup.Core.Tests.Diagnostics
         private static readonly DateTime Now = new DateTime(2026, 11, 5, 12, 30, 0);
 
         /// <summary>Texts that show their codes, so the report can be compared exactly and is independent of any language.</summary>
-        private sealed class CodeTexts : IReportTexts
+        internal sealed class CodeTexts : IReportTexts
         {
             public string SshTitle(string source) => "SSH|" + source;
 

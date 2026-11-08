@@ -1,19 +1,43 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace HddBackup.App.Forms
 {
-    /// <summary>One line of a <see cref="NoteListPanel"/>: a glyph, a sentence that wraps, and grey detail lines under it.</summary>
+    /// <summary>A button at the right end of a <see cref="NoteItem"/> (feature 011: "Fix…", "Add a key…", "Undo").</summary>
+    internal sealed class NoteAction
+    {
+        public NoteAction(string text, Action click, bool enabled = true, string tip = null)
+        {
+            Text = text;
+            Click = click;
+            Enabled = enabled;
+            Tip = tip;
+        }
+
+        public string Text { get; }
+
+        public Action Click { get; }
+
+        public bool Enabled { get; }
+
+        public string Tip { get; }
+    }
+
+    /// <summary>One line of a <see cref="NoteListPanel"/>: a glyph, a sentence that wraps, buttons, and grey detail lines under it.</summary>
     internal sealed class NoteItem
     {
-        public NoteItem(string glyph, Color glyphColor, string text, string detail = null)
+        public NoteItem(string glyph, Color glyphColor, string text, string detail = null, IReadOnlyList<NoteAction> actions = null)
         {
             Glyph = glyph;
             GlyphColor = glyphColor;
             Text = text;
             Detail = detail ?? string.Empty;
+            Actions = actions ?? Array.Empty<NoteAction>();
         }
+
+        public IReadOnlyList<NoteAction> Actions { get; }
 
         public string Glyph { get; }
 
@@ -32,6 +56,7 @@ namespace HddBackup.App.Forms
     {
         private readonly List<Label> _texts = new List<Label>();
         private readonly List<Label> _details = new List<Label>();
+        private bool _hasActions;
         private readonly FlowLayoutPanel _flow = new FlowLayoutPanel
         {
             FlowDirection = FlowDirection.TopDown,
@@ -55,9 +80,12 @@ namespace HddBackup.App.Forms
             _flow.Controls.Clear();
             _texts.Clear();
             _details.Clear();
+            _hasActions = false;
             foreach (var item in items)
             {
-                var row = new TableLayoutPanel { ColumnCount = 2, AutoSize = true, Margin = new Padding(0, 0, 0, 8) };
+                _hasActions |= item.Actions.Count > 0;
+                var row = new TableLayoutPanel { ColumnCount = 3, AutoSize = true, Margin = new Padding(0, 0, 0, 8) };
+                row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
                 row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
                 row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
                 var glyph = new Label
@@ -73,6 +101,35 @@ namespace HddBackup.App.Forms
                 row.Controls.Add(glyph, 0, 0);
                 row.Controls.Add(text, 1, 0);
                 _texts.Add(text);
+                if (item.Actions.Count > 0)
+                {
+                    var buttons = new FlowLayoutPanel { AutoSize = true, WrapContents = false, Margin = new Padding(12, 0, 0, 0) };
+                    var tips = new ToolTip();
+                    foreach (var action in item.Actions)
+                    {
+                        var button = new Button
+                        {
+                            Text = action.Text,
+                            AutoSize = true,
+                            AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                            MinimumSize = new Size(90, 26),
+                            Enabled = action.Enabled,
+                            Margin = new Padding(0, 0, 6, 0)
+                        };
+                        var click = action.Click;
+                        button.Click += (s, e) => click();
+                        if (!string.IsNullOrEmpty(action.Tip))
+                        {
+                            tips.SetToolTip(button, action.Tip);
+                        }
+
+                        buttons.Controls.Add(button);
+                    }
+
+                    buttons.Disposed += (s, e) => tips.Dispose();
+                    row.Controls.Add(buttons, 2, 0);
+                }
+
                 if (item.Detail.Length > 0)
                 {
                     var detail = new Label
@@ -103,7 +160,7 @@ namespace HddBackup.App.Forms
         /// <summary>Limits the wrapping labels to the visible width so long sentences wrap instead of scrolling sideways.</summary>
         private void ApplyWidths()
         {
-            int width = ClientSize.Width - SystemInformation.VerticalScrollBarWidth - (int)(Font.Size * 3) - 16;
+            int width = ClientSize.Width - SystemInformation.VerticalScrollBarWidth - (int)(Font.Size * 3) - 16 - (_hasActions ? 230 : 0);
             if (width < 120)
             {
                 width = 120;

@@ -210,11 +210,33 @@ namespace HddBackup.Core.Tests.Editing
                 return;
             }
 
-            string dir = System.IO.Path.Combine(export, "editing");
-            Directory.CreateDirectory(dir);
             image.Device.Flush();
             image.Device.Dispose();
-            File.Copy(image.Path, System.IO.Path.Combine(dir, "saved-" + scenario + ".img"), true);
+            ExportForCi(scenario, image.Path, expectedTree);
+        }
+
+        /// <summary>The same for an image that is not held open by an <see cref="EditImage"/> (feature 011).</summary>
+        public static void ExportForCi(string scenario, string imagePath, Dictionary<string, TreeEntry> expectedTree)
+        {
+            string export = Environment.GetEnvironmentVariable("HDDBACKUP_EXPORT_DIR");
+            if (string.IsNullOrEmpty(export))
+            {
+                return;
+            }
+
+            string dir = System.IO.Path.Combine(export, "editing");
+            Directory.CreateDirectory(dir);
+            File.Copy(imagePath, System.IO.Path.Combine(dir, "saved-" + scenario + ".img"), true);
+            var attrs = new List<string>();
+            foreach (var e in expectedTree.Values.OrderBy(x => x.Path, StringComparer.Ordinal))
+            {
+                if (e.Path != "/")
+                {
+                    attrs.Add(e.Path + "\t" + Convert.ToString(e.Mode & 0xFFF, 8) + "\t" + e.Uid + "\t" + e.Gid + "\t" + (e.Type == 'L' ? e.Content : "-"));
+                }
+            }
+
+            File.WriteAllText(System.IO.Path.Combine(dir, "saved-" + scenario + ".attrs.tsv"), string.Join("\n", attrs) + "\n", new UTF8Encoding(false));
             var lines = new List<string>();
             foreach (var e in expectedTree.Values.OrderBy(x => x.Path, StringComparer.Ordinal))
             {

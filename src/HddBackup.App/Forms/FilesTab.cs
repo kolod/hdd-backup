@@ -13,6 +13,7 @@ using HddBackup.Core.Devices;
 using HddBackup.Core.Diagnostics;
 using HddBackup.Core.Errors;
 using HddBackup.Core.Imaging;
+using HddBackup.Core.Repair;
 using HddBackup.Core.Shrinking;
 
 namespace HddBackup.App.Forms
@@ -214,12 +215,22 @@ namespace HddBackup.App.Forms
                 {
                     ShowTool(new StartupTasksWindow(result, _settings));
                 });
-            _menuSsh.Click += (s, e) => RunTool(
-                (reader, source) => SshCheck.Run(reader, source, CancellationToken.None),
-                (report, source) =>
-                {
-                    ShowTool(new SshWizardDialog(report, _settings));
-                });
+            _menuSsh.Click += (s, e) =>
+            {
+                var host = RepairHost;
+                bool repair = host.CanRepair;
+                RunTool(
+                    (reader, source) =>
+                    {
+                        var report = SshCheck.Run(reader, source, CancellationToken.None);
+                        return new RepairView(report, repair ? SshRepairPlanner.Offers(reader, report, DateTime.Today) : null);
+                    },
+                    (view, source) =>
+                    {
+                        ShowTool(new SshWizardDialog(view, _settings, host));
+                    },
+                    RepairOverlay());
+            };
             _menuExtract.Click += (s, e) => ExtractSelected();
             SizeChanged += (s, e) => FitLabels();
 
@@ -821,7 +832,7 @@ namespace HddBackup.App.Forms
         /// view, so the tree stays responsive), then shows its result. Cancel stops it; a read error
         /// is shown in the status line and no window opens.
         /// </summary>
-        private async void RunTool<T>(Func<SystemReader, DiagnosticsSource, T> tool, Action<T, DiagnosticsSource> show)
+        private async void RunTool<T>(Func<SystemReader, DiagnosticsSource, T> tool, Action<T, DiagnosticsSource> show, Func<IFileTree, IFileTree> overlay = null)
         {
             var source = BuildToolSource();
             if (source == null || _toolRunning)
@@ -839,7 +850,7 @@ namespace HddBackup.App.Forms
             T result;
             try
             {
-                result = await Task.Run(() => DiagnosticsRunner.Run(_access, source, tool, cts.Token));
+                result = await Task.Run(() => DiagnosticsRunner.Run(_access, source, tool, cts.Token, overlay));
             }
             catch (OperationCanceledException)
             {

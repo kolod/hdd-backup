@@ -1612,4 +1612,283 @@ Every change is written to the card immediately. There is no diff file and no ch
   <data name="Edit_CardFailed" xml:space="preserve">
     <value>The change was not completed: {0} The file is either entirely old or entirely new; run e2fsck on Linux if in doubt.</value>
   </data>
+  <data name="Ssh_R_KeyFileUnsafe" xml:space="preserve">
+    <value>its key file is ignored by the server (a file or folder on the way is open to others or has the wrong owner)</value>
+  </data>
+  <data name="Ssh_F_AccountKeyFileUnsafe" xml:space="preserve">
+    <value>The keys of {0} are ignored by the server because {1} is open to other users or has the wrong owner.</value>
+  </data>
+  <data name="Repair_Hint_EditOff" xml:space="preserve">
+    <value>To repair, switch on Edit on the Files tab (it works for ext4 images and for removable cards that are not write-protected).</value>
+  </data>
+  <data name="Repair_Fix" xml:space="preserve">
+    <value>Fix…</value>
+  </data>
+  <data name="Repair_AddKey" xml:space="preserve">
+    <value>Add a key…</value>
+  </data>
+  <data name="Repair_Waiting" xml:space="preserve">
+    <value>Waiting repairs ({0}). The result above is shown as it will be after you press Save:</value>
+  </data>
+  <data name="Repair_Undo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="Repair_VerdictAfter" xml:space="preserve">
+    <value> (after the waiting repairs)</value>
+  </data>
+  <data name="Repair_Busy" xml:space="preserve">
+    <value>Working…</value>
+  </data>
+  <data name="Repair_Applied_Image" xml:space="preserve">
+    <value>Queued: {0}. It takes effect when you press Save.</value>
+  </data>
+  <data name="Repair_Applied_Card" xml:space="preserve">
+    <value>Written to the card: {0}.</value>
+  </data>
+  <data name="Repair_Failed" xml:space="preserve">
+    <value>The repair was not made: {0}</value>
+  </data>
+  <data name="Repair_UndoBlocked" xml:space="preserve">
+    <value>This repair cannot be undone because a later change ({0}) depends on it.</value>
+  </data>
+  <data name="Repair_ReportCaption" xml:space="preserve">
+    <value>Repairs in this session</value>
+  </data>
+  <data name="Repair_Report_Waiting" xml:space="preserve">
+    <value>waiting for Save: {0}</value>
+  </data>
+  <data name="Repair_Report_Saved" xml:space="preserve">
+    <value>saved: {0}</value>
+  </data>
+  <data name="Repair_Report_Written" xml:space="preserve">
+    <value>written to the card: {0}</value>
+  </data>
+  <data name="Repair_Title_EnableServer" xml:space="preserve">
+    <value>Set {0} to start at boot</value>
+  </data>
+  <data name="Repair_Title_UnmaskServer" xml:space="preserve">
+    <value>Unmask {0} and set it to start at boot</value>
+  </data>
+  <data name="Repair_Title_AllowUser" xml:space="preserve">
+    <value>Allow {0} to log in (add to the AllowUsers list)</value>
+  </data>
+  <data name="Repair_Title_UnblockUser" xml:space="preserve">
+    <value>Take {0} off the DenyUsers list</value>
+  </data>
+  <data name="Repair_Title_AllowGroup" xml:space="preserve">
+    <value>Allow the group {1} of {0} to log in (add to the AllowGroups list)</value>
+  </data>
+  <data name="Repair_Title_EnableKeyAuth" xml:space="preserve">
+    <value>Switch key login on</value>
+  </data>
+  <data name="Repair_Title_RootKeysOnly" xml:space="preserve">
+    <value>Let root log in with a key only</value>
+  </data>
+  <data name="Repair_Title_RootPassword" xml:space="preserve">
+    <value>Let root log in with a password too</value>
+  </data>
+  <data name="Repair_Title_EnablePasswordAuth" xml:space="preserve">
+    <value>Switch password login on</value>
+  </data>
+  <data name="Repair_Title_FixShell" xml:space="preserve">
+    <value>Give {0} the login shell {1}</value>
+  </data>
+  <data name="Repair_Title_FixKeyFileModes" xml:space="preserve">
+    <value>Correct the permissions of the key files of {0}</value>
+  </data>
+  <data name="Repair_Title_AddKey" xml:space="preserve">
+    <value>Add the key {1} for {0}</value>
+  </data>
+  <data name="Repair_Why_EnableServer" xml:space="preserve">
+    <value>The SSH server is installed but nothing starts it at boot. This creates the links that “systemctl enable” would create.</value>
+  </data>
+  <data name="Repair_Why_UnmaskServer" xml:space="preserve">
+    <value>The SSH service is masked, so it can never start. This removes the mask and creates the links that enable it.</value>
+  </data>
+  <data name="Repair_Why_AllowUser" xml:space="preserve">
+    <value>The server accepts only the users in the AllowUsers list, and this account is not in it. A line with the account is added; the existing lines stay.</value>
+  </data>
+  <data name="Repair_Why_UnblockUser" xml:space="preserve">
+    <value>This account is on the DenyUsers list. Its name is removed from the line; the other names stay.</value>
+  </data>
+  <data name="Repair_Why_AllowGroup" xml:space="preserve">
+    <value>The server accepts only the groups in the AllowGroups list, and none of this account's groups is in it. A line with the account's own group is added.</value>
+  </data>
+  <data name="Repair_Why_EnableKeyAuth" xml:space="preserve">
+    <value>Login with a key is switched off in the server settings. The line is replaced by one that switches it on; the old line stays as a comment.</value>
+  </data>
+  <data name="Repair_Why_RootKeysOnly" xml:space="preserve">
+    <value>The server does not let root log in. This allows root to log in with a key (never with a password).</value>
+  </data>
+  <data name="Repair_Why_RootPassword" xml:space="preserve">
+    <value>This lets root log in with a password.</value>
+  </data>
+  <data name="Repair_Why_EnablePasswordAuth" xml:space="preserve">
+    <value>Login with a password is switched off in the server settings. The line is replaced by one that switches it on.</value>
+  </data>
+  <data name="Repair_Why_FixShell" xml:space="preserve">
+    <value>The account's login shell does not allow logging in. Only the shell field of this account in /etc/passwd changes.</value>
+  </data>
+  <data name="Repair_Why_FixKeyFileModes" xml:space="preserve">
+    <value>The server ignores keys in files that others can write to or that belong to somebody else. Only permissions and owner change; the keys are not touched.</value>
+  </data>
+  <data name="Repair_Why_AddKey" xml:space="preserve">
+    <value>The key is added to the list of keys that may log in as this account. Existing keys are kept as they are.</value>
+  </data>
+  <data name="Repair_Risk_RootPassword" xml:space="preserve">
+    <value>Risk: anyone who guesses the root password can take over the system. Prefer a key.</value>
+  </data>
+  <data name="Repair_Risk_EnablePasswordAuth" xml:space="preserve">
+    <value>Risk: passwords can be guessed over the network. A key is safer; use this only on a network you trust.</value>
+  </data>
+  <data name="Repair_Risk_Confirm" xml:space="preserve">
+    <value>I understand the risk</value>
+  </data>
+  <data name="Repair_Change_CreateLink" xml:space="preserve">
+    <value>Create the link {0} → {2}</value>
+  </data>
+  <data name="Repair_Change_RemoveLink" xml:space="preserve">
+    <value>Remove the link {0} (it points to {1})</value>
+  </data>
+  <data name="Repair_Change_Edit" xml:space="preserve">
+    <value>Change {0}: {1} → {2}</value>
+  </data>
+  <data name="Repair_Change_EditAdd" xml:space="preserve">
+    <value>Change {0}: {2}</value>
+  </data>
+  <data name="Repair_Change_CreateFolder" xml:space="preserve">
+    <value>Create the folder {0}</value>
+  </data>
+  <data name="Repair_Change_CreateFolderAs" xml:space="preserve">
+    <value>Create the folder {0} (permissions and owner: {2})</value>
+  </data>
+  <data name="Repair_Change_CreateFile" xml:space="preserve">
+    <value>Create the file {0}</value>
+  </data>
+  <data name="Repair_Change_CreateFileAs" xml:space="preserve">
+    <value>Create the file {0} (permissions and owner: {2})</value>
+  </data>
+  <data name="Repair_Change_SetModeOwner" xml:space="preserve">
+    <value>Set permissions and owner of {0}: {1} → {2}</value>
+  </data>
+  <data name="Repair_Change_ChangeShell" xml:space="preserve">
+    <value>In {0}, change the login shell: {1} → {2}</value>
+  </data>
+  <data name="Repair_Change_AppendKey" xml:space="preserve">
+    <value>Add the key {2} to {0}</value>
+  </data>
+  <data name="Repair_Refused_NoInstallSection" xml:space="preserve">
+    <value>The service has no [Install] section, so it cannot be enabled automatically.</value>
+  </data>
+  <data name="Repair_Refused_ListedInMatch" xml:space="preserve">
+    <value>The restriction is inside a Match block; it is not repaired automatically.</value>
+  </data>
+  <data name="Repair_Refused_KeysFromCommand" xml:space="preserve">
+    <value>The server takes keys from a command, so a key added to a file would not be used.</value>
+  </data>
+  <data name="Repair_Refused_NoHome" xml:space="preserve">
+    <value>The account has no home folder in this file system.</value>
+  </data>
+  <data name="Repair_Refused_NoSuitableShell" xml:space="preserve">
+    <value>No login shell (bash or sh) is installed in this system.</value>
+  </data>
+  <data name="Repair_Refused_OutsideFileSystem" xml:space="preserve">
+    <value>The key file is a link that leads outside this file system, or its folder would have to be created outside the home folder.</value>
+  </data>
+  <data name="Repair_Refused_Duplicate" xml:space="preserve">
+    <value>This key is already installed for the account.</value>
+  </data>
+  <data name="Repair_Refused_NoGroupName" xml:space="preserve">
+    <value>The account's group has no usable name in /etc/group.</value>
+  </data>
+  <data name="Repair_Refused_NotRepairable" xml:space="preserve">
+    <value>This cannot be repaired automatically.</value>
+  </data>
+  <data name="Repair_Refused_Unreadable" xml:space="preserve">
+    <value>A file needed for the repair cannot be read.</value>
+  </data>
+  <data name="Repair_Refused_LinkTooLong" xml:space="preserve">
+    <value>The link target is too long for this kind of link.</value>
+  </data>
+  <data name="Repair_Refused_AlreadyThere" xml:space="preserve">
+    <value>Already in place; nothing to change.</value>
+  </data>
+  <data name="Repair_KeyRefused_Empty" xml:space="preserve">
+    <value>Paste a public key (one line, or load a .pub file).</value>
+  </data>
+  <data name="Repair_KeyRefused_PrivateKey" xml:space="preserve">
+    <value>This is a private key. Never share it: paste the public key (the .pub file) instead.</value>
+  </data>
+  <data name="Repair_KeyRefused_Certificate" xml:space="preserve">
+    <value>This is a certificate, not a public key.</value>
+  </data>
+  <data name="Repair_KeyRefused_Several" xml:space="preserve">
+    <value>Only one key at a time: remove the extra lines.</value>
+  </data>
+  <data name="Repair_KeyRefused_UnknownType" xml:space="preserve">
+    <value>This does not look like a public key (it should start with ssh-ed25519, ssh-rsa or ecdsa-…).</value>
+  </data>
+  <data name="Repair_KeyRefused_BadEncoding" xml:space="preserve">
+    <value>The key data is damaged or cut off; copy the whole line again.</value>
+  </data>
+  <data name="Repair_KeyRefused_TypeMismatch" xml:space="preserve">
+    <value>The key type and the key data do not match; copy the whole line again.</value>
+  </data>
+  <data name="Repair_KeyRefused_TooLong" xml:space="preserve">
+    <value>The text is too long for a public key.</value>
+  </data>
+  <data name="Repair_Confirm_Title" xml:space="preserve">
+    <value>Fix: {0}</value>
+  </data>
+  <data name="Repair_Confirm_Intro" xml:space="preserve">
+    <value>This will change:</value>
+  </data>
+  <data name="Repair_Confirm_Card" xml:space="preserve">
+    <value>It is written to the card at once and cannot be undone.</value>
+  </data>
+  <data name="Repair_Confirm_Image" xml:space="preserve">
+    <value>It waits for Save; you can undo it before that.</value>
+  </data>
+  <data name="Repair_Confirm_Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Repair_Confirm_Others" xml:space="preserve">
+    <value>Or choose another way:</value>
+  </data>
+  <data name="Repair_Key_Title" xml:space="preserve">
+    <value>Add a key</value>
+  </data>
+  <data name="Repair_Key_Account" xml:space="preserve">
+    <value>Account:</value>
+  </data>
+  <data name="Repair_Key_Box" xml:space="preserve">
+    <value>Public key (one line, or load a .pub file):</value>
+  </data>
+  <data name="Repair_Key_Load" xml:space="preserve">
+    <value>Load…</value>
+  </data>
+  <data name="Repair_Key_Facts" xml:space="preserve">
+    <value>Type: {0}    Fingerprint: {1}    Comment: {2}</value>
+  </data>
+  <data name="Repair_Key_WarnLegacy" xml:space="preserve">
+    <value>This old key type (DSA) is ignored by current servers.</value>
+  </data>
+  <data name="Repair_Key_WarnOptions" xml:space="preserve">
+    <value>The line starts with options (from=, command=, no-pty …) that restrict this key.</value>
+  </data>
+  <data name="Repair_Key_Target" xml:space="preserve">
+    <value>Added to: {0}</value>
+  </data>
+  <data name="Repair_Key_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Repair_Key_LoadFilter" xml:space="preserve">
+    <value>Public keys (*.pub)|*.pub|All files (*.*)|*.*</value>
+  </data>
+  <data name="Repair_Key_LoadFailed" xml:space="preserve">
+    <value>The file could not be read as a public key: {0}</value>
+  </data>
+  <data name="Repair_Key_NoAccounts" xml:space="preserve">
+    <value>There is no account with a home folder in this system.</value>
+  </data>
 </root>

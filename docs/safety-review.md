@@ -134,6 +134,35 @@ Editing is the only place where the program writes inside a file system it did n
 
 Verification: unit tests with real mke2fs images, interruption tests at every write (image and card), the program's checker after every scenario, and an independent `e2fsck -fn` and `debugfs rdump` comparison in CI. Not covered by tests: raw writes to a real card with a mounted FAT volume on Windows 7 SP1 and 11 (manual checklist steps 46–48).
 
+## Repairing SSH access (feature 011)
+
+The SSH check can change the opened ext4 system only through the edit mode of feature 010: no new
+write path exists. A repair is a group of the same changes (create, edit, delete, links, and now
+permissions and owner), written by the same image and card sessions, so every safety rule of the
+edit mode holds unchanged: only the edited partition is written, the order of writes survives an
+interruption, an image changes only on **Save**, a card only after its confirmation, and a change is
+checked as a whole before its first write (one check per repair on a card).
+
+- **Nothing without consent.** Opening the wizard, paging and re-checking read through a read-only
+  handle; a repair control exists only while edit mode is on and the session can take changes; each
+  repair shows the exact changes first and is queued or written only after the user confirms.
+- **Files are changed minimally.** Text is edited line by line; every other line and its line ending
+  stays byte for byte, a replaced line stays as a dated comment, a key is appended after the old keys.
+  The check that the editor does not change anything else is a byte comparison of every other file
+  in each end-to-end test, and an independent `e2fsck -fn` plus `debugfs stat` of modes, owners and
+  link targets in CI.
+- **Secrets.** Password hashes are never read into a repair, a plan or a log; a private key typed or
+  pasted by mistake is recognised, refused and cleared before any object is made; titles, summaries,
+  the session log and reports hold only an account name and a key fingerprint (tests scan them for
+  planted secrets). A public key is, of course, written into the key file that the user chose.
+- **Risk is explicit.** Switching on password login or root password login is never the first or the
+  default choice, shows its risk in words and needs a tick; empty passwords are never offered.
+- **A repair that cannot work is not offered.** The check now reports key files that the server would
+  ignore (modes, owner), so a repair is not declared a success while the login still fails.
+
+Not covered by tests: that a real Raspberry Pi accepts the repaired login (manual checklist steps
+49–52).
+
 ## Residual risks
 
 1. **Automatic remount after a partition table change.** When `DeviceLock` is disposed, Windows

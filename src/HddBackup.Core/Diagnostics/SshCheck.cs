@@ -25,7 +25,7 @@ namespace HddBackup.Core.Diagnostics
         {
             LoginReason.NotInAllowUsers, LoginReason.Denied, LoginReason.RootNotAllowed, LoginReason.LockedRefused,
             LoginReason.PasswordAuthOffNoKey, LoginReason.KeyAuthOffNoPassword, LoginReason.MethodsNeedBoth,
-            LoginReason.EmptyPasswordRefused, LoginReason.PasswordLocked, LoginReason.NoPasswordNoKey, LoginReason.NoShell
+            LoginReason.EmptyPasswordRefused, LoginReason.PasswordLocked, LoginReason.KeyFileUnsafe, LoginReason.NoPasswordNoKey, LoginReason.NoShell
         };
 
         public static SshReport Run(SystemReader reader, DiagnosticsSource source, CancellationToken cancellationToken)
@@ -76,7 +76,7 @@ namespace HddBackup.Core.Diagnostics
             }
 
             SettingsFindings(findings, notes, settings, db);
-            AccountFindings(findings, notes, shown, db, root);
+            AccountFindings(findings, notes, shown, db, root, settings);
 
             var verdict = Decide(server, notEnabled, bootFlag, shown, settings, db, notes);
             report.Findings = findings;
@@ -282,7 +282,7 @@ namespace HddBackup.Core.Diagnostics
             }
         }
 
-        private static void AccountFindings(List<Finding> findings, List<Finding> notes, List<Account> shown, AccountDatabase db, LinuxRoot root)
+        private static void AccountFindings(List<Finding> findings, List<Finding> notes, List<Account> shown, AccountDatabase db, LinuxRoot root, SshSettings settings)
         {
             foreach (var a in shown.Where(x => !x.IsSystemAccount))
             {
@@ -294,6 +294,13 @@ namespace HddBackup.Core.Diagnostics
                 {
                     findings.Add(new Finding(FindingCode.AccountCannot, FindingStatus.Problem, 3, new[] { a.Name }, null, a.Reason));
                 }
+            }
+
+            foreach (var a in shown.Where(x => !x.IsSystemAccount && x.HasUsableShell && x.KeyCount > 0 && x.KeyFileSafety != KeyFileSafety.Ok))
+            {
+                bool enforced = settings.StrictModes.Value;
+                var unsafeKeys = new Finding(FindingCode.AccountKeyFileUnsafe, enforced ? FindingStatus.Problem : FindingStatus.Info, 3, new[] { a.Name, a.KeyFileProblemPath ?? a.KeyFilePath ?? string.Empty, a.KeyFileSafety.ToString() }, null, enforced ? LoginReason.KeyFileUnsafe : LoginReason.None);
+                findings.Add(unsafeKeys);
             }
 
             foreach (var a in shown.Where(x => !x.IsSystemAccount && x.HasUsableShell))
@@ -464,6 +471,10 @@ namespace HddBackup.Core.Diagnostics
             {
                 keyReason = LoginReason.KeyAuthOffNoPassword;
             }
+            else if (a.KeyCount > 0 && a.KeyFileSafety != KeyFileSafety.Ok && s.StrictModes.Value)
+            {
+                keyReason = LoginReason.KeyFileUnsafe;
+            }
             else if (a.KeyCount > 0)
             {
                 key = LoginAnswer.Yes;
@@ -560,6 +571,11 @@ namespace HddBackup.Core.Diagnostics
             if (a.Uid == 0 && s.PermitRootLogin.Value == RootLoginMode.ProhibitPassword && serverKey && a.KeyCount == 0)
             {
                 return LoginReason.RootNotAllowed;
+            }
+
+            if (keyReason == LoginReason.KeyFileUnsafe)
+            {
+                return LoginReason.KeyFileUnsafe;
             }
 
             if (!serverPassword)
