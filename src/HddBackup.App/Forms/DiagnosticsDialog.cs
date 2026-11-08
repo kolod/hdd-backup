@@ -47,7 +47,7 @@ namespace HddBackup.App.Forms
             _copy.Text = Strings.Get("Diagnostics_Copy");
             _save.Text = Strings.Get("Diagnostics_Save");
             _close.Text = Strings.Get("Common_Close");
-            _close.DialogResult = DialogResult.Cancel;
+            _close.Click += (s, e) => Close();
             _copy.Enabled = false;
             _save.Enabled = false;
             _report.Text = Strings.Get("Diagnostics_Collecting");

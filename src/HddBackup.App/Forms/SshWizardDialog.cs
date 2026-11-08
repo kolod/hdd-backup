@@ -135,7 +135,8 @@ namespace HddBackup.App.Forms
             _back.Text = Strings.Get("Ssh_Back");
             _next.Text = Strings.Get("Ssh_Next");
             _close.Text = Strings.Get("Common_Close");
-            _close.DialogResult = DialogResult.Cancel;
+            // the window is not modal, so a button's DialogResult alone does not close it
+            _close.Click += (s, e) => Close();
             _back.Click += (s, e) => Go(_step - 1);
             _next.Click += (s, e) => Go(_step + 1);
             var buttons = Ui.Flow(rightToLeft: true);
