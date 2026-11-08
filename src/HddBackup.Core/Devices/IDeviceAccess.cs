@@ -60,6 +60,14 @@ namespace HddBackup.Core.Devices
         /// </summary>
         IExclusiveDevice OpenExclusiveForWrite(DeviceInfo device);
 
+        /// <summary>
+        /// Opens the disk writable for changing one partition in place (feature 010): nothing is locked or
+        /// dismounted, and the returned device only reaches the given byte range, so the partition table, the
+        /// other partitions and their mounted volumes cannot be written to. Throws
+        /// <see cref="Errors.ImagingException"/> when the device changed or cannot be opened for writing.
+        /// </summary>
+        IBlockDevice OpenForPartitionWrite(DeviceInfo device, long partitionOffset, long partitionLength);
+
         EjectResult Eject(DeviceInfo device);
 
         PathInfo GetPathInfo(string path);

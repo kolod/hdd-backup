@@ -34,6 +34,13 @@ namespace HddBackup.Core.Devices
             return new FileBlockDevice(stream, false, stream.Length - (stream.Length % Sector));
         }
 
+        /// <summary>Opens an existing image for reading and writing, exclusively (no other program may open it meanwhile).</summary>
+        public static FileBlockDevice OpenReadWrite(string path)
+        {
+            var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None, 1 << 16, FileOptions.RandomAccess | FileOptions.WriteThrough);
+            return new FileBlockDevice(stream, true, stream.Length - (stream.Length % Sector));
+        }
+
         /// <summary>Creates (or truncates) a file of the given size; unwritten areas read as zeros.</summary>
         public static FileBlockDevice Create(string path, long size)
         {

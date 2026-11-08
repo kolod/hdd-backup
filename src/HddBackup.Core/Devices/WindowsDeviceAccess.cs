@@ -16,6 +16,21 @@ namespace HddBackup.Core.Devices
             return PhysicalDiskDevice.Open(device.DiskNumber, writable: false);
         }
 
+        public IBlockDevice OpenForPartitionWrite(DeviceInfo device, long partitionOffset, long partitionLength)
+        {
+            VerifyIdentity(device);
+            var disk = PhysicalDiskDevice.Open(device.DiskNumber, writable: true);
+            try
+            {
+                return new PartitionView(disk, partitionOffset, partitionLength, ownsInner: true);
+            }
+            catch
+            {
+                disk.Dispose();
+                throw;
+            }
+        }
+
         public IExclusiveDevice OpenExclusiveForWrite(DeviceInfo device)
         {
             VerifyIdentity(device);

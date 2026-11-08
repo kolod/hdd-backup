@@ -1448,4 +1448,168 @@ Imagen más pequeña posible: {2}</value>
   <data name="Startup_Legend" xml:space="preserve">
     <value>Azul: estándar de Linux (viene con el sistema). Negro: añadido o modificado por una persona. Gris: no se ejecutará.</value>
   </data>
+  <data name="Edit_Button" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Tooltip_Edit_Button" xml:space="preserve">
+    <value>Activa el modo de edición: los cambios esperan en un archivo diff junto a la imagen hasta que pulse Guardar.</value>
+  </data>
+  <data name="Edit_Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Tooltip_Edit_Save" xml:space="preserve">
+    <value>Escribe los cambios pendientes en la imagen y actualiza su archivo de suma de comprobación.</value>
+  </data>
+  <data name="Edit_Discard" xml:space="preserve">
+    <value>Descartar</value>
+  </data>
+  <data name="Tooltip_Edit_Discard" xml:space="preserve">
+    <value>Descarta todos los cambios pendientes; la imagen no se modifica.</value>
+  </data>
+  <data name="Edit_Apply" xml:space="preserve">
+    <value>Aplicar al archivo</value>
+  </data>
+  <data name="Edit_Editing" xml:space="preserve">
+    <value>Modo de edición: {0} cambio(s) sin guardar.</value>
+  </data>
+  <data name="Edit_NewFile" xml:space="preserve">
+    <value>Archivo nuevo…</value>
+  </data>
+  <data name="Edit_NewFolder" xml:space="preserve">
+    <value>Carpeta nueva…</value>
+  </data>
+  <data name="Edit_Rename" xml:space="preserve">
+    <value>Renombrar…</value>
+  </data>
+  <data name="Edit_Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Edit_NamePrompt" xml:space="preserve">
+    <value>Nombre:</value>
+  </data>
+  <data name="Edit_DeleteQuestion" xml:space="preserve">
+    <value>¿Eliminar {0}? Se quitará de la imagen al guardar.</value>
+  </data>
+  <data name="Edit_Saved" xml:space="preserve">
+    <value>{0} cambio(s) guardados en la imagen.</value>
+  </data>
+  <data name="Edit_SavedStale" xml:space="preserve">
+    <value>Guardado, pero el archivo de suma de comprobación está desactualizado: {0}</value>
+  </data>
+  <data name="Edit_SaveFailed" xml:space="preserve">
+    <value>Los cambios no se guardaron: {0}</value>
+  </data>
+  <data name="Edit_ChangeRefused" xml:space="preserve">
+    <value>No se puede hacer este cambio: {0}</value>
+  </data>
+  <data name="Edit_Interrupted" xml:space="preserve">
+    <value>Se interrumpió un guardado de esta imagen. Termínelo antes de nada.</value>
+  </data>
+  <data name="Edit_FinishSave" xml:space="preserve">
+    <value>Terminar el guardado</value>
+  </data>
+  <data name="Edit_ImageChanged" xml:space="preserve">
+    <value>La imagen cambió después de estos cambios, por lo que no se pueden guardar. ¿Descartarlos?</value>
+  </data>
+  <data name="Edit_DiscardQuestion" xml:space="preserve">
+    <value>¿Descartar todos los cambios pendientes?</value>
+  </data>
+  <data name="Edit_Saving" xml:space="preserve">
+    <value>Guardando los cambios en la imagen…</value>
+  </data>
+  <data name="Edit_UpdatingChecksum" xml:space="preserve">
+    <value>Actualizando el archivo de suma de comprobación…</value>
+  </data>
+  <data name="Edit_Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Edit_Why_Compressed" xml:space="preserve">
+    <value>una imagen comprimida no se puede editar</value>
+  </data>
+  <data name="Edit_Why_NotBrowsable" xml:space="preserve">
+    <value>no hay una partición ext4 editable</value>
+  </data>
+  <data name="Edit_Why_NotWritable" xml:space="preserve">
+    <value>el archivo de imagen es de solo lectura</value>
+  </data>
+  <data name="Edit_Why_NeedsRecovery" xml:space="preserve">
+    <value>el sistema de archivos necesita recuperar el diario (móntelo una vez en Linux)</value>
+  </data>
+  <data name="Edit_Why_HasOrphans" xml:space="preserve">
+    <value>el sistema de archivos tiene una lista de huérfanos (ejecute e2fsck en Linux)</value>
+  </data>
+  <data name="Edit_Why_HasErrors" xml:space="preserve">
+    <value>el sistema de archivos está marcado con errores</value>
+  </data>
+  <data name="Edit_Why_NotClean" xml:space="preserve">
+    <value>el sistema de archivos no se desmontó limpiamente</value>
+  </data>
+  <data name="Edit_Why_UnsupportedFeature" xml:space="preserve">
+    <value>el sistema de archivos usa funciones que la edición no admite</value>
+  </data>
+  <data name="Edit_Why_InUseByAnotherInstance" xml:space="preserve">
+    <value>la imagen se está editando en otra ventana de este programa</value>
+  </data>
+  <data name="Edit_Why_NotRemovable" xml:space="preserve">
+    <value>el dispositivo no es extraíble</value>
+  </data>
+  <data name="Edit_Why_SystemDisk" xml:space="preserve">
+    <value>este es el disco del sistema</value>
+  </data>
+  <data name="Edit_Why_WriteProtected" xml:space="preserve">
+    <value>el dispositivo está protegido contra escritura</value>
+  </data>
+  <data name="Edit_Err_NoSpace" xml:space="preserve">
+    <value>no hay espacio libre suficiente</value>
+  </data>
+  <data name="Edit_Err_NoInodes" xml:space="preserve">
+    <value>no hay inodos libres</value>
+  </data>
+  <data name="Edit_Err_TooFragmented" xml:space="preserve">
+    <value>el espacio libre está demasiado fragmentado para este archivo</value>
+  </data>
+  <data name="Edit_Err_NotFound" xml:space="preserve">
+    <value>el elemento ya no existe</value>
+  </data>
+  <data name="Edit_Err_EntryChanged" xml:space="preserve">
+    <value>el elemento cambió desde que lo vio</value>
+  </data>
+  <data name="Edit_Err_NameExists" xml:space="preserve">
+    <value>ya existe un archivo con ese nombre</value>
+  </data>
+  <data name="Edit_Err_BadName" xml:space="preserve">
+    <value>el nombre no es válido en ext4</value>
+  </data>
+  <data name="Edit_Err_TooLarge" xml:space="preserve">
+    <value>demasiado grande</value>
+  </data>
+  <data name="Edit_Err_Other" xml:space="preserve">
+    <value>este elemento no se puede cambiar</value>
+  </data>
+  <data name="Edit_Pending_New" xml:space="preserve">
+    <value>nuevo</value>
+  </data>
+  <data name="Edit_Pending_Edited" xml:space="preserve">
+    <value>editado</value>
+  </data>
+  <data name="Edit_Pending_Renamed" xml:space="preserve">
+    <value>renombrado</value>
+  </data>
+  <data name="Edit_CardConfirm" xml:space="preserve">
+    <value>¿Editar esta tarjeta?
+
+Cada cambio se escribe en la tarjeta de inmediato. No hay archivo diff ni suma de comprobación, y el cambio no se puede deshacer. No retire la tarjeta mientras se escribe.</value>
+  </data>
+  <data name="Edit_EditingCard" xml:space="preserve">
+    <value>Editando la tarjeta: cada cambio se escribe al instante.</value>
+  </data>
+  <data name="Edit_Done" xml:space="preserve">
+    <value>Hecho</value>
+  </data>
+  <data name="Tooltip_Edit_Done" xml:space="preserve">
+    <value>Sale del modo de edición. Los cambios ya están en la tarjeta.</value>
+  </data>
+  <data name="Edit_CardFailed" xml:space="preserve">
+    <value>El cambio no se completó: {0} El archivo está entero antiguo o entero nuevo; ante la duda, ejecute e2fsck en Linux.</value>
+  </data>
 </root>

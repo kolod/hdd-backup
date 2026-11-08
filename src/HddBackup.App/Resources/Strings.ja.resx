@@ -1448,4 +1448,168 @@ Linux (ext4) パーティションの使用量: {1}
   <data name="Startup_Legend" xml:space="preserve">
     <value>青: Linux の標準 (システムに付属)。黒: 人が追加または変更したもの。灰色: 実行されません。</value>
   </data>
+  <data name="Edit_Button" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="Tooltip_Edit_Button" xml:space="preserve">
+    <value>編集モードを有効にします。変更は保存を押すまでイメージの隣の差分ファイルに保持されます。</value>
+  </data>
+  <data name="Edit_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Tooltip_Edit_Save" xml:space="preserve">
+    <value>待機中の変更をイメージに書き込み、チェックサムファイルを更新します。</value>
+  </data>
+  <data name="Edit_Discard" xml:space="preserve">
+    <value>破棄</value>
+  </data>
+  <data name="Tooltip_Edit_Discard" xml:space="preserve">
+    <value>待機中の変更をすべて破棄します。イメージは変更されません。</value>
+  </data>
+  <data name="Edit_Apply" xml:space="preserve">
+    <value>ファイルに適用</value>
+  </data>
+  <data name="Edit_Editing" xml:space="preserve">
+    <value>編集モード: 未保存の変更 {0} 件。</value>
+  </data>
+  <data name="Edit_NewFile" xml:space="preserve">
+    <value>新しいファイル…</value>
+  </data>
+  <data name="Edit_NewFolder" xml:space="preserve">
+    <value>新しいフォルダー…</value>
+  </data>
+  <data name="Edit_Rename" xml:space="preserve">
+    <value>名前の変更…</value>
+  </data>
+  <data name="Edit_Delete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="Edit_NamePrompt" xml:space="preserve">
+    <value>名前:</value>
+  </data>
+  <data name="Edit_DeleteQuestion" xml:space="preserve">
+    <value>{0} を削除しますか？ 保存時にイメージから削除されます。</value>
+  </data>
+  <data name="Edit_Saved" xml:space="preserve">
+    <value>{0} 件の変更をイメージに保存しました。</value>
+  </data>
+  <data name="Edit_SavedStale" xml:space="preserve">
+    <value>保存しましたが、チェックサムファイルが古いままです: {0}</value>
+  </data>
+  <data name="Edit_SaveFailed" xml:space="preserve">
+    <value>変更は保存されませんでした: {0}</value>
+  </data>
+  <data name="Edit_ChangeRefused" xml:space="preserve">
+    <value>この変更はできません: {0}</value>
+  </data>
+  <data name="Edit_Interrupted" xml:space="preserve">
+    <value>このイメージの保存が中断されました。先に完了してください。</value>
+  </data>
+  <data name="Edit_FinishSave" xml:space="preserve">
+    <value>保存を完了</value>
+  </data>
+  <data name="Edit_ImageChanged" xml:space="preserve">
+    <value>これらの変更後にイメージが変更されたため、保存できません。破棄しますか？</value>
+  </data>
+  <data name="Edit_DiscardQuestion" xml:space="preserve">
+    <value>待機中の変更をすべて破棄しますか？</value>
+  </data>
+  <data name="Edit_Saving" xml:space="preserve">
+    <value>変更をイメージに保存しています…</value>
+  </data>
+  <data name="Edit_UpdatingChecksum" xml:space="preserve">
+    <value>チェックサムファイルを更新しています…</value>
+  </data>
+  <data name="Edit_Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Edit_Why_Compressed" xml:space="preserve">
+    <value>圧縮イメージは編集できません</value>
+  </data>
+  <data name="Edit_Why_NotBrowsable" xml:space="preserve">
+    <value>編集できる ext4 パーティションがありません</value>
+  </data>
+  <data name="Edit_Why_NotWritable" xml:space="preserve">
+    <value>イメージファイルは読み取り専用です</value>
+  </data>
+  <data name="Edit_Why_NeedsRecovery" xml:space="preserve">
+    <value>ファイルシステムはジャーナルの回復が必要です（Linux で一度マウントしてください）</value>
+  </data>
+  <data name="Edit_Why_HasOrphans" xml:space="preserve">
+    <value>ファイルシステムに孤立リストがあります（Linux で e2fsck を実行してください）</value>
+  </data>
+  <data name="Edit_Why_HasErrors" xml:space="preserve">
+    <value>ファイルシステムにエラーが記録されています</value>
+  </data>
+  <data name="Edit_Why_NotClean" xml:space="preserve">
+    <value>ファイルシステムは正常にアンマウントされていません</value>
+  </data>
+  <data name="Edit_Why_UnsupportedFeature" xml:space="preserve">
+    <value>ファイルシステムが編集に対応していない機能を使っています</value>
+  </data>
+  <data name="Edit_Why_InUseByAnotherInstance" xml:space="preserve">
+    <value>このイメージは別のウィンドウで編集中です</value>
+  </data>
+  <data name="Edit_Why_NotRemovable" xml:space="preserve">
+    <value>デバイスはリムーバブルではありません</value>
+  </data>
+  <data name="Edit_Why_SystemDisk" xml:space="preserve">
+    <value>これはシステムディスクです</value>
+  </data>
+  <data name="Edit_Why_WriteProtected" xml:space="preserve">
+    <value>デバイスは書き込み禁止です</value>
+  </data>
+  <data name="Edit_Err_NoSpace" xml:space="preserve">
+    <value>空き容量が足りません</value>
+  </data>
+  <data name="Edit_Err_NoInodes" xml:space="preserve">
+    <value>空き inode がありません</value>
+  </data>
+  <data name="Edit_Err_TooFragmented" xml:space="preserve">
+    <value>空き領域が断片化しすぎています</value>
+  </data>
+  <data name="Edit_Err_NotFound" xml:space="preserve">
+    <value>項目は存在しません</value>
+  </data>
+  <data name="Edit_Err_EntryChanged" xml:space="preserve">
+    <value>項目は表示後に変更されています</value>
+  </data>
+  <data name="Edit_Err_NameExists" xml:space="preserve">
+    <value>同じ名前のファイルが既にあります</value>
+  </data>
+  <data name="Edit_Err_BadName" xml:space="preserve">
+    <value>ext4 では無効な名前です</value>
+  </data>
+  <data name="Edit_Err_TooLarge" xml:space="preserve">
+    <value>大きすぎます</value>
+  </data>
+  <data name="Edit_Err_Other" xml:space="preserve">
+    <value>この項目は変更できません</value>
+  </data>
+  <data name="Edit_Pending_New" xml:space="preserve">
+    <value>新規</value>
+  </data>
+  <data name="Edit_Pending_Edited" xml:space="preserve">
+    <value>編集済み</value>
+  </data>
+  <data name="Edit_Pending_Renamed" xml:space="preserve">
+    <value>名前変更済み</value>
+  </data>
+  <data name="Edit_CardConfirm" xml:space="preserve">
+    <value>このカードを編集しますか？
+
+変更はすぐにカードへ書き込まれます。差分ファイルもチェックサムもなく、元に戻せません。書き込み中はカードを取り外さないでください。</value>
+  </data>
+  <data name="Edit_EditingCard" xml:space="preserve">
+    <value>カードを編集中: 変更はすぐに書き込まれます。</value>
+  </data>
+  <data name="Edit_Done" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="Tooltip_Edit_Done" xml:space="preserve">
+    <value>編集モードを終了します。変更は既にカードに書き込まれています。</value>
+  </data>
+  <data name="Edit_CardFailed" xml:space="preserve">
+    <value>変更は完了しませんでした: {0} ファイルは完全に古いか完全に新しい状態です。不安な場合は Linux で e2fsck を実行してください。</value>
+  </data>
 </root>

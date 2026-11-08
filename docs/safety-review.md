@@ -118,6 +118,22 @@ Scope: `.github/workflows/release.yml`, `.github/actions/build-test`, `.github/r
 | Least privilege | Workflows default to `contents: read`; only the release `publish` job has `contents: write`; pull requests from forks get no secrets | Workflow files |
 | No stored admin credential | Protection is applied by the owner locally with `gh`; nothing in CI can change the rules | `Set-RepoProtection.ps1` (admin check, exit 3) |
 
+## Editing files (feature 010)
+
+Editing is the only place where the program writes inside a file system it did not create. The rules:
+
+1. **Nothing is written before Save (images).** Changes live only in the diff file beside the image. The image is opened for writing only by Save and Finish save, after the Files view has closed it.
+2. **Check before writing.** Every save and every card change is first built as an ordered write set on an overlay (reads see the planned writes, nothing reaches the device), and the file system as it would be afterwards is checked with the program's own checker. Any finding stops the change with nothing written.
+3. **Order of writes.** New data blocks first, then allocation bitmaps, then the inode, then the directory entry; for deletion the directory entry is removed first, then the inode, then the blocks are freed. A file is therefore entirely old or entirely new; the worst case is leaked blocks or inodes, which Linux `e2fsck` removes.
+4. **Redo log.** A save writes its whole write set to `<image>.hddbackup-redo` (atomically, sealed with SHA-256) before the first write to the image. If the save is interrupted, opening the image offers **Finish save**, which replays the same writes with the same result.
+5. **Identity.** A diff or redo log records the image length, partition, file system UUID and a hash of the superblock and group descriptors; a mismatch refuses the save.
+6. **Card writes are confined.** A card is opened writable through a window over the ext4 partition only (partition table, boot partition and other partitions cannot be reached); the disk identity is verified first; system disks, non-removable and write-protected devices are refused; there is a confirmation.
+7. **Refusals.** Compressed images, read-only files, file systems with a journal to recover, orphans, errors, an unclean state or unsupported features are refused without writing.
+8. **Checksums.** After a successful save the `.sha256` beside the image is rewritten from the saved image; if that step fails or is cancelled the result says the checksum is stale. A compressed twin's checksum is not touched.
+9. **Single editor.** A lock file stops a second window from editing the same image.
+
+Verification: unit tests with real mke2fs images, interruption tests at every write (image and card), the program's checker after every scenario, and an independent `e2fsck -fn` and `debugfs rdump` comparison in CI. Not covered by tests: raw writes to a real card with a mounted FAT volume on Windows 7 SP1 and 11 (manual checklist steps 46–48).
+
 ## Residual risks
 
 1. **Automatic remount after a partition table change.** When `DeviceLock` is disposed, Windows

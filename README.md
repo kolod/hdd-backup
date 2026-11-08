@@ -239,11 +239,33 @@ their own read-only handle; nothing is written, locked or dismounted, and nothin
   the root of a Linux system ("no system configuration was found") and a file system that was not
   cleanly unmounted (shown with the same warning as in the tree) are reported honestly.
 
+### Editing files (feature 010)
+
+On the **Files** tab the **Edit** button turns on edit mode for the opened ext4 partition.
+
+- **Images (`.img`).** Changes wait in a diff file beside the image (`<image>.hddbackup-diff`);
+  the image itself is not touched. **Save** checks the result, writes it into the image and
+  updates the `.sha256` file beside it (or creates it). **Discard** drops the waiting changes.
+  Closing the program keeps them; they come back when the image is opened again. A diff made for
+  another version of the image is refused.
+- **Cards (devices).** Changes are written to the card at once. There is no diff file and no
+  checksum, and a change cannot be undone. Only removable cards that are not the system disk are
+  offered, after a confirmation. Only the ext4 partition is written; the boot (FAT) partition
+  and the partition table are never touched, and no volume is locked or dismounted.
+- **What can be changed:** the text of a text file (up to 1 MiB, shown completely), and
+  creating, deleting and renaming files and folders (right-click, or F2 and Del).
+- **Safety:** the new content of a file is written to new blocks first, and the directory entry
+  or inode is switched last, so after an interruption a file is entirely old or entirely new; at
+  worst some blocks are left unused, which `e2fsck` on Linux removes. File systems that need
+  journal recovery, have errors, or use features that editing does not support are refused.
+- Compressed images (`.img.gz`) cannot be edited; convert them on the **Image** tab first.
+
 Hardware validation steps: [docs/manual-hardware-checklist.md](docs/manual-hardware-checklist.md).
 Design documents: [specs/001-usb-sd-imaging/](specs/001-usb-sd-imaging/),
 [specs/002-ext4-image-shrink/](specs/002-ext4-image-shrink/),
 [specs/008-ext4-browser/](specs/008-ext4-browser/),
-[specs/009-image-diagnostic-tools/](specs/009-image-diagnostic-tools/).
+[specs/009-image-diagnostic-tools/](specs/009-image-diagnostic-tools/),
+[specs/010-ext4-writer/](specs/010-ext4-writer/).
 
 ## License
 
