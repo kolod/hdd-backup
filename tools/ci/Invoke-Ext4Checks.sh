@@ -41,7 +41,7 @@ for path in "$EXPORTS"/*; do
     jobs+=("$path"$'\t'"$FIXTURES/$fixture.img.gz")
 done
 
-if [ ${#jobs[@]} -eq 0 ] && [ ! -s "$LOGS/results.tsv" ] && ! compgen -G "$EXPORTS/extracted/*.tsv" > /dev/null && ! compgen -G "$EXPORTS/diagnostics/*.tsv" > /dev/null; then
+if [ ${#jobs[@]} -eq 0 ] && [ ! -s "$LOGS/results.tsv" ] && ! compgen -G "$EXPORTS/extracted/*.tsv" > /dev/null && ! compgen -G "$EXPORTS/diagnostics/*.tsv" > /dev/null && ! compgen -G "$EXPORTS/editing/*.img" > /dev/null; then
     echo "::error::No exported ext4 images found in $EXPORTS"
     exit 1
 fi
@@ -107,6 +107,10 @@ done
 # Diagnostic tools (feature 009): the settings and enabled units the tools found in the fixtures must equal
 # `sshd -T` and `systemctl --root` over the same files (tests/fixtures/ext4/check-diagnostics.sh).
 bash "$(dirname "$CHECK")/check-diagnostics.sh" "$EXPORTS" "$FIXTURES" "$LOGS/results.tsv"
+
+# Editing (feature 010): every image saved by the editing tests must pass e2fsck -fn and match its expected tree
+# (tests/fixtures/ext4/check-editing.sh).
+bash "$(dirname "$CHECK")/check-editing.sh" "$EXPORTS" "$FIXTURES" "$LOGS/results.tsv"
 
 failed=0
 {

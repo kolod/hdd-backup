@@ -20,10 +20,22 @@ namespace HddBackup.Core.Browsing
         Socket
     }
 
+    /// <summary>Whether an entry has a waiting (not yet saved) change in edit mode.</summary>
+    public enum PendingState
+    {
+        None,
+        Edited,
+        New,
+        Renamed
+    }
+
     /// <summary>One entry of a browsed file system. No ext4 types leak through it.</summary>
     public sealed class FsEntry
     {
         public uint Inode { get; internal set; }
+
+        /// <summary>Edit mode: this entry has a change waiting to be saved.</summary>
+        public PendingState Pending { get; internal set; }
 
         /// <summary>Decoded as UTF-8; invalid bytes show as U+FFFD. "/" for the root.</summary>
         public string Name { get; internal set; } = string.Empty;

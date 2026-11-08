@@ -1,6 +1,30 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.4.0 → 1.5.0 (2026-11-08)
+Bump rationale: MINOR — scope of Principle VII materially expanded and Principle I extended with
+the safeguards of the first write that is not a restore (feature 010).
+Modified principles:
+- I. Data Safety First — a new bullet governs editing files of the ext4 file system of an image or
+  a removable device: for a device only removable media, a confirmation that names model, size and
+  partition before the first byte, writes only inside the sector range of the edited ext4
+  partition (other partitions are never written, locked or dismounted: Windows does not mount
+  ext4), no editing of a file system that is not cleanly unmounted, a check that the change fits
+  before writing, failures stop with the offset. The lock-and-dismount rule remains for restore.
+- VII. Simplicity — scope now also covers editing files of the ext4 file system of an image or a
+  removable device: changing the content of files and creating, deleting and renaming files and
+  directories. For an image the changes are kept in a pending-changes (diff) file until the user
+  saves, an interrupted save can be finished, and the checksum files of the image are updated (or
+  a .sha256 file is created); for a device each change is written at once and no checksum is
+  calculated. Browsing, extraction and diagnostics stay read-only. The out-of-scope item
+  "file-level backup that writes into images or devices" is narrowed to automatic or scheduled
+  file-level backup.
+Modified sections: none (Technology & Platform Constraints already allow writing ext4 by own
+managed code).
+Templates requiring updates: none (plan Constitution Check is derived at plan time).
+Deferred TODOs: none.
+
+Previous report (1.4.0):
 Version change: 1.3.0 → 1.4.0 (2026-11-05)
 Bump rationale: MINOR — scope of Principle VII materially expanded (feature 009).
 Modified principles:
@@ -107,6 +131,18 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
   report the exact offset and cause, and leave partial output clearly marked as incomplete
   (never silently delivered as a valid image).
 - Cancellation MUST be supported at any time and MUST leave the system in a defined state.
+- Editing files of an ext4 file system is the only write to media other than restore. For a
+  device it MUST be limited to removable media (never the system disk or the disk hosting the
+  program), MUST show model, size and partition and require an explicit confirmation before the
+  first byte is written, and MUST write only inside the sector range of the edited ext4
+  partition, so that no other partition is written, locked or dismounted (the edited partition is
+  not a Windows volume, so no dismount is needed); this MUST be enforced by the device wrapper,
+  not only by the callers. A file system that is not cleanly unmounted, is damaged or uses an
+  unsupported feature MUST NOT be edited. A change MUST be checked to fit before its first write,
+  and a write error MUST stop with the offset and cause. The order of writes MUST be such that an
+  interruption leaves the file system as before, as after, or with only unreferenced blocks or
+  inodes that a file system check removes, never with an entry that points to unwritten data. For an image the changes MUST stay in a
+  pending-changes file until the user saves, and a save that was interrupted MUST be completable.
 
 **Rationale**: irreversible data loss is the only failure mode that cannot be fixed by a patch.
 
@@ -197,10 +233,17 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
   cron tasks) and reporting the findings. Shrinking and repair rebuild the file system into a new
   image; the original image is never modified, and damage beyond an unclean shutdown is refused,
   not repaired. Browsing, extraction and diagnostics are read-only: the source is never
-  modified, and no file is ever written into an image or onto a device by them. Diagnostics
+  modified, and no file is ever written into an image or onto a device by them. Editing is a
+  separate, explicit mode of the file browser: it changes the content of files and creates,
+  deletes and renames files and directories in the ext4 file system of an image or a removable
+  device, under the safeguards of Principle I. For an image the changes are first kept in a
+  pending-changes (diff) file next to the image and are written only when the user saves; after a
+  save the checksum files next to the image are updated, or a .sha256 file is created. For a
+  device each change is written at once, with a confirmation when edit mode is switched on, and
+  no checksum is calculated. Diagnostics
   report and advise but never change a setting, never display, copy or save secrets (password
-  hashes, private keys, authorized key text) and make no network access. Features outside that scope (file-level backup that writes into images or
-  devices, cloud upload, scheduling, other compression formats, growing or shrinking other file
+  hashes, private keys, authorized key text) and make no network access. Features outside that scope (automatic or scheduled file-level backup that
+  writes into images or devices, cloud upload, scheduling, other compression formats, growing or shrinking other file
   systems, general file system repair) require a constitution amendment.
 - Prefer the simplest design that satisfies the principles above (YAGNI); abstractions MUST be
   justified by a concrete current need.
@@ -251,4 +294,4 @@ The tool writes raw sectors to physical devices; a single mistake destroys user 
 - Compliance is reviewed at every plan's Constitution Check and in every code review; any
   justified deviation MUST be recorded in the plan's Complexity Tracking table.
 
-**Version**: 1.4.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-11-05
+**Version**: 1.5.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-11-08

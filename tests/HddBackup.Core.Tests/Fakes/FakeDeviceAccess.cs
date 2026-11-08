@@ -52,6 +52,14 @@ namespace HddBackup.Core.Tests.Fakes
             return new ReadOnlyHandle(_devices[device.DiskNumber], this);
         }
 
+        public int PartitionWriteOpens { get; private set; }
+
+        public IBlockDevice OpenForPartitionWrite(DeviceInfo device, long partitionOffset, long partitionLength)
+        {
+            PartitionWriteOpens++;
+            return new HddBackup.Core.Devices.PartitionView(_devices[device.DiskNumber], partitionOffset, partitionLength);
+        }
+
         public IExclusiveDevice OpenExclusiveForWrite(DeviceInfo device)
         {
             if (FailLock)

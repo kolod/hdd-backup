@@ -21,7 +21,7 @@ namespace HddBackup.App.Forms
     /// Browse the ext4 file systems of an image (and, later, a device) read-only: partition
     /// choice, a lazily expanded tree, a viewer for the selected file and extraction.
     /// </summary>
-    internal sealed class FilesTab : UserControl, ILocalizable
+    internal sealed partial class FilesTab : UserControl, ILocalizable
     {
         private static readonly object LoadingTag = new object();
 
@@ -125,13 +125,19 @@ namespace HddBackup.App.Forms
             _split.Panel1.Controls.Add(_tree);
             _split.Panel2.Controls.Add(_rightPanel);
             Ui.AddRow(_root, _split, fill: true);
-            var bottom = new TableLayoutPanel { ColumnCount = 3, AutoSize = true, Dock = DockStyle.Top, Margin = new Padding(0) };
+            var bottom = new TableLayoutPanel { ColumnCount = 6, AutoSize = true, Dock = DockStyle.Top, Margin = new Padding(0) };
             bottom.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-            bottom.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            bottom.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            for (int c = 0; c < 5; c++)
+            {
+                bottom.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            }
+
             bottom.Controls.Add(_status, 0, 0);
-            bottom.Controls.Add(_tools, 1, 0);
-            bottom.Controls.Add(_extract, 2, 0);
+            bottom.Controls.Add(_discard, 1, 0);
+            bottom.Controls.Add(_save, 2, 0);
+            bottom.Controls.Add(_edit, 3, 0);
+            bottom.Controls.Add(_tools, 4, 0);
+            bottom.Controls.Add(_extract, 5, 0);
             Ui.AddRow(_root, bottom);
             _status.Dock = DockStyle.None;
             _menu.Items.Add(_menuExtract);
@@ -150,7 +156,7 @@ namespace HddBackup.App.Forms
             viewerRows.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             var modes = Ui.Flow();
             modes.WrapContents = false;
-            modes.Controls.AddRange(new Control[] { _viewAuto, _viewText, _viewHex, _viewNote });
+            modes.Controls.AddRange(new Control[] { _viewAuto, _viewText, _viewHex, _viewNote, _apply });
             viewerRows.Controls.Add(_headerPath, 0, 0);
             viewerRows.Controls.Add(_headerDetail, 0, 1);
             viewerRows.Controls.Add(_viewer, 0, 2);
@@ -217,6 +223,7 @@ namespace HddBackup.App.Forms
             _menuExtract.Click += (s, e) => ExtractSelected();
             SizeChanged += (s, e) => FitLabels();
 
+            InitEdit();
             ApplyStrings();
             OnSelectedChanged();
         }
@@ -236,6 +243,7 @@ namespace HddBackup.App.Forms
             _menuExtract.Text = Strings.Get("Files_Extract");
             _tips.SetToolTip(_extract, Strings.Get("Tooltip_Files_Extract"));
             RenderToolsButton();
+            ApplyEditStrings();
             _menuSsh.Text = Strings.Get("Tools_Ssh");
             _menuStartup.Text = Strings.Get("Tools_Startup");
             _viewAuto.Text = Strings.Get("Files_ViewAuto");
@@ -564,6 +572,7 @@ namespace HddBackup.App.Forms
             _tree.Nodes.Add(root);
             _tree.SelectedNode = root;
             root.Expand();
+            RestoreEditIfWaiting();
         }
 
         private static Font MonospaceFont(Font like)
@@ -587,7 +596,7 @@ namespace HddBackup.App.Forms
             var cts = new CancellationTokenSource();
             _previewCts = cts;
             var entry = node?.Tag as FsEntry;
-            var view = _view;
+            var view = Tree;
             _viewerError = null;
             if (entry == null || view == null)
             {
@@ -618,7 +627,7 @@ namespace HddBackup.App.Forms
             }
             catch (Exception ex) when (ex is ImagingException || ex is ObjectDisposedException || ex is IOException)
             {
-                if (cts.IsCancellationRequested || IsDisposed || !ReferenceEquals(view, _view))
+                if (cts.IsCancellationRequested || IsDisposed || !ReferenceEquals(view, Tree))
                 {
                     return;
                 }
@@ -628,7 +637,7 @@ namespace HddBackup.App.Forms
                 return;
             }
 
-            if (cts.IsCancellationRequested || IsDisposed || !ReferenceEquals(view, _view))
+            if (cts.IsCancellationRequested || IsDisposed || !ReferenceEquals(view, Tree))
             {
                 return;
             }
@@ -649,6 +658,7 @@ namespace HddBackup.App.Forms
         private void RenderViewer()
         {
             var entry = _shownEntry;
+            _viewer.ReadOnly = true;
             if (_fontBase != Font)
             {
                 // Fonts are GDI objects: replaced only when the form font changes (language switch).
@@ -698,6 +708,8 @@ namespace HddBackup.App.Forms
             {
                 _viewNote.Text = Strings.Format("Files_ShownOf", Formatters.Bytes(preview.ShownBytes), Formatters.Bytes(preview.TotalBytes));
             }
+
+            UpdateViewerEditable();
         }
 
         private static string HeaderDetail(FsEntry e)
@@ -736,6 +748,7 @@ namespace HddBackup.App.Forms
             _extract.Enabled = can && !_toolRunning;
             _menuExtract.Enabled = can && !_toolRunning;
             RenderToolsButton();
+            UpdateEditUi();
         }
 
         /// <summary>The Tools button: a menu button, or Cancel while a tool analyses; its tooltip says why it is disabled.</summary>
@@ -1041,7 +1054,7 @@ namespace HddBackup.App.Forms
         private async void LoadChildren(TreeNode node)
         {
             var entry = (FsEntry)node.Tag;
-            var view = _view;
+            var view = Tree;
             int generation = _generation;
             node.Nodes[0].Text = Strings.Get("Files_Opening");
             IReadOnlyList<FsEntry> children;
@@ -1122,10 +1135,19 @@ namespace HddBackup.App.Forms
                 }
             }
 
+            if (entry.Pending != PendingState.None)
+            {
+                text += " [" + Strings.Get("Edit_Pending_" + entry.Pending) + "]";
+            }
+
             var node = new TreeNode(text) { Tag = entry, ToolTipText = tip, ImageKey = icon, SelectedImageKey = icon };
             if (entry.Unreadable != null)
             {
                 node.ForeColor = Color.DarkRed;
+            }
+            else if (entry.Pending != PendingState.None)
+            {
+                node.ForeColor = Color.DarkGreen;
             }
 
             if (entry.IsDirectory && entry.Unreadable == null)
@@ -1163,6 +1185,7 @@ namespace HddBackup.App.Forms
             _viewerError = null;
             RenderViewer();
             _tree.Nodes.Clear();
+            EndEdit();
             var view = _view;
             _view = null;
             view?.Dispose();

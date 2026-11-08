@@ -32,6 +32,9 @@ namespace HddBackup.Core.Tests.Progress
 
             public IBlockDevice OpenForRead(DeviceInfo device) => _inner.OpenForRead(device);
 
+            public IBlockDevice OpenForPartitionWrite(DeviceInfo device, long partitionOffset, long partitionLength) =>
+                _inner.OpenForPartitionWrite(device, partitionOffset, partitionLength);
+
             public IExclusiveDevice OpenExclusiveForWrite(DeviceInfo device) => _inner.OpenExclusiveForWrite(device);
 
             public EjectResult Eject(DeviceInfo device)

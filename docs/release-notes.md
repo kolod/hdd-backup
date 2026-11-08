@@ -13,6 +13,12 @@ published either; its fix is part of 1.0.0-rc.3.
 
 ### Added
 
+- **Editing files on the Files tab.** The new **Edit** button turns on edit mode for an ext4
+  partition. In an image, changes wait in a diff file next to it until **Save** writes them and
+  updates (or creates) the `.sha256` file; **Discard** drops them. On a card, changes are written
+  at once, with no diff file and no checksum. You can edit the text of a file, and create, delete
+  and rename files and folders. A file is always entirely old or entirely new after an
+  interruption. Compressed images, file systems that need recovery or have errors are refused.
 - **Tools on the Files tab.** A new **Tools** button next to **Extract…** opens two read-only
   checks of the opened Linux system. Both only read; nothing is written to the image or the card,
   and passwords, key text and private keys are never read into a result.
