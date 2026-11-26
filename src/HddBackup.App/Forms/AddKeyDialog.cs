@@ -89,7 +89,14 @@ namespace HddBackup.App.Forms
             Controls.Add(buttons);
             AcceptButton = _add;
             CancelButton = _cancel;
-            FormClosed += (s, e) => _key.Text = string.Empty; // nothing typed here outlives the dialog
+            FormClosed += (s, e) =>
+            {
+                // nothing typed here outlives the dialog; clearing must not re-evaluate, which would drop the plan
+                // that the caller reads right after the dialog closes
+                _clearing = true;
+                _key.Text = string.Empty;
+                _clearing = false;
+            };
             Evaluate();
         }
 
