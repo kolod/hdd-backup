@@ -233,7 +233,9 @@ namespace HddBackup.Core.Ext4
                 throw new Ext4FormatException("Inode " + sourceInode + " uses inline data.");
             }
 
-            if ((inode.Flags & Ext4Inode.FlagEaInode) != 0)
+            // 0x200000 is EA_INODE_FL only when the ea_inode feature is on; before that it was EOFBLOCKS_FL
+            // (blocks allocated past the end of the file), which older kernels left set on ordinary files.
+            if ((inode.Flags & Ext4Inode.FlagEaInode) != 0 && (source.Superblock.FeatureIncompat & Ext4Features.IncompatEaInode) != 0)
             {
                 throw new Ext4FormatException("Inode " + sourceInode + " is an xattr value inode.");
             }
