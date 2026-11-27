@@ -85,7 +85,10 @@ namespace HddBackup.Core.Editing
             {
                 using (var disk = _access.OpenForPartitionWrite(_device, _offset, _length))
                 {
-                    var editor = new Ext4Editor(disk);
+                    // Nothing is written until ApplyTo, so building and checking can read through a cache: the check reads
+                    // the whole file system in small pieces, which takes minutes on a card without one.
+                    var reads = new CachedReadDevice(disk);
+                    var editor = new Ext4Editor(reads);
                     foreach (var change in changes)
                     {
                         ct.ThrowIfCancellationRequested();
@@ -93,7 +96,7 @@ namespace HddBackup.Core.Editing
                     }
 
                     var set = editor.Writes;
-                    var findings = EditPreflight.Check(set, disk);
+                    var findings = EditPreflight.Check(set, reads);
                     if (findings.Count > 0)
                     {
                         return new SaveResult { Status = SaveStatus.Refused, Error = EditError.Internal, Detail = findings[0] };

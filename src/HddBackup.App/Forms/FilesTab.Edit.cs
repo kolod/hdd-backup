@@ -349,19 +349,61 @@ namespace HddBackup.App.Forms
             return true;
         }
 
+        /// <summary>
+        /// Runs <paramref name="work"/> on a worker thread behind a small modal "please wait" window, so the program keeps
+        /// answering Windows while the card is read and written. Returns when the work is done (callers stay synchronous).
+        /// </summary>
+        private T RunWithWait<T>(Func<T> work)
+        {
+            T result = default(T);
+            Exception error = null;
+            bool done = false;
+            using (var wait = new Form())
+            {
+                wait.Text = Strings.Get("Edit_Button");
+                wait.Icon = AppIcon.Icon;
+                wait.Font = UiFont.For(LanguageService.Current);
+                wait.FormBorderStyle = FormBorderStyle.FixedDialog;
+                wait.StartPosition = FormStartPosition.CenterParent;
+                wait.ControlBox = false;
+                wait.MaximizeBox = wait.MinimizeBox = wait.ShowInTaskbar = false;
+                wait.AutoScaleMode = AutoScaleMode.Dpi;
+                wait.ClientSize = new Size(360, 84);
+                var label = new Label { Text = Strings.Get("Repair_Busy"), AutoSize = true, UseMnemonic = false, Location = new Point(16, 14) };
+                var bar = new ProgressBar { Style = ProgressBarStyle.Marquee, Location = new Point(16, 44), Size = new Size(328, 18) };
+                wait.Controls.Add(label);
+                wait.Controls.Add(bar);
+                wait.FormClosing += (s, e) => e.Cancel = !done; // the window closes only when the work has finished
+                wait.Shown += async (s, e) =>
+                {
+                    try
+                    {
+                        result = await Task.Run(work);
+                    }
+                    catch (Exception ex)
+                    {
+                        error = ex;
+                    }
+
+                    done = true;
+                    wait.Close();
+                };
+                wait.ShowDialog(FindForm());
+            }
+
+            if (error != null)
+            {
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error).Throw();
+            }
+
+            return result;
+        }
+
         private bool RecordOnCard(EditChange change, string select)
         {
-            SaveResult result;
-            var previous = Cursor;
-            Cursor = Cursors.WaitCursor;
-            try
-            {
-                result = _card.Apply(change, null, CancellationToken.None);
-            }
-            finally
-            {
-                Cursor = previous;
-            }
+            // The check before a write reads the whole file system, which takes seconds on a card: never on the UI thread.
+            var card = _card;
+            SaveResult result = RunWithWait(() => card.Apply(change, null, CancellationToken.None));
 
             if (result.Status != SaveStatus.Saved)
             {
